@@ -9,7 +9,7 @@ output:
 params:
   family: "red"   # choices: red, lapis, ochre, teal, green, violet
   base_size: 13
-  content_width: 80   # in ch units
+  content_width: 72   # in ch units
 vignette: >
   %\VignetteIndexEntry{Getting started}
   %\VignetteEngine{knitr::rmarkdown}

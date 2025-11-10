@@ -9,7 +9,7 @@ output:
 params:
   family: "green"
   base_size: 14
-  content_width: 80
+  content_width: 72
 vignette: >
   %\VignetteIndexEntry{Albersdown Demo}
   %\VignetteEngine{knitr::rmarkdown}
