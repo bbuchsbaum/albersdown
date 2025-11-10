@@ -1,0 +1,7 @@
+template:
+  package: albersdown
+
+articles:
+  - title: Getting started
+    contents:
+      - getting-started

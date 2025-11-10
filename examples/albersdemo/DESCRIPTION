@@ -1,0 +1,18 @@
+Package: albersdemo
+Type: Package
+Title: Demo Package Using the albersdown Theme
+Version: 0.0.1
+Authors@R: c(person(given = "Albersdemo", family = "Authors", role = c("aut","cre"),
+    email = "you@example.com"))
+Description: Minimal demo package that consumes the albersdown template for
+    pkgdown sites and uses the Albers vignette skeleton with local CSS.
+Depends: R (>= 3.5)
+Suggests:
+    ggplot2,
+    gt,
+    knitr,
+    rmarkdown,
+    pkgdown
+VignetteBuilder: knitr
+Encoding: UTF-8
+Config/Needs/website: your-org/albersdown@v1.0.0

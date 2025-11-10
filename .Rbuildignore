@@ -1,0 +1,6 @@
+^data-raw$
+^\.github$
+^README\.md$
+^NEWS\.md$
+^\.DS_Store$
+^examples$
