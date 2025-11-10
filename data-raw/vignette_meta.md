@@ -1,6 +1,4 @@
-Below is a drop‑in meta‑prompt you can give to any LLM. It encodes a complete house style for “Hadley‑grade” R package vignettes—hierarchical, navigable, link‑rich, and easy to search. It tells the model what inputs it will receive, the steps to follow, and the exact outputs to produce (both human‑readable and JSON for automation). You can customize the bracketed placeholders.
 
-⸻
 
 📘 Meta‑Prompt: House Style & Planning Guide for R Package Vignettes
 
@@ -293,7 +291,7 @@ Acceptance checks (add to each blueprint)
 - [ ] Links and focus rings show the family accent and pass AA.
 - [ ] Callouts use A500 border and A300 tint; tables have subtle stripe.
 - [ ] Plots/tables use `theme_albers()` / `gt_albers()` with the chosen family.
-- [ ] Page width feels readable (default 80ch, adjustable via `content_width`).
+- [ ] Page width feels readable (default 72ch, adjustable via `content_width`).
 
 A) Human‑readable plan (Markdown)
 	1.	Executive summary (one page)
@@ -435,191 +433,24 @@ A) Ten design rules
 	9.	Born accessible: WCAG AA contrast, no color-only encoding, dark-mode parity.
 	10.	Print-friendly: high-contrast on white, scalable figures, no interactive-only affordances.
 
-B) Design tokens + typography, spacing, figures
+B) Design tokens (see package)
 
-Token | Light | Dark
--- | -- | --
-`--albers-bg` | `#ffffff` | `#0b0c0e`
-`--albers-fg` | `#111111` | `#e6e6e6`
-`--albers-muted` | `#6b7280` | `#9aa0a6`
-`--albers-border` | `#e5e7eb` | `#2a2f36`
-`--albers-accent` | `#1f6feb` | `#7aa2ff`
-`--albers-link` | `#1f6feb` | `#93b4ff`
-`--albers-code-bg` | `#f6f8fa` | `#161b22`
-
-Typography  
-	•	Body: `-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif`  
-	•	Code: `ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", "Roboto Mono", monospace`  
-	•	Base sizing: body 17–18 px, line-height 1.55; H1 = 1.6–1.8× body, H2 = 1.35×, H3 = 1.15×.
-
-Spacing & layout  
-	•	4-pt rhythm: 4 / 8 / 12 / 16 / 24 / 32 px.  
-	•	Content width: `max-width: 70–72ch`, centered column.  
-	•	Figures: `fig.width = 7`, `fig.asp = 0.618` (golden aspect).
+Use the tokens defined by the albersdown template; do not reinvent CSS locally. See the “Design notes” vignette for the authoritative token list and examples.
 
 C) Implementation quick-start
 	1.	Create `vignettes/albers.css`, add it to each vignette via YAML (`css: albers.css`), and hold the following minimalist styles:
 
-```css
-:root{
-  --albers-bg:#fff; --albers-fg:#111; --albers-muted:#6b7280;
-  --albers-border:#e5e7eb; --albers-accent:#1f6feb; --albers-link:#1f6feb;
-  --albers-code-bg:#f6f8fa;
-  --rhythm-1:4px; --rhythm-2:8px; --rhythm-3:12px; --rhythm-4:16px; --rhythm-5:24px; --rhythm-6:32px;
-  --content-max:72ch;
-  --font-body:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif;
-  --font-code:ui-monospace,"SF Mono",Menlo,Consolas,"Liberation Mono","Roboto Mono",monospace;
-}
-@media (prefers-color-scheme: dark){
-  :root{
-    --albers-bg:#0b0c0e; --albers-fg:#e6e6e6; --albers-muted:#9aa0a6;
-    --albers-border:#2a2f36; --albers-accent:#7aa2ff; --albers-link:#93b4ff;
-    --albers-code-bg:#161b22;
-  }
-}
-html,body{background:var(--albers-bg); color:var(--albers-fg); font-family:var(--font-body); line-height:1.55; font-size:17.5px;}
-main, .content, .container, .page-content, .vignette, .contents{
-  max-width:var(--content-max); margin-inline:auto; padding-inline:clamp(var(--rhythm-4), 2vw, var(--rhythm-6));
-}
-p{margin-block: var(--rhythm-4);}
-h1,h2,h3{font-weight:600; line-height:1.25; margin-top:var(--rhythm-6); margin-bottom:var(--rhythm-3);}
-h1{font-size:1.8rem;} h2{font-size:1.4rem;} h3{font-size:1.2rem;}
-a{color:var(--albers-link); text-decoration:underline; text-underline-offset:2px;}
-a:hover{filter:brightness(0.9);}
-a:focus{outline:2px solid var(--albers-accent); outline-offset:2px;}
-code, pre, kbd, samp{font-family:var(--font-code); font-size:0.95em;}
-pre{background:var(--albers-code-bg); border:1px solid var(--albers-border);
-    padding:var(--rhythm-5); border-radius:6px; overflow:auto; margin-block:var(--rhythm-5);}
-pre code{background:transparent; border:none; padding:0;}
-p code{background:var(--albers-code-bg); padding:0.1em 0.35em; border-radius:4px; border:1px solid var(--albers-border);}
-table{border-collapse:collapse; width:100%; font-variant-numeric:tabular-nums;}
-th,td{border-bottom:1px solid var(--albers-border); padding:10px 8px;}
-thead th{font-weight:600;}
-tbody tr:nth-child(odd){background:color-mix(in srgb, var(--albers-code-bg) 35%, transparent);}
-caption{caption-side:bottom; color:var(--albers-muted); padding-top:var(--rhythm-3); font-size:0.95em;}
-figure, img{max-width:100%; height:auto;}
-figcaption{color:var(--albers-muted); font-size:0.95em; margin-top:var(--rhythm-2);}
-.center{display:block; margin-inline:auto;}
-ul,ol{padding-left:1.1em; margin-block:var(--rhythm-4);}
-li+li{margin-top:4px;}
-blockquote, .callout{
-  border-left:3px solid var(--albers-accent); background:color-mix(in srgb, var(--albers-accent) 6%, transparent);
-  padding:var(--rhythm-4) var(--rhythm-5); margin-block:var(--rhythm-5); border-radius:6px;
-}
-blockquote p{margin:0;}
-h2:hover .anchor, h3:hover .anchor{opacity:1;}
-.anchor{opacity:0; margin-left:6px; text-decoration:none; color:var(--albers-muted);}
-```
+<!-- Removed: legacy CSS block (manual styling). Use albersdown template + vignette kit instead. -->
 
-Attach it via vignette YAML:
+<!-- Removed: legacy vignette CSS instructions (superseded by albersdown) -->
 
-```yaml
-output:
-  rmarkdown::html_vignette:
-    toc: true
-    toc_depth: 2
-css: albers.css
-```
+<!-- Removed: legacy ggplot2 helper code (superseded by albersdown helpers) -->
 
-	2.	Add minimalist ggplot2 helpers (store under `R/theme-albers.R`; ensure `{ggplot2}` + `{viridisLite}` are in Suggests) and call `theme_set(theme_albers())` in vignette setup chunks:
+<!-- Removed: legacy example usage for deprecated helpers -->
 
-```r
-albers_okabe_ito <- function() {
-  c("#000000","#E69F00","#56B4E9","#009E73","#F0E442","#0072B2","#D55E00","#CC79A7")
-}
+<!-- Removed: legacy gt helper code (use albersdown::gt_albers instead) -->
 
-scale_color_albers <- function(..., discrete = TRUE) {
-  if (discrete) ggplot2::scale_color_manual(values = albers_okabe_ito(), ...)
-  else if (requireNamespace("viridisLite", quietly = TRUE))
-    ggplot2::scale_color_gradientn(colours = viridisLite::viridis(256), ...)
-  else ggplot2::scale_color_gradient(low = "#cbd5e1", high = "#1f6feb", ...)
-}
-
-scale_fill_albers <- function(..., discrete = TRUE) {
-  if (discrete) ggplot2::scale_fill_manual(values = albers_okabe_ito(), ...)
-  else if (requireNamespace("viridisLite", quietly = TRUE))
-    ggplot2::scale_fill_gradientn(colours = viridisLite::viridis(256), ...)
-  else ggplot2::scale_fill_gradient(low = "#cbd5e1", high = "#1f6feb", ...)
-}
-
-theme_albers <- function(base_size = 11, base_family = "system-ui") {
-  ggplot2::theme_minimal(base_size = base_size, base_family = base_family) +
-    ggplot2::theme(
-      panel.grid.major = ggplot2::element_line(color = "#e5e7eb", linewidth = 0.3),
-      panel.grid.minor = ggplot2::element_blank(),
-      axis.title.x = ggplot2::element_text(margin = ggplot2::margin(t = 6)),
-      axis.title.y = ggplot2::element_text(margin = ggplot2::margin(r = 6)),
-      plot.title = ggplot2::element_text(face = "bold", margin = ggplot2::margin(b = 8)),
-      plot.subtitle = ggplot2::element_text(margin = ggplot2::margin(b = 10), color = "#374151"),
-      plot.caption = ggplot2::element_text(size = rel(0.9), color = "#6b7280", margin = ggplot2::margin(t = 10)),
-      legend.position = "top",
-      legend.title = ggplot2::element_text(face = "bold")
-    )
-}
-```
-
-Example usage:
-
-```r
-theme_set(theme_albers())
-
-mtcars |>
-  ggplot2::ggplot(ggplot2::aes(wt, mpg, color = factor(cyl))) +
-  ggplot2::geom_point(size = 2.2) +
-  scale_color_albers() +
-  ggplot2::labs(
-    title = "Fuel efficiency vs. weight",
-    subtitle = "Example with Albers theme",
-    x = "Weight (1000 lbs)",
-    y = "MPG"
-  ) +
-  theme_albers()
-```
-
-	3.	Optional: define a quiet GT helper for striped tables (`R/gt-albers.R`) and call `gt_albers()` inside vignettes.
-
-```r
-gt_albers <- function(x) {
-  x |>
-    gt::opt_row_striping() |>
-    gt::tab_options(
-      table.width = gt::px(720),
-      table.font.names = "system-ui",
-      table.border.top.color = "transparent",
-      table.border.bottom.color = "transparent",
-      data_row.padding = gt::px(6),
-      heading.align = "left"
-    ) |>
-    gt::tab_style(
-      style = list(gt::cell_borders(sides = "bottom", color = "#e5e7eb")),
-      locations = gt::cells_body()
-    ) |>
-    gt::tab_style(
-      style = gt::cell_text(color = "#6b7280"),
-      locations = gt::cells_title(groups = "subtitle")
-    )
-}
-```
-
-D) pkgdown integration
-
-Use a `_pkgdown.yml` snippet to propagate the same palette + CSS site-wide (place the CSS at `inst/pkgdown/albers.css`):
-
-```yaml
-template:
-  bootstrap: 5
-  bslib:
-    bg: "#ffffff"
-    fg: "#111111"
-    primary: "#1f6feb"
-    secondary: "#6b7280"
-    base_font: "system-ui"
-    heading_font: "system-ui"
-    code_font: "ui-monospace"
-  assets:
-    - "inst/pkgdown/albers.css"
-highlight: textmate
-```
+<!-- Removed: legacy pkgdown integration without template package (superseded by `template: { package: albersdown }`) -->
 
 E) Vignette front-matter & chunk defaults
 	•	Add `description: "Clean, minimal vignette using the Albers visual system."` and `css: albers.css` to the YAML shown in §16.  
@@ -637,12 +468,12 @@ F) “Albers gates” visual QA
 	•	Print/PDF remains legible; no color-only semantics.
 
 G) Notes for the LLM when drafting blueprints
-	•	After each outline section, add “Visual notes” covering figure type, callouts, and table styling (reference `gt_albers()` where relevant).  
+	•	After each outline section, add “Visual notes” covering figure type, callouts, and table styling (reference `albersdown::gt_albers()` where relevant).  
 	•	Assume system fonts—no external font dependencies unless explicitly requested.  
-	•	Use a single accent (`--albers-accent`) for links, callouts, and the hero data series.  
+	•	Follow albersdown discipline: one palette family per page; use A700 for a single data highlight; A300 for subtle tints.  
 	•	Ensure all code blocks render inside `<pre><code>` elements so the CSS applies; avoid overly wide outputs.  
-	•	When specifying chunk defaults, mention `theme_set(theme_albers())` in setup.  
-	•	Document how design tokens map to CSS/pkgdown/bslib to keep RMarkdown and pkgdown perfectly aligned.
+	•	In setup, call `theme_set(albersdown::theme_albers(params$family, base_size = params$base_size))`; use `scale_*_albers[_highlight]()` for color/fill.  
+	•	Do not ship standalone CSS or custom bslib settings; rely on the shared template and vignette kit.
 
 ---
 
@@ -677,3 +508,120 @@ Respect these if provided; otherwise use defaults above.
 
 ### Want me to tailor this to your org?
 If you share a representative package (name, function list, and any constraints), I can run this meta‑prompt and return the first full plan and JSON so you can see it in action.
+
+---
+
+## Appendix: Albersdown setup (precise steps for a new package)
+
+Follow these exact steps to adopt the shared theme in a fresh or existing R package. The result is CRAN‑friendly vignettes (offline CSS) and a deterministic pkgdown site using a pinned template.
+
+1) DESCRIPTION changes
+
+Add Suggests and the vignette builder (keep your existing fields):
+
+```
+Suggests:
+    knitr,
+    rmarkdown,
+    pkgdown,
+    ggplot2,
+    gt
+VignetteBuilder: knitr
+```
+
+Pin the template package for site builds (adjust org/tag):
+
+```
+Config/Needs/website: your-org/albersdown@v1.0.0
+```
+
+2) Root `_pkgdown.yml`
+
+Create or edit `_pkgdown.yml` with:
+
+```yaml
+template:
+  package: albersdown
+  bootstrap: 5
+```
+
+3) Install the template and add the vignette kit
+
+In an R session at the package root:
+
+```r
+# Optional but recommended for local testing
+pak::pak("your-org/albersdown@v1.0.0")
+
+# One‑command onboarding (copies vignettes/albers.css; adds template stanza if missing)
+albersdown::use_albers_vignettes()
+
+# OR draft explicitly from the template
+rmarkdown::draft(
+  "vignettes/getting-started.Rmd",
+  template = "albers_vignette",
+  package  = "albersdown",
+  edit     = FALSE
+)
+```
+
+4) Vignette header and setup (what “correct” looks like)
+
+YAML (front‑matter):
+
+```yaml
+output: rmarkdown::html_vignette
+css: albers.css
+params:
+  family: "red"       # red, lapis, ochre, teal, green, violet
+  base_size: 13        # ggplot base text size
+  content_width: 72    # column width in ch
+```
+
+Setup chunk (already included in the template):
+
+```r
+knitr::opts_chunk$set(
+  collapse = TRUE, comment = "#>", fig.align = "center", fig.retina = 2,
+  out.width = "100%", fig.width = 7, fig.asp = 0.618, message = FALSE, warning = FALSE
+)
+set.seed(123); options(pillar.sigfig = 7, width = 80)
+library(ggplot2)
+if (requireNamespace("albersdown", quietly = TRUE)) {
+  theme_set(albersdown::theme_albers(params$family, base_size = params$base_size))
+}
+cat(sprintf('<script>document.addEventListener("DOMContentLoaded",function(){document.body.classList.add("palette-%s");});</script>', params$family))
+cat(sprintf('<style>:root{--content:%sch}</style>', params$content_width))
+```
+
+Optional anchors in raw knitted HTML (pkgdown pages include anchors automatically):
+
+```r
+cat('<script>document.addEventListener("DOMContentLoaded",function(){document.querySelectorAll("h2, h3").forEach(function(h){if(!h.id)return;if(h.querySelector("a.anchor"))return;var a=document.createElement("a");a.href="#"+h.id;a.className="anchor";a.textContent="▣";a.setAttribute("aria-label","Link to this section");a.setAttribute("title","Link to this section");h.appendChild(a);});});</script>')
+```
+
+5) Use the helpers consistently
+
+- Plot theme: `theme_albers(params$family, base_size = params$base_size)`
+- Color: `scale_color_albers(params$family)` or `scale_color_albers_highlight(family = params$family, tone = "A700")`
+- Fill: `scale_fill_albers(params$family)` or `scale_fill_albers_highlight(family = params$family, tone = "A700")`
+- Tables: `gt_albers(x, family = params$family)`
+
+6) Verify
+
+```r
+# Knit a vignette (offline; uses local CSS)
+rmarkdown::render("vignettes/getting-started.Rmd")
+
+# Build site (uses the pinned template in DESCRIPTION)
+pkgdown::build_site()
+```
+
+You should see AA‑colored links, ▣ anchors on H2/H3, copy buttons on code, a subtle A300 tint for callouts/tables, and plots/tables styled with the chosen family.
+
+Troubleshooting
+
+- No accent in HTML: confirm `css: albers.css` is present and the file exists in `vignettes/`.
+- No anchors in raw knit: add the tiny anchor script above; on pkgdown pages, anchors are injected by `albers.js`.
+- Site build fails to find `albersdown`: check `Config/Needs/website` and that the tag exists.
+- CRAN builds: safe—no network fetch in vignettes; the remote pin affects only pkgdown builds.

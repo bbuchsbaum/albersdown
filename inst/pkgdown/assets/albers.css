@@ -81,6 +81,8 @@ h2:focus-within .anchor, h3:focus-within .anchor{opacity:1;}
 
 /* “Homage” hero tile (optional) */
 .homage-hero{ aspect-ratio:3/2; background:var(--bg); box-shadow: inset 0 0 0 84px var(--A300), inset 0 0 0 56px var(--A500), inset 0 0 0 28px var(--A700), inset 0 0 0 0 var(--A900); border-radius:4px; margin-block:24px; }
+/* Letterbox variant for calmer presence */
+.homage-hero--letterbox{ aspect-ratio:6/1; background:var(--bg); box-shadow: inset 0 0 0 48px var(--A300), inset 0 0 0 32px var(--A500), inset 0 0 0 16px var(--A700), inset 0 0 0 0 var(--A900); border-radius:4px; margin-block:16px 8px; }
 
 /* Hairline rules with square notch */
 .hr-notch{position:relative; height:1px; background:var(--border); margin:24px 0;}

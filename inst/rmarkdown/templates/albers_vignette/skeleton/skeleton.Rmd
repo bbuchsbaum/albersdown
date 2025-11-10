@@ -42,7 +42,7 @@ cat(sprintf('<style>:root{--content:%sch}</style>', params$content_width))
 <div class="hr-notch" role="presentation"></div>
 
 ```{r anchors, echo=FALSE, results='asis'}
-cat('<script>document.addEventListener("DOMContentLoaded",function(){document.querySelectorAll("h2, h3").forEach(function(h){if(!h.id)return;var a=document.createElement("a");a.href="#"+h.id;a.className="anchor";a.textContent="▣";a.setAttribute("aria-label","Link to this section");a.setAttribute("title","Link to this section");h.appendChild(a);});});</script>')
+cat('<script>document.addEventListener("DOMContentLoaded",function(){document.querySelectorAll("h2, h3").forEach(function(h){if(!h.id)return;if(h.querySelector("a.anchor"))return;var a=document.createElement("a");a.href="#"+h.id;a.className="anchor";a.textContent="▣";a.setAttribute("aria-label","Link to this section");a.setAttribute("title","Link to this section");h.appendChild(a);});});</script>')
 ```
 
 ## Goal

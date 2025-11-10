@@ -1,0 +1,98 @@
+---
+title: "Albers components"
+name: components
+description: "A quick tour of the Albers cues: anchors, hero, callouts, code copy, plots, fills, and gt."
+output:
+  rmarkdown::html_vignette:
+    toc: true
+    toc_depth: 2
+params:
+  family: "violet"
+  base_size: 14
+  content_width: 72
+vignette: >
+  %\VignetteIndexEntry{Albers components}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+css: albers.css
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE, comment = "#>", fig.align = "center", fig.retina = 2,
+  out.width = "100%", fig.width = 7, fig.asp = 0.618, message = FALSE, warning = FALSE
+)
+set.seed(1); options(pillar.sigfig = 7, width = 80)
+library(ggplot2)
+if (requireNamespace("albersdown", quietly = TRUE)) {
+  theme_set(albersdown::theme_albers(params$family, base_size = params$base_size))
+}
+```
+
+```{r albers-family, echo=FALSE, results='asis'}
+cat(sprintf('<script>document.addEventListener("DOMContentLoaded",function(){document.body.classList.add("palette-%s");});</script>', params$family))
+```
+
+```{r content-width, echo=FALSE, results='asis'}
+cat(sprintf('<style>:root{--content:%sch}</style>', params$content_width))
+```
+
+```{r anchors, echo=FALSE, results='asis'}
+cat('<script>document.addEventListener("DOMContentLoaded",function(){document.querySelectorAll("h2, h3").forEach(function(h){if(!h.id)return;if(h.querySelector("a.anchor"))return;var a=document.createElement("a");a.href="#"+h.id;a.className="anchor";a.textContent="▣";a.setAttribute("aria-label","Link to this section");a.setAttribute("title","Link to this section");h.appendChild(a);});});</script>')
+```
+
+<div class="homage-hero--letterbox" aria-hidden="true"></div>
+<div class="hr-notch" role="presentation"></div>
+
+## Anchors, links, and callouts {#anchors}
+
+Anchors ▣ appear on hover/focus at the right edge of H2/H3. Links use the family’s AA tone (e.g., [pkgdown docs](https://pkgdown.r-lib.org/)).
+
+> TIP: Keep callouts crisp; the A300 tint stays at ≈8%.
+
+## Copyable code and long lines {#code}
+
+```r
+long_vector <- paste(rep("abcdef", 20), collapse = ":")
+long_vector
+```
+
+## Color scales (lines/points) {#color}
+
+```{r}
+mtcars$grp <- factor(ifelse(mtcars$cyl == 6, "highlight", "other"), levels = c("other", "highlight"))
+ggplot(mtcars, aes(wt, mpg, color = grp)) +
+  geom_point(size = 2.2) +
+  albersdown::scale_color_albers_highlight(family = params$family, tone = "A700") +
+  labs(title = "Highlight vs other (color)", subtitle = "A700 highlights; gray recedes")
+```
+
+## Fill scales (bars/histograms) {#fill}
+
+```{r}
+mtcars$grp2 <- factor(ifelse(mtcars$mpg > 25, "highlight", "other"), levels = c("other", "highlight"))
+ggplot(mtcars, aes(grp2, fill = grp2)) +
+  geom_bar(width = 0.7) +
+  albersdown::scale_fill_albers_highlight(family = params$family, tone = "A700") +
+  guides(fill = "none") +
+  labs(title = "Highlight vs other (fill)")
+```
+
+## gt tables {#gt}
+
+```{r}
+if (requireNamespace("gt", quietly = TRUE)) {
+  head(mtcars[, 1:5], 6) |>
+    gt::gt() |>
+    albersdown::gt_albers(family = params$family)
+}
+```
+
+## See also {#see-also}
+
+<div class="hr-notch" role="presentation"></div>
+
+- Getting started: `articles/getting-started.html`
+- Design notes: `articles/design-notes.html`
+- pkgdown docs: https://pkgdown.r-lib.org/
+
