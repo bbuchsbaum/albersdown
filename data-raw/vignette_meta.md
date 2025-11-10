@@ -198,6 +198,103 @@ A vignette plan is ready when:
 
 13) What to produce now (your required outputs)
 
+
+⸻
+
+14) Theme & Styling (albersdown Homage system)
+
+All vignettes and the pkgdown site MUST use the shared albersdown theme. The template enforces accessible accents, disciplined spacing, and per‑vignette palette families (one family per page).
+
+Theme assumptions
+- Vignettes are `html_vignette` and include a local CSS file `albers.css` (no network; CRAN‑safe).
+- The site uses the pkgdown template shipped by `albersdown`.
+- One palette family per page: red, lapis, ochre, teal, green, violet. Families provide A900/A700/A500/A300 tones mapped to roles (links, highlights, borders, tints).
+
+Consumer setup (site)
+- In the consuming package root `DESCRIPTION`:
+  - `Config/Needs/website: your-org/albersdown@v1.0.0`  (pin a tag)
+- In the consuming package root `_pkgdown.yml`:
+  ```yaml
+  template:
+    package: albersdown
+    bootstrap: 5
+  # plus your navbar/articles/reference config
+  ```
+
+Albers Vignette header (required fields)
+```yaml
+---
+title: "Getting started"
+name: getting-started
+description: "A quiet, minimalist vignette styled with Albers."
+output:
+  rmarkdown::html_vignette:
+    toc: true
+    toc_depth: 2
+params:
+  family: "red"       # choices: red, lapis, ochre, teal, green, violet
+  base_size: 13        # ggplot text size
+  content_width: 80    # column width in ch
+vignette: >
+  %\VignetteIndexEntry{Getting started}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+css: albers.css        # local, copied by the template
+---
+```
+
+Setup chunk (include in every vignette)
+```r
+knitr::opts_chunk$set(
+  collapse = TRUE, comment = "#>", fig.align = "center", fig.retina = 2,
+  out.width = "100%", fig.width = 7, fig.asp = 0.618, message = FALSE, warning = FALSE
+)
+set.seed(123); options(pillar.sigfig = 7, width = 80)
+library(ggplot2)
+if (requireNamespace("albersdown", quietly = TRUE)) {
+  theme_set(albersdown::theme_albers(params$family, base_size = params$base_size))
+}
+```
+
+Palette family activation (injects CSS class to swap tokens)
+```r
+cat(sprintf('<script>document.addEventListener("DOMContentLoaded",function(){document.body.classList.add("palette-%s");});</script>', params$family))
+```
+
+Content width control (per‑page, no CSS edits)
+```r
+cat(sprintf('<style>:root{--content:%sch}</style>', params$content_width))
+```
+
+Plot and table helpers (use consistently)
+- In examples and walkthroughs, apply:
+  - `theme_albers(params$family, base_size = params$base_size)`
+  - `scale_color_albers(params$family, ...)` and `scale_fill_albers(params$family, ...)` as needed
+  - `gt_albers(x, family = params$family)` for gt tables
+
+CRAN rule
+- Vignettes must build offline with only Imports/Suggests. The template copies `albers.css` next to each vignette; do not fetch CSS at runtime.
+
+Discipline & accessibility
+- One family per page; choose for mood/wayfinding, not meaning.
+- Links/focus use AA‑safe tones: light mode A900; dark mode A300 (violet overrides dark link tone as `#BA68C8`).
+- Callouts: A500 border + A300 tint (≤12%); keep borders subtle.
+- Avoid color‑only encodings; use shapes, linetypes, labels.
+
+Onboarding helper (optional)
+- Run `albersdown::use_albers_vignettes()` in an existing package to:
+  - Copy `vignettes/albers.css` if missing.
+  - Add `template: { package: albersdown }` to `_pkgdown.yml` if absent.
+  - Suggest `ggplot2` and `gt` in `Suggests`.
+
+Acceptance checks (add to each blueprint)
+- [ ] Vignette header includes `css: albers.css` and `params` block.
+- [ ] A family is declared and body class is set (`palette-{family}`).
+- [ ] Links and focus rings show the family accent and pass AA.
+- [ ] Callouts use A500 border and A300 tint; tables have subtle stripe.
+- [ ] Plots/tables use `theme_albers()` / `gt_albers()` with the chosen family.
+- [ ] Page width feels readable (default 80ch, adjustable via `content_width`).
+
 A) Human‑readable plan (Markdown)
 	1.	Executive summary (one page)
 	2.	IA & Navigation (tree view + reading paths)

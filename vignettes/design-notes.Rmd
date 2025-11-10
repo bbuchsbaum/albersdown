@@ -1,0 +1,108 @@
+---
+title: "Design notes: Homage system"
+name: design-notes
+description: "Visual tokens, palette families, and component rules for albersdown."
+output:
+  rmarkdown::html_vignette:
+    toc: true
+    toc_depth: 2
+params:
+  family: "violet"     # red, lapis, ochre, teal, green, violet
+  base_size: 13
+  content_width: 80
+vignette: >
+  %\VignetteIndexEntry{Design notes: Homage system}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+css: albers.css
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE, comment = "#>", fig.align = "center", fig.retina = 2,
+  out.width = "100%", fig.width = 7, fig.asp = 0.618, message = FALSE, warning = FALSE
+)
+set.seed(123); options(pillar.sigfig = 7, width = 80)
+library(ggplot2)
+if (requireNamespace("albersdown", quietly = TRUE)) {
+  theme_set(albersdown::theme_albers(params$family, base_size = params$base_size))
+}
+```
+
+```{r albers-family, echo=FALSE, results='asis'}
+cat(sprintf('<script>document.addEventListener("DOMContentLoaded",function(){document.body.classList.add("palette-%s");});</script>', params$family))
+```
+
+```{r content-width, echo=FALSE, results='asis'}
+cat(sprintf('<style>:root{--content:%sch}</style>', params$content_width))
+```
+
+<div class="homage-hero" aria-hidden="true"></div>
+<div class="hr-notch" role="presentation"></div>
+
+## Overview {.overview}
+
+- One family per page (A900/A700/A500/A300 → roles)
+- Links + focus use AA tones; anchors show ▣ on hover
+- Callouts and tables use quiet A300 tints; code blocks are flat with a small corner square
+
+## Palette families and roles {#palettes}
+
+Families available: red, lapis, ochre, teal, green, violet. Each has four tones:
+
+- A900: links and focus in light mode; strongest contrast
+- A700: highlights (one series per plot); nav active marker
+- A500: borders, anchors (▣), code-corner square, hr notch
+- A300: tints for callouts and table stripe; links/focus in dark mode
+
+## Links, anchors, and rhythm {#links-anchors}
+
+Links and focus rings always meet AA. Move the cursor over H2/H3 to reveal the square anchor glyph ▣.
+
+<div class="hr-notch" role="presentation"></div>
+
+## Callouts and code blocks {#callouts-code}
+
+> TIP: Callouts use an A500 border and a subtle A300 tint (≈8–10%). Keep them short and purposeful.
+
+```r
+# a small, readable function
+foo <- function(x) if (length(x) == 0) NA_real_ else mean(x)
+foo(c(1, 2, 3))
+```
+
+The code fence has no drop shadow and includes a small A500 square in the top-left corner—a minimal homage.
+
+## Tables {#tables}
+
+Base HTML tables pick up a quiet A300 zebra stripe and thin borders.
+
+```{r}
+head(mtcars[, 1:5])
+```
+
+## Plots: one highlight, others neutral {#plots}
+
+```{r}
+mtcars$grp <- ifelse(mtcars$cyl == 6, "highlight", "other")
+mtcars$grp <- factor(mtcars$grp, levels = c("other", "highlight"))
+ggplot(mtcars, aes(wt, mpg, color = grp)) +
+  geom_point(size = 2.2) +
+  albersdown::scale_color_albers_highlight(
+    family = params$family,
+    tone = "A700",
+    highlight = "highlight",
+    other_name = "other"
+  ) +
+  labs(title = "One highlighted series; others neutral",
+       subtitle = "A700 draws the eye; gray recedes",
+       x = "Weight (1000 lbs)", y = "MPG")
+```
+
+## See also {#see-also}
+
+<div class="hr-notch" role="presentation"></div>
+
+- Getting started: `articles/getting-started.html`
+- pkgdown template docs: `reference/index.html`
+- Palette and roles: `#palettes`

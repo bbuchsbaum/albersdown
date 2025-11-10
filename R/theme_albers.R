@@ -2,13 +2,15 @@
 #'
 #' @param family One of "red", "lapis", "ochre", "teal".
 #' @export
-albers_palette <- function(family = c("red","lapis","ochre","teal")) {
+albers_palette <- function(family = c("red","lapis","ochre","teal","green","violet")) {
   family <- match.arg(family)
   switch(family,
-    red   = c(A900 = "#CD2D26", A700 = "#DC3925", A500 = "#E44926", A300 = "#E35B2D"),
-    lapis = c(A900 = "#1B2A74", A700 = "#20399C", A500 = "#2C4FCC", A300 = "#4968D6"),
-    ochre = c(A900 = "#6F5200", A700 = "#8B6700", A500 = "#B48900", A300 = "#D7A700"),
-    teal  = c(A900 = "#0D4A4A", A700 = "#0F5E5E", A500 = "#127373", A300 = "#2F8C8C")
+    red    = c(A900 = "#CD2D26", A700 = "#DC3925", A500 = "#E44926", A300 = "#E35B2D"),
+    lapis  = c(A900 = "#1B2A74", A700 = "#20399C", A500 = "#2C4FCC", A300 = "#4968D6"),
+    ochre  = c(A900 = "#6F5200", A700 = "#8B6700", A500 = "#B48900", A300 = "#D7A700"),
+    teal   = c(A900 = "#0D4A4A", A700 = "#0F5E5E", A500 = "#127373", A300 = "#2F8C8C"),
+    green  = c(A900 = "#1B5E20", A700 = "#2E7D32", A500 = "#388E3C", A300 = "#66BB6A"),
+    violet = c(A900 = "#4A148C", A700 = "#6A1B9A", A500 = "#8E24AA", A300 = "#BA68C8")
   )
 }
 
@@ -18,7 +20,7 @@ albers_palette <- function(family = c("red","lapis","ochre","teal")) {
 #' @param base_size Base font size.
 #' @param base_family Base font family.
 #' @export
-theme_albers <- function(family = "red", base_size = 11, base_family = "system-ui") {
+theme_albers <- function(family = "red", base_size = 13, base_family = "system-ui") {
   pal <- albers_palette(family)
   ggplot2::theme_minimal(base_size = base_size, base_family = base_family) +
     ggplot2::theme(
@@ -54,3 +56,46 @@ scale_fill_albers <- function(family = "red", discrete = TRUE, ...) {
   else ggplot2::scale_fill_gradient(low = pal[["A300"]], high = pal[["A900"]], ...)
 }
 
+#' Convenience scale: highlight vs other (color)
+#'
+#' Returns a manual color scale mapping a single highlighted group to a
+#' family tone (default A700) and all other points to a neutral gray.
+#'
+#' @param family Palette family name.
+#' @param tone One of A900, A700, A500, A300 used for the highlight color.
+#' @param other Hex color used for non-highlight values.
+#' @param highlight Name of the value that should receive the highlight color.
+#' @param other_name Name of the value that should receive the neutral color.
+#' @param ... Passed to `ggplot2::scale_color_manual()`.
+#' @export
+scale_color_albers_highlight <- function(
+  family = "red",
+  tone = c("A700", "A900", "A500", "A300"),
+  other = "#9aa0a6",
+  highlight = "highlight",
+  other_name = "other",
+  ...
+) {
+  tone <- match.arg(tone)
+  pal <- albers_palette(family)
+  vals <- stats::setNames(c(pal[[tone]], other), c(highlight, other_name))
+  ggplot2::scale_color_manual(values = vals, ...)
+}
+
+#' Convenience scale: highlight vs other (fill)
+#'
+#' @inheritParams scale_color_albers_highlight
+#' @export
+scale_fill_albers_highlight <- function(
+  family = "red",
+  tone = c("A700", "A900", "A500", "A300"),
+  other = "#9aa0a6",
+  highlight = "highlight",
+  other_name = "other",
+  ...
+) {
+  tone <- match.arg(tone)
+  pal <- albers_palette(family)
+  vals <- stats::setNames(c(pal[[tone]], other), c(highlight, other_name))
+  ggplot2::scale_fill_manual(values = vals, ...)
+}

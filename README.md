@@ -38,7 +38,7 @@ css: albers.css
 In the setup chunk:
 
 library(ggplot2)
-theme_set(albersdown::theme_albers())
+theme_set(albersdown::theme_albers(params$family, base_size = 13))
 
 Helpers
 -------
@@ -46,6 +46,8 @@ Helpers
 - theme_albers(family = "red")
 - scale_color_albers(family = "red", discrete = TRUE, ...)
 - scale_fill_albers(family = "red", discrete = TRUE, ...)
+- scale_color_albers_highlight(family = "red", tone = "A700", other = "#9aa0a6")
+- scale_fill_albers_highlight(family = "red", tone = "A700", other = "#9aa0a6")
 - gt_albers(x, family = "red")
 
 Notes
@@ -54,3 +56,13 @@ Notes
 - Keep vignette CSS local to satisfy CRAN’s no-network rule.
 - Pin a release tag in Config/Needs/website for deterministic site builds.
 
+Choosing a palette family per page
+----------------------------------
+
+- Families: red, lapis, ochre, teal, green, violet.
+- In YAML, add: params: family: "red"
+- In setup, call: theme_set(albersdown::theme_albers(params$family))
+- If plot text feels small, increase `base_size` (e.g., 13–14):
+  `theme_set(albersdown::theme_albers(params$family, base_size = 14))`
+- Add body class so CSS tokens switch by family:
+  cat(sprintf('<script>document.addEventListener("DOMContentLoaded",function(){document.body.classList.add("palette-%s");});</script>', params$family))
