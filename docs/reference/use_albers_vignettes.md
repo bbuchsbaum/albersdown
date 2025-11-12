@@ -1,10 +1,7 @@
-# Configure current package to use albersdown
+# Configure current package to use albersdown (back-compat wrapper)
 
-- Copies vignette CSS if missing
-
-- Suggests helper packages
-
-- Adds pkgdown template stanza to `_pkgdown.yml`
+This wrapper preserves the old name and forwards to
+[`use_albersdown()`](use_albersdown.md).
 
 ## Usage
 

@@ -16,6 +16,61 @@ Adopt a style worthy of Hadley Wickham:
 
 ⸻
 
+0A) Albersdown: one‑command theming (new, simpler setup)
+
+Use albersdown’s turn‑key helper to theme new or existing packages with a single call. It is CRAN‑safe (local assets), idempotent (safe to re‑run), and prints a clear “doctor” report.
+
+- One‑liner (existing package, patch all vignettes):
+  - `albersdown::use_albersdown(family = "red", apply_to = "all")`
+- One‑liner (new package, just install assets/template):
+  - `albersdown::use_albersdown(family = "red", apply_to = "new")`
+
+What it does
+- Copies `vignettes/albers.css` and `vignettes/albers.js` from the package so vignettes build offline (CRAN‑friendly). Checksums prevent clobbering local edits; originals are backed up under `.albersdown.bak/` when patching.
+- Ensures `_pkgdown.yml` contains `template: { package: albersdown }` (keeps your existing navbar/articles intact).
+- Optionally patches every vignette (`vignettes/*.Rmd` and `.qmd`) to:
+  - Add or merge `output: rmarkdown::html_vignette` and `css: albers.css`.
+  - Ensure `includes: in_header:` loads the local `albers.js` (copy buttons, square anchors).
+  - Inject a palette family script that adds `palette-<family>` to `<body>`.
+  - Append `theme_set(albersdown::theme_albers(params$family))` inside the existing setup chunk if missing.
+- Doctor report: verifies CSS/JS presence, flags drift vs packaged copies, and notes missing palette injection.
+
+Parameters
+- `family`: one of `"red"|"lapis"|"ochre"|"teal"|"green"|"violet"`. Authors can override per‑vignette via `params$family`.
+- `apply_to`: `"all"` patches every vignette; `"new"` only installs the template/assets.
+- `dry_run = TRUE`: show intended changes without writing.
+
+Recommended YAML when writing vignettes by hand (the helper adds this automatically):
+
+```yaml
+---
+title: "Getting started"
+name: getting-started
+output:
+  rmarkdown::html_vignette:
+    toc: true
+    toc_depth: 2
+params:
+  family: "red"
+css: albers.css
+includes:
+  in_header: |
+    <script src="albers.js"></script>
+    <script>document.addEventListener('DOMContentLoaded',()=>document.body.classList.add('palette-red'));</script>
+---
+```
+
+In the setup chunk, set the theme (the helper injects this if missing):
+
+```
+if (requireNamespace("ggplot2", quietly = TRUE) && requireNamespace("albersdown", quietly = TRUE)) {
+  ggplot2::theme_set(albersdown::theme_albers(params$family))
+}
+```
+
+Site build
+- Keep your custom navbar/articles. With the template stanza in place, run `pkgdown::build_site()` to get the same look (square anchors, copy buttons, Homage palettes).
+
 1) Inputs you will receive
 
 You will be given (some or all):
@@ -575,7 +630,7 @@ css: albers.css
 params:
   family: "red"       # red, lapis, ochre, teal, green, violet
   base_size: 13        # ggplot base text size
-  content_width: 72    # column width in ch
+  content_width: 80    # column width in ch
 ```
 
 Setup chunk (already included in the template):
@@ -587,8 +642,8 @@ knitr::opts_chunk$set(
 )
 set.seed(123); options(pillar.sigfig = 7, width = 80)
 library(ggplot2)
-if (requireNamespace("albersdown", quietly = TRUE)) {
-  theme_set(albersdown::theme_albers(params$family, base_size = params$base_size))
+if (requireNamespace("ggplot2", quietly = TRUE) && requireNamespace("albersdown", quietly = TRUE)) {
+  ggplot2::theme_set(albersdown::theme_albers(params$family, base_size = params$base_size))
 }
 cat(sprintf('<script>document.addEventListener("DOMContentLoaded",function(){document.body.classList.add("palette-%s");});</script>', params$family))
 cat(sprintf('<style>:root{--content:%sch}</style>', params$content_width))

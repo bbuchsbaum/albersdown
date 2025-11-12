@@ -15,6 +15,8 @@ Suggests:
     gt,
     bslib,
     usethis,
+    yaml,
+    cli,
     viridisLite,
     knitr,
     rmarkdown,
@@ -24,3 +26,4 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
 LazyData: true
 VignetteBuilder: knitr
+Config/Needs/website: albersdown

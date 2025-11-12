@@ -2,14 +2,10 @@
 % Please edit documentation in R/use_albers.R
 \name{use_albers_vignettes}
 \alias{use_albers_vignettes}
-\title{Configure current package to use albersdown}
+\title{Configure current package to use albersdown (back-compat wrapper)}
 \usage{
 use_albers_vignettes()
 }
 \description{
-\itemize{
-\item Copies vignette CSS if missing
-\item Suggests helper packages
-\item Adds pkgdown template stanza to \verb{_pkgdown.yml}
-}
+This wrapper preserves the old name and forwards to \code{use_albersdown()}.
 }

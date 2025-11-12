@@ -1,31 +1,41 @@
 ---
-title: "Design notes: Homage system"
+title: 'Design notes: Homage system'
 name: design-notes
-description: "Visual tokens, palette families, and component rules for albersdown."
+description: Visual tokens, palette families, and component rules for albersdown.
 output:
   rmarkdown::html_vignette:
-    toc: true
+    toc: yes
     toc_depth: 2
+    df_print: kable
 params:
-  family: "violet"     # red, lapis, ochre, teal, green, violet
+  family: violet
   base_size: 13
-  content_width: 72
-vignette: >
-  %\VignetteIndexEntry{Design notes: Homage system}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+  content_width: 80
+vignette: |
+  %\VignetteIndexEntry{Design notes: Homage system} %\VignetteEngine{knitr::rmarkdown} %\VignetteEncoding{UTF-8}
 css: albers.css
+resource_files:
+- albers.css
+- albers.js
+includes:
+  in_header: |-
+    <script src="albers.js"></script>
+    <script>document.addEventListener('DOMContentLoaded',()=>document.body.classList.add('palette-red'));</script>
+
 ---
 
 ```{r setup, include=FALSE}
+if (requireNamespace("ggplot2", quietly = TRUE) && requireNamespace("albersdown", quietly = TRUE)) ggplot2::theme_set(albersdown::theme_albers(params$family))
+if (requireNamespace("ggplot2", quietly = TRUE) && requireNamespace("albersdown", quietly = TRUE)) ggplot2::theme_set(albersdown::theme_albers(params$family))
+if (requireNamespace("ggplot2", quietly = TRUE) && requireNamespace("albersdown", quietly = TRUE)) ggplot2::theme_set(albersdown::theme_albers(params$family))
 knitr::opts_chunk$set(
   collapse = TRUE, comment = "#>", fig.align = "center", fig.retina = 2,
   out.width = "100%", fig.width = 7, fig.asp = 0.618, message = FALSE, warning = FALSE
 )
 set.seed(123); options(pillar.sigfig = 7, width = 80)
 library(ggplot2)
-if (requireNamespace("albersdown", quietly = TRUE)) {
-  theme_set(albersdown::theme_albers(params$family, base_size = params$base_size))
+if (requireNamespace("ggplot2", quietly = TRUE) && requireNamespace("albersdown", quietly = TRUE)) {
+  ggplot2::theme_set(albersdown::theme_albers(params$family, base_size = params$base_size))
 }
 ```
 
@@ -55,6 +65,35 @@ Families available: red, lapis, ochre, teal, green, violet. Each has four tones:
 - A500: borders, anchors (▣), code-corner square, hr notch
 - A300: tints for callouts and table stripe; links/focus in dark mode
 
+## Image-derived palettes {#image-palettes}
+
+The original Homage families favor a single hue family per plot or page. When you want a different aesthetic (pulled from the grid image), use the image-derived palettes and scales. They mirror the API and are fully opt-in.
+
+Sequential (image-based)
+
+```{r img-seq, fig.height=3.2}
+mtcars |>
+  ggplot(aes(wt, mpg, colour = hp)) +
+  geom_point(size = 2.2) +
+  labs(title = "Image-derived sequential (lapis)") +
+  albersdown::scale_color_albers_img("lapis", discrete = FALSE)
+```
+
+Diverging (image-based)
+
+```{r img-div, fig.height=3.2}
+df <- transform(datasets::faithful, centered = waiting - mean(waiting))
+ggplot(df, aes(eruptions, centered, colour = centered)) +
+  geom_point(alpha = 0.9) +
+  labs(title = "Image-derived diverging (red <-> teal)") +
+  albersdown::scale_color_albers_img_red_teal(neutral = "#e5e7eb")
+```
+
+Notes
+- The `*_img` scales are opt-in and don’t change existing defaults.
+- `neutral` can be set to `"#e5e7eb"` (site border token) for visual coherence with pages.
+- Prefer the original single-family scales for a quieter, unified look; reach for the image-derived or diverging scales to emphasize contrasts.
+
 ## Links, anchors, and rhythm {#links-anchors}
 
 Links and focus rings always meet AA. Move the cursor over H2/H3 to reveal the square anchor glyph ▣.
@@ -78,7 +117,7 @@ The code fence has no drop shadow and includes a small A500 square in the top-le
 Base HTML tables pick up a quiet A300 zebra stripe and thin borders.
 
 ```{r}
-head(mtcars[, 1:5])
+knitr::kable(head(mtcars[, 1:5]), format = "html")
 ```
 
 ## Plots: one highlight, others neutral {#plots}

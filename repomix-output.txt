@@ -1,0 +1,557 @@
+This file is a merged representation of a subset of the codebase, containing specifically included files, combined into a single document by Repomix.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Only files matching these patterns are included: R/*.R, R/*.r, *.Rmd, *.rmd, DESCRIPTION, tests/*.R, tests/*.r, tests/**/*.R, tests/**/*.r, src/*.cpp, src/*.h, src/*.hpp, src/**/*.cpp, src/**/*.h, src/**/*.hpp
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+<additional_info>
+
+</additional_info>
+
+</file_summary>
+
+<directory_structure>
+R/
+  bs_theme.R
+  gt_albers.R
+  theme_albers.R
+  use_albers.R
+  use_albersdown.R
+DESCRIPTION
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path="R/use_albersdown.R">
+#' One-shot setup for existing packages
+#'
+#' Turn-key retrofit to adopt the albersdown theme in an existing package.
+#' Copies local assets for CRAN-safe vignettes, ensures pkgdown template,
+#' optionally patches all vignettes, writes a README note, and prints a doctor report.
+#'
+#' @param family one of: "red","lapis","ochre","teal","green","violet"
+#' @param apply_to "all" to patch every *.Rmd/*.qmd in vignettes/, or "new" to only add the template and assets
+#' @param dry_run if TRUE, show changes without writing
+#' @param fallback_extra Controls copying site-wide fallbacks into `pkgdown/`:
+#'   - "auto": copy `pkgdown/extra.css` and `pkgdown/extra.js` only when the consuming
+#'     package does not use `template: { package: albersdown }` in `_pkgdown.yml`.
+#'   - "always": always copy to `pkgdown/` (useful as a safety net or for custom setups).
+#'   - "never": never copy site-wide fallbacks.
+#' @export
+use_albersdown <- function(
+  family = "red",
+  apply_to = c("all","new"),
+  dry_run = FALSE,
+  fallback_extra = c("auto","always","never")
+) {
+  apply_to <- match.arg(apply_to)
+  fallback_extra <- match.arg(fallback_extra)
+  if (requireNamespace("cli", quietly = TRUE)) cli::cli_h1("albersdown setup") else message("albersdown setup")
+  .ensure_pkgdown_template(dry_run = dry_run)
+  .copy_resources(dry_run = dry_run, fallback_extra = fallback_extra)
+  if (apply_to == "all") .patch_all_rmds(family, dry_run)
+  .write_readme_snippet(family, dry_run)
+  .doctor(family)
+  invisible(TRUE)
+}
+
+.ensure_pkgdown_template <- function(dry_run = FALSE) {
+  yml <- "_pkgdown.yml"
+  if (!file.exists(yml)) {
+    if (dry_run) {
+      if (requireNamespace("cli", quietly = TRUE)) cli::cli_alert_info("Would create {.file _pkgdown.yml} with template stanza") else message("Would create _pkgdown.yml with template stanza")
+      return(invisible(TRUE))
+    }
+    writeLines("template:\n  package: albersdown\n", yml)
+    if (requireNamespace("cli", quietly = TRUE)) cli::cli_alert_success("Created {.file _pkgdown.yml} with albersdown template") else message("Created _pkgdown.yml with albersdown template")
+    return(invisible(TRUE))
+  }
+  lines <- readLines(yml)
+  has_template <- any(grepl("^template\\s*:\\s*$", lines))
+  has_package <- any(grepl("package:\\s*albersdown", lines))
+  if (!has_template) {
+    add <- c("", "# Albers theme", "template:", "  package: albersdown")
+    if (dry_run) {
+      if (requireNamespace("cli", quietly = TRUE)) cli::cli_alert_info("Would append template stanza to {.file _pkgdown.yml}") else message("Would append template stanza to _pkgdown.yml")
+    } else {
+      writeLines(c(lines, add), yml)
+      if (requireNamespace("cli", quietly = TRUE)) cli::cli_alert_success("Appended template stanza to {.file _pkgdown.yml}") else message("Appended template stanza to _pkgdown.yml")
+    }
+  } else if (!has_package) {
+    if (requireNamespace("cli", quietly = TRUE)) cli::cli_alert_warning("Existing template found; not overwriting. Add {template: { package: albersdown }} manually if desired.") else message("Existing template found; not overwriting. Add template: { package: albersdown } manually if desired.")
+  } else {
+    if (requireNamespace("cli", quietly = TRUE)) cli::cli_alert_success("{.file _pkgdown.yml} already uses albersdown") else message("_pkgdown.yml already uses albersdown")
+  }
+  invisible(TRUE)
+}
+
+.copy_resources <- function(dry_run = FALSE, fallback_extra = c("auto","always","never")) {
+  fallback_extra <- match.arg(fallback_extra)
+  dir.create("vignettes", showWarnings = FALSE)
+  # CSS from the vignette skeleton ensures vignettes build offline
+  src_css <- system.file("rmarkdown/templates/albers_vignette/skeleton/albers.css", package = "albersdown")
+  # JS from pkgdown assets (anchors + copy buttons)
+  src_js  <- system.file("pkgdown/assets/albers.js", package = "albersdown")
+  dst_css <- file.path("vignettes", "albers.css")
+  dst_js  <- file.path("vignettes", "albers.js")
+  for (pair in list(c(src_css, dst_css), c(src_js, dst_js))) {
+    if (!nzchar(pair[1]) || !file.exists(pair[1])) next
+    src <- pair[1]; dst <- pair[2]
+    if (!file.exists(dst)) {
+      if (dry_run) {
+        if (requireNamespace("cli", quietly = TRUE)) cli::cli_alert_info("Would copy {.file %s}", dst) else message(sprintf("Would copy %s", dst))
+      } else {
+        file.copy(src, dst, overwrite = FALSE)
+        if (requireNamespace("cli", quietly = TRUE)) cli::cli_alert_success("Copied {.file %s}", dst) else message(sprintf("Copied %s", dst))
+      }
+    } else {
+      # checksum-based drift detection
+      h_src <- .md5(src); h_dst <- .md5(dst)
+      if (!is.na(h_src) && !is.na(h_dst) && identical(h_src, h_dst)) {
+        if (requireNamespace("cli", quietly = TRUE)) cli::cli_alert_info("{.file %s} already exists and is up-to-date", dst) else message(sprintf("%s already exists and is up-to-date", dst))
+      } else {
+        if (requireNamespace("cli", quietly = TRUE)) cli::cli_alert_warning("{.file %s} differs from packaged copy; keeping local file", dst) else message(sprintf("%s differs from packaged copy; keeping local file", dst))
+      }
+    }
+  }
+
+  # Fallback for pkgdown sites that are not using the albersdown template:
+  # copy site-wide assets to pkgdown/extra.css and pkgdown/extra.js so pkgdown
+  # auto-includes them. This is only done when the template is absent to avoid
+  # interfering with other templates.
+  if (identical(fallback_extra, "always") || (identical(fallback_extra, "auto") && !.uses_albers_template())) {
+    dir.create("pkgdown", showWarnings = FALSE)
+    site_pairs <- list(
+      c(src_css, file.path("pkgdown", "extra.css")),
+      c(src_js,  file.path("pkgdown", "extra.js"))
+    )
+    for (pair in site_pairs) {
+      if (!nzchar(pair[1]) || !file.exists(pair[1])) next
+      src <- pair[1]; dst <- pair[2]
+      if (!file.exists(dst)) {
+        if (dry_run) {
+          if (requireNamespace("cli", quietly = TRUE)) cli::cli_alert_info("Would copy {.file %s}", dst) else message(sprintf("Would copy %s", dst))
+        } else {
+          file.copy(src, dst, overwrite = FALSE)
+          if (requireNamespace("cli", quietly = TRUE)) cli::cli_alert_success("Copied {.file %s} (pkgdown fallback)", dst) else message(sprintf("Copied %s (pkgdown fallback)", dst))
+        }
+      } else {
+        h_src <- .md5(src); h_dst <- .md5(dst)
+        if (!is.na(h_src) && !is.na(h_dst) && identical(h_src, h_dst)) {
+          if (requireNamespace("cli", quietly = TRUE)) cli::cli_alert_info("{.file %s} already exists and is up-to-date", dst) else message(sprintf("%s already exists and is up-to-date", dst))
+        } else {
+          if (requireNamespace("cli", quietly = TRUE)) cli::cli_alert_warning("{.file %s} differs from packaged copy; keeping local file", dst) else message(sprintf("%s differs from packaged copy; keeping local file", dst))
+        }
+      }
+    }
+  }
+  invisible(TRUE)
+}
+
+.patch_all_rmds <- function(family, dry_run = FALSE) {
+  files <- c(Sys.glob("vignettes/*.Rmd"), Sys.glob("vignettes/*.qmd"))
+  if (!length(files)) {
+    if (requireNamespace("cli", quietly = TRUE)) cli::cli_alert_info("No vignettes found to patch") else message("No vignettes found to patch")
+    return(invisible(TRUE))
+  }
+  for (f in files) .patch_one_rmd(f, family, dry_run)
+  invisible(TRUE)
+}
+
+.patch_one_rmd <- function(path, family, dry_run = FALSE) {
+  if (!requireNamespace("yaml", quietly = TRUE)) {
+    if (requireNamespace("cli", quietly = TRUE)) cli::cli_alert_warning("Package {.pkg yaml} not installed; skipping {.file {basename(path)}}") else message(sprintf("yaml not installed; skipping %s", basename(path)))
+    return(invisible(FALSE))
+  }
+  raw <- readLines(path, warn = FALSE)
+  if (length(raw) < 3 || raw[1] != "---") {
+    if (requireNamespace("cli", quietly = TRUE)) cli::cli_alert_warning("No YAML header in {.file {basename(path)}}; skipping") else message(sprintf("No YAML header in %s; skipping", basename(path)))
+    return(invisible(FALSE))
+  }
+  fence <- which(raw == "---")
+  if (length(fence) < 2) {
+    if (requireNamespace("cli", quietly = TRUE)) cli::cli_alert_warning("Malformed YAML in {.file {basename(path)}}; skipping") else message(sprintf("Malformed YAML in %s; skipping", basename(path)))
+    return(invisible(FALSE))
+  }
+  head <- raw[(fence[1]+1):(fence[2]-1)]
+  body <- raw[(fence[2]+1):length(raw)]
+  y <- tryCatch(yaml::yaml.load(paste(head, collapse = "\n")), error = function(e) NULL)
+  if (is.null(y)) {
+    if (requireNamespace("cli", quietly = TRUE)) cli::cli_alert_warning("Could not parse YAML in {.file {basename(path)}}; skipping") else message(sprintf("Could not parse YAML in %s; skipping", basename(path)))
+    return(invisible(FALSE))
+  }
+
+  # ensure output, css, params, includes
+  if (is.null(y$output)) y$output <- list(`rmarkdown::html_vignette` = list(toc = TRUE, toc_depth = 2))
+  if (is.null(y$css)) {
+    y$css <- "albers.css"
+  } else if (is.character(y$css)) {
+    if (!"albers.css" %in% y$css) y$css <- unique(c(y$css, "albers.css"))
+  }
+  y$params <- .modify_list(list(family = family), y$params %||% list())
+
+  # header includes: ensure local albers.js, and a palette family script (idempotent)
+  inject_palette <- sprintf(
+    "<script>document.addEventListener('DOMContentLoaded',()=>document.body.classList.add('palette-%s'));</script>",
+    family
+  )
+  inc <- y$includes %||% list()
+  in_header <- inc$in_header %||% ""
+  if (!grepl("albers\\.js", in_header, fixed = FALSE)) {
+    in_header <- paste0(in_header, if (nzchar(in_header)) "\n" else "", "<script src=\"albers.js\"></script>")
+  }
+  if (!grepl("palette-", in_header, fixed = TRUE)) {
+    in_header <- paste0(in_header, if (nzchar(in_header)) "\n" else "", inject_palette)
+  }
+  inc$in_header <- in_header
+  y$includes <- inc
+
+  new_head <- yaml::as.yaml(y)
+  out <- c("---", new_head, "---", body)
+  if (!dry_run) {
+    dir.create(".albersdown.bak", showWarnings = FALSE)
+    file.copy(path, file.path(".albersdown.bak", basename(path)), overwrite = TRUE)
+    writeLines(out, path, useBytes = TRUE)
+  }
+  if (requireNamespace("cli", quietly = TRUE)) cli::cli_alert_success("Updated YAML in {.file {basename(path)}}") else message(sprintf("Updated YAML in %s", basename(path)))
+
+  # ensure setup chunk sets theme (idempotent). Prefer ggplot2::theme_set.
+  ensure_theme <- function(lines) {
+    has_qualified <- any(grepl("ggplot2::theme_set\\(albersdown::theme_albers\\(", lines, fixed = TRUE))
+    if (has_qualified) return(lines)
+    # If an unqualified theme_set() exists, upgrade it in place
+    unqual_idx <- grep("(^|[^:])theme_set\\(albersdown::theme_albers\\(", lines)
+    if (length(unqual_idx)) {
+      lines[unqual_idx] <- sub(
+        pattern = "theme_set\\(albersdown::theme_albers\\(",
+        replacement = "ggplot2::theme_set(albersdown::theme_albers(",
+        x = lines[unqual_idx]
+      )
+      return(lines)
+    }
+    # Otherwise, inject into existing setup chunk if present
+    pos <- grep("^```\\{r.*setup", lines)
+    if (!length(pos)) return(lines)  # no setup chunk; don't invent one
+    inject <- "if (requireNamespace(\"ggplot2\", quietly = TRUE) && requireNamespace(\"albersdown\", quietly = TRUE)) ggplot2::theme_set(albersdown::theme_albers(params$family))"
+    lines <- append(lines, inject, after = pos[1])
+    lines
+  }
+  if (!dry_run) writeLines(ensure_theme(readLines(path, warn = FALSE)), path, useBytes = TRUE)
+  invisible(TRUE)
+}
+
+.write_readme_snippet <- function(family, dry_run = FALSE) {
+  tip <- paste0(
+    "\n\n## Albers theme\n",
+    "This package uses the albersdown theme. Vignettes are styled with `vignettes/albers.css` and a local `vignettes/albers.js`; the palette family is provided via `params$family` (default '",
+    family, "'). The pkgdown site uses `template: { package: albersdown }`.\n"
+  )
+  if (file.exists("README.md")) {
+    if (dry_run) {
+      if (requireNamespace("cli", quietly = TRUE)) cli::cli_alert_info("Would append Albers note to {.file README.md}") else message("Would append Albers note to README.md")
+    } else {
+      cat(tip, file = "README.md", append = TRUE)
+      if (requireNamespace("cli", quietly = TRUE)) cli::cli_alert_success("Appended Albers note to {.file README.md}") else message("Appended Albers note to README.md")
+    }
+  }
+  invisible(TRUE)
+}
+
+.doctor <- function(family) {
+  if (requireNamespace("cli", quietly = TRUE)) cli::cli_h2("Doctor") else message("Doctor")
+  ok_css <- file.exists("vignettes/albers.css")
+  ok_js  <- file.exists("vignettes/albers.js")
+  if (requireNamespace("cli", quietly = TRUE)) {
+    cli::cli_alert_success("CSS present: {ok_css}")
+    cli::cli_alert_success("JS present:  {ok_js}")
+  } else {
+    message(sprintf("CSS present: %s", ok_css))
+    message(sprintf("JS present: %s", ok_js))
+  }
+  # drift report
+  src_css <- system.file("rmarkdown/templates/albers_vignette/skeleton/albers.css", package = "albersdown")
+  src_js  <- system.file("pkgdown/assets/albers.js", package = "albersdown")
+  if (ok_css && nzchar(src_css) && file.exists(src_css)) {
+    if (!identical(.md5(src_css), .md5("vignettes/albers.css"))) {
+      if (requireNamespace("cli", quietly = TRUE)) cli::cli_alert_warning("vignettes/albers.css is not the packaged version (drift detected)") else message("vignettes/albers.css drift detected")
+    }
+  }
+  if (ok_js && nzchar(src_js) && file.exists(src_js)) {
+    if (!identical(.md5(src_js), .md5("vignettes/albers.js"))) {
+      if (requireNamespace("cli", quietly = TRUE)) cli::cli_alert_warning("vignettes/albers.js is not the packaged version (drift detected)") else message("vignettes/albers.js drift detected")
+    }
+  }
+  v <- c(Sys.glob("vignettes/*.Rmd"), Sys.glob("vignettes/*.qmd"))
+  if (length(v)) {
+    missing_css <- v[!vapply(v, function(p) any(grepl("css:\\s*.*albers\\.css", readLines(p))), logical(1))]
+    if (length(missing_css)) {
+      if (requireNamespace("cli", quietly = TRUE)) cli::cli_alert_warning("These vignettes do not include albers.css: {missing_css}") else message(sprintf("These vignettes do not include albers.css: %s", paste(basename(missing_css), collapse = ", ")))
+    }
+    missing_js <- v[!vapply(v, function(p) any(grepl("albers\\.js", readLines(p))), logical(1))]
+    if (length(missing_js)) {
+      if (requireNamespace("cli", quietly = TRUE)) cli::cli_alert_warning("These vignettes do not include albers.js: {missing_js}") else message(sprintf("These vignettes do not include albers.js: %s", paste(basename(missing_js), collapse = ", ")))
+    }
+    fams <- vapply(v, function(p) {
+      any(grepl(sprintf("palette-%s", family), readLines(p)))
+    }, logical(1))
+    if (!all(fams)) {
+      if (requireNamespace("cli", quietly = TRUE)) cli::cli_alert_info("Some vignettes omit the palette script; they will default to 'red'") else message("Some vignettes omit the palette script; they will default to 'red'")
+    }
+  }
+  invisible(TRUE)
+}
+
+`%||%` <- function(a, b) if (is.null(a)) b else a
+
+.modify_list <- function(x, val) {
+  if (is.null(val)) return(x)
+  for (nm in names(val)) x[[nm]] <- val[[nm]]
+  x
+}
+
+.md5 <- function(path) {
+  if (!file.exists(path)) return(NA_character_)
+  as.character(utils::head(tools::md5sum(path), 1L))
+}
+
+.uses_albers_template <- function() {
+  yml <- "_pkgdown.yml"
+  if (!file.exists(yml)) return(FALSE)
+  lines <- readLines(yml, warn = FALSE)
+  has_template <- any(grepl("^template\\s*:\\s*$", lines))
+  has_package <- any(grepl("package:\\s*albersdown", lines))
+  isTRUE(has_template && has_package)
+}
+</file>
+
+<file path="R/bs_theme.R">
+#' bs_theme for pkgdown (light/dark aware)
+#'
+#' Convenience wrapper exposing core variables; most consumers won't need this
+#' directly if they use `template: { package: albersdown }`.
+#' @export
+albers_bs_theme <- function(accent = "#1f6feb", bg = "#ffffff", fg = "#111111") {
+  bslib::bs_theme(
+    version = 5,
+    bg = bg, fg = fg, primary = accent, secondary = "#6b7280",
+    base_font = bslib::font_collection("system-ui"),
+    heading_font = bslib::font_collection("system-ui"),
+    code_font = bslib::font_collection("ui-monospace")
+  )
+}
+</file>
+
+<file path="R/gt_albers.R">
+#' Quiet, legible gt style with subtle stripe from A300
+#'
+#' @param x A `gt` table
+#' @param family Palette family for subtle accents
+#' @export
+gt_albers <- function(x, family = "red") {
+  pal <- albers_palette(family)
+  stripe <- pal[["A300"]]
+  x |>
+    gt::opt_row_striping() |>
+    gt::tab_options(
+      table.width = gt::px(720),
+      table.font.names = "system-ui",
+      data_row.padding = gt::px(6),
+      table.border.top.color = "transparent",
+      table.border.bottom.color = "transparent",
+      heading.align = "left"
+    ) |>
+    gt::tab_style(
+      style = list(gt::cell_borders(sides = "bottom", color = "#e5e7eb")),
+      locations = gt::cells_body()
+    ) |>
+    gt::tab_style(
+      style = gt::cell_text(color = "#6b7280"),
+      locations = gt::cells_title(groups = "subtitle")
+    ) |>
+    gt::tab_style(
+      style = gt::cell_fill(color = stripe),
+      locations = gt::cells_body(rows = gt::odd())
+    )
+}
+</file>
+
+<file path="R/use_albers.R">
+#' Configure current package to use albersdown (back-compat wrapper)
+#'
+#' This wrapper preserves the old name and forwards to `use_albersdown()`.
+#' @export
+use_albers_vignettes <- function() {
+  use_albersdown(apply_to = "new", dry_run = FALSE)
+}
+</file>
+
+<file path="R/theme_albers.R">
+#' Return four-tone Homage family by name
+#'
+#' @param family One of "red", "lapis", "ochre", "teal".
+#' @export
+albers_palette <- function(family = c("red","lapis","ochre","teal","green","violet")) {
+  family <- match.arg(family)
+  switch(family,
+    red    = c(A900 = "#CD2D26", A700 = "#DC3925", A500 = "#E44926", A300 = "#E35B2D"),
+    lapis  = c(A900 = "#1B2A74", A700 = "#20399C", A500 = "#2C4FCC", A300 = "#4968D6"),
+    ochre  = c(A900 = "#6F5200", A700 = "#8B6700", A500 = "#B48900", A300 = "#D7A700"),
+    teal   = c(A900 = "#0D4A4A", A700 = "#0F5E5E", A500 = "#127373", A300 = "#2F8C8C"),
+    green  = c(A900 = "#1B5E20", A700 = "#2E7D32", A500 = "#388E3C", A300 = "#66BB6A"),
+    violet = c(A900 = "#4A148C", A700 = "#6A1B9A", A500 = "#8E24AA", A300 = "#BA68C8")
+  )
+}
+
+#' Minimal, legible plot theme (uses family tones for accents)
+#'
+#' @param family Palette family used by companion scales.
+#' @param base_size Base font size.
+#' @param base_family Base font family.
+#' @export
+theme_albers <- function(family = "red", base_size = 13, base_family = "system-ui") {
+  pal <- albers_palette(family)
+  ggplot2::theme_minimal(base_size = base_size, base_family = base_family) +
+    ggplot2::theme(
+      panel.grid.major = ggplot2::element_line(color = "#e5e7eb", linewidth = 0.3),
+      panel.grid.minor = ggplot2::element_blank(),
+      plot.title = ggplot2::element_text(face = "bold", margin = ggplot2::margin(b = 8)),
+      plot.subtitle = ggplot2::element_text(color = "#374151", margin = ggplot2::margin(b = 10)),
+      plot.caption = ggplot2::element_text(color = "#6b7280", margin = ggplot2::margin(t = 10)),
+      legend.position = "top",
+      legend.title = ggplot2::element_text(face = "bold"),
+      axis.title.x = ggplot2::element_text(margin = ggplot2::margin(t = 6)),
+      axis.title.y = ggplot2::element_text(margin = ggplot2::margin(r = 6)),
+      plot.background = ggplot2::element_rect(fill = NA, colour = NA)
+    )
+}
+
+#' Scales that use the family's tones (discrete/continuous)
+#'
+#' @param family Palette family.
+#' @param discrete Whether to use a discrete palette; if FALSE, uses a gradient.
+#' @param ... Passed to underlying `ggplot2` scale.
+#' @export
+scale_color_albers <- function(family = "red", discrete = TRUE, ...) {
+  pal <- albers_palette(family)
+  if (discrete) ggplot2::scale_color_manual(values = unname(pal[c("A900","A700","A500","A300")]), ...)
+  else ggplot2::scale_color_gradient(low = pal[["A300"]], high = pal[["A900"]], ...)
+}
+
+#' @export
+scale_fill_albers <- function(family = "red", discrete = TRUE, ...) {
+  pal <- albers_palette(family)
+  if (discrete) ggplot2::scale_fill_manual(values = unname(pal[c("A900","A700","A500","A300")]), ...)
+  else ggplot2::scale_fill_gradient(low = pal[["A300"]], high = pal[["A900"]], ...)
+}
+
+#' Convenience scale: highlight vs other (color)
+#'
+#' Returns a manual color scale mapping a single highlighted group to a
+#' family tone (default A700) and all other points to a neutral gray.
+#'
+#' @param family Palette family name.
+#' @param tone One of A900, A700, A500, A300 used for the highlight color.
+#' @param other Hex color used for non-highlight values.
+#' @param highlight Name of the value that should receive the highlight color.
+#' @param other_name Name of the value that should receive the neutral color.
+#' @param ... Passed to `ggplot2::scale_color_manual()`.
+#' @export
+scale_color_albers_highlight <- function(
+  family = "red",
+  tone = c("A700", "A900", "A500", "A300"),
+  other = "#9aa0a6",
+  highlight = "highlight",
+  other_name = "other",
+  ...
+) {
+  tone <- match.arg(tone)
+  pal <- albers_palette(family)
+  vals <- stats::setNames(c(pal[[tone]], other), c(highlight, other_name))
+  ggplot2::scale_color_manual(values = vals, ...)
+}
+
+#' Convenience scale: highlight vs other (fill)
+#'
+#' @inheritParams scale_color_albers_highlight
+#' @export
+scale_fill_albers_highlight <- function(
+  family = "red",
+  tone = c("A700", "A900", "A500", "A300"),
+  other = "#9aa0a6",
+  highlight = "highlight",
+  other_name = "other",
+  ...
+) {
+  tone <- match.arg(tone)
+  pal <- albers_palette(family)
+  vals <- stats::setNames(c(pal[[tone]], other), c(highlight, other_name))
+  ggplot2::scale_fill_manual(values = vals, ...)
+}
+</file>
+
+<file path="DESCRIPTION">
+Package: albersdown
+Type: Package
+Title: Minimalist Theme and Vignette Kit for pkgdown and R Markdown
+Version: 1.0.0
+Authors@R: c(person(given = "Albersdown", family = "Authors", role = c("aut","cre"),
+    email = "you@example.com"))
+Description: A lightweight template package that standardizes pkgdown theming
+    and provides an R Markdown vignette skeleton with local CSS, plus helper
+    functions for ggplot2 and gt. Designed to be CRAN-friendly and easy to roll
+    out across multiple packages.
+Depends: R (>= 3.5)
+Imports:
+Suggests:
+    ggplot2,
+    gt,
+    bslib,
+    usethis,
+    yaml,
+    cli,
+    viridisLite,
+    knitr,
+    rmarkdown,
+    pkgdown
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3
+LazyData: true
+VignetteBuilder: knitr
+</file>
+
+</files>

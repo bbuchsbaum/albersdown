@@ -4,7 +4,7 @@
 \alias{theme_albers}
 \title{Minimal, legible plot theme (uses family tones for accents)}
 \usage{
-theme_albers(family = "red", base_size = 11, base_family = "system-ui")
+theme_albers(family = "red", base_size = 13, base_family = "system-ui")
 }
 \arguments{
 \item{family}{Palette family used by companion scales.}

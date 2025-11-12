@@ -10,7 +10,7 @@
   --muted:#6b7280;
   --border:#e5e7eb;
   --code-bg:#f6f8fa;
-  --content: 72ch;
+  --content: 80ch;
   --anchor-offset: 72px;
 
   /* Homage palette tokens (default family: Red) */
@@ -42,6 +42,12 @@
     --accent-ink: var(--accent-ink-dark);                /* ensure AA in dark */
     --accent-tint: color-mix(in srgb, var(--A700) 18%, transparent);
   }
+}
+/* Respect pkgdown light-switch (Bootstrap 5.3 color modes) */
+[data-bs-theme="dark"]{
+  --bg:#0b0c0e; --ink:#e6e6e6; --muted:#9aa0a6; --border:#2a2f36; --code-bg:#161b22;
+  --accent-ink: var(--accent-ink-dark);
+  --accent-tint: color-mix(in srgb, var(--A700) 18%, transparent);
 }
 
 /* Core typography & layout */
@@ -78,6 +84,8 @@ caption{caption-side:bottom; color:var(--muted); padding-top:12px; font-size:0.9
 blockquote,.callout{border-left:3px solid var(--A500); background:var(--accent-tint); padding:16px 24px; margin-block:24px; border-radius:6px;}
 blockquote p{margin:0;}
 
+h2:hover .anchor, h3:hover .anchor{opacity:1;}
+h2:focus-within .anchor, h3:focus-within .anchor{opacity:1;}
 .anchor{opacity:0; position:absolute; right:0; top:50%; transform:translateY(-50%); text-decoration:none; color:var(--A500); font-weight:700; line-height:1; transition:opacity .15s ease-in-out;}
 
 /* “Homage” hero tile (optional) */

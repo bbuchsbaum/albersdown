@@ -5,7 +5,7 @@ Minimal, legible plot theme (uses family tones for accents)
 ## Usage
 
 ``` r
-theme_albers(family = "red", base_size = 11, base_family = "system-ui")
+theme_albers(family = "red", base_size = 13, base_family = "system-ui")
 ```
 
 ## Arguments

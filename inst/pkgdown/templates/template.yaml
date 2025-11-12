@@ -1,0 +1,4 @@
+template:
+  assets:
+    - assets/albers.css
+    - assets/albers.js

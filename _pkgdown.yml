@@ -1,14 +1,14 @@
 template:
   package: albersdown
   bootstrap: 5
-
 navbar:
   structure:
-    left: [reference, articles]
-    right: [search]
-
+    left:
+    - reference
+    - articles
+    right: search
 articles:
-  - title: Vignettes
-    contents:
-      - getting-started
-      - design-notes
+- title: Vignettes
+  contents:
+  - getting-started
+  - design-notes

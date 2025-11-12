@@ -6,7 +6,7 @@
   --muted:#6b7280;
   --border:#e5e7eb;
   --code-bg:#f6f8fa;
-  --content: 72ch;               /* content column width */
+  --content: 80ch;               /* content column width */
   --anchor-offset: 72px;         /* scroll offset for anchored headings */
 
   /* Homage palette tokens (default family: Red) */
@@ -38,6 +38,12 @@
     --accent-ink: var(--accent-ink-dark);                /* ensure AA in dark */
     --accent-tint: color-mix(in srgb, var(--A700) 18%, transparent);
   }
+}
+/* Also respect Bootstrap 5.3 color modes used by pkgdown light-switch */
+[data-bs-theme="dark"]{
+  --bg:#0b0c0e; --ink:#e6e6e6; --muted:#9aa0a6; --border:#2a2f36; --code-bg:#161b22;
+  --accent-ink: var(--accent-ink-dark);
+  --accent-tint: color-mix(in srgb, var(--A700) 18%, transparent);
 }
 
 /* Core typography & layout */

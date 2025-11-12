@@ -56,11 +56,184 @@ scale_fill_albers <- function(family = "red", discrete = TRUE, ...) {
   else ggplot2::scale_fill_gradient(low = pal[["A300"]], high = pal[["A900"]], ...)
 }
 
+#' Distinct, colorblind-friendly line palette across families
+#'
+#' Uses one high-contrast tone (default A700) from different families
+#' to maximize separation between lines. This departs from the
+#' single-family aesthetic but improves readability for multi-series lines.
+#'
+#' @param n Number of colors needed; defaults to length of available families (6).
+#' @param tone One of "A700", "A900", or "A500".
+#' @param ... Passed to `ggplot2::scale_color_manual()`.
+#' @export
+scale_color_albers_distinct <- function(n = NULL, tone = c("A700", "A900", "A500"), ...) {
+  tone <- match.arg(tone)
+  families <- c("red","teal","lapis","ochre","green","violet")
+  cols <- vapply(families, function(f) albers_palette(f)[[tone]], character(1))
+  if (is.null(n)) n <- length(cols)
+  ggplot2::scale_color_manual(values = unname(cols[seq_len(min(n, length(cols)))]), ...)
+}
+
+#' Discrete linetype scale to pair with Albers colors
+#'
+#' Provides a sensible set of linetypes for multi-series line charts.
+#' @param ... Passed to `ggplot2::scale_linetype_manual()`.
+#' @export
+scale_linetype_albers <- function(...) {
+  ggplot2::scale_linetype_manual(values = c("solid","dashed","dotdash","dotted","longdash","twodash"), ...)
+}
+
+#' Return a complementary family for diverging palettes
+#'
+#' Pairs warm/cool and related families to produce balanced diverging
+#' combinations that align with the Homage system.
+#'
+#' @param family One of "red","lapis","ochre","teal","green","violet"
+#' @keywords internal
+albers_complement <- function(family = c("red","lapis","ochre","teal","green","violet")) {
+  family <- match.arg(family)
+  switch(
+    family,
+    red    = "lapis",
+    lapis  = "red",
+    ochre  = "teal",
+    teal   = "ochre",
+    violet = "green",
+    green  = "violet"
+  )
+}
+
+#' Build a 5-stop diverging spec from two families
+#'
+#' @param low_family  family driving the low side
+#' @param high_family family driving the high side
+#' @param neutral     hex color at the midpoint (defaults to CSS border tone)
+#' @return list(colours, values)
+#' @keywords internal
+albers_diverging_spec <- function(
+  low_family  = "red",
+  high_family = albers_complement(low_family),
+  neutral     = "#e5e7eb"
+) {
+  low  <- albers_palette(low_family)
+  high <- albers_palette(high_family)
+  cols <- c(low[["A900"]], low[["A500"]], neutral, high[["A500"]], high[["A900"]])
+  vals <- c(0,               0.45,         0.50,     0.55,            1.00)
+  list(colours = unname(cols), values = vals)
+}
+
+#' Diverging color scale (continuous)
+#'
+#' @param low_family,high_family Homage families for the two sides
+#' @param midpoint numeric midpoint for the diverging scale (default 0)
+#' @param neutral hex color for the midpoint (default matches CSS border)
+#' @param ... passed to ggplot2::scale_color_gradient2()
+#' @export
+scale_color_albers_diverging <- function(
+  low_family  = "red",
+  high_family = albers_complement(low_family),
+  midpoint = 0,
+  neutral = "#e5e7eb",
+  ...
+) {
+  low  <- albers_palette(low_family)
+  high <- albers_palette(high_family)
+  ggplot2::scale_color_gradient2(
+    low = low[["A700"]], mid = neutral, high = high[["A700"]],
+    midpoint = midpoint, ...
+  )
+}
+
+#' Diverging fill scale (continuous)
+#'
+#' @inheritParams scale_color_albers_diverging
+#' @export
+scale_fill_albers_diverging <- function(
+  low_family  = "red",
+  high_family = albers_complement(low_family),
+  midpoint = 0,
+  neutral = "#e5e7eb",
+  ...
+) {
+  low  <- albers_palette(low_family)
+  high <- albers_palette(high_family)
+  ggplot2::scale_fill_gradient2(
+    low = low[["A700"]], mid = neutral, high = high[["A700"]],
+    midpoint = midpoint, ...
+  )
+}
+
+#' Diverging color scale with multiple stops (continuous)
+#'
+#' Uses a 5-stop palette (low2, low1, neutral, high1, high2) for smoother
+#' transitions around the midpoint.
+#'
+#' @inheritParams scale_color_albers_diverging
+#' @export
+scale_color_albers_diverging_n <- function(
+  low_family  = "red",
+  high_family = albers_complement(low_family),
+  neutral = "#e5e7eb",
+  ...
+) {
+  spec <- albers_diverging_spec(low_family, high_family, neutral)
+  ggplot2::scale_color_gradientn(colours = spec$colours, values = spec$values, ...)
+}
+
+#' Diverging fill scale with multiple stops (continuous)
+#'
+#' @inheritParams scale_color_albers_diverging_n
+#' @export
+scale_fill_albers_diverging_n <- function(
+  low_family  = "red",
+  high_family = albers_complement(low_family),
+  neutral = "#e5e7eb",
+  ...
+) {
+  spec <- albers_diverging_spec(low_family, high_family, neutral)
+  ggplot2::scale_fill_gradientn(colours = spec$colours, values = spec$values, ...)
+}
+
+#' 5-class diverging (discrete)
+#'
+#' Useful for binned choropleths or sliced residuals. The middle class uses
+#' the neutral color.
+#'
+#' @param labels Optional labels for the five classes (low2, low1, mid, high1, high2)
+#' @export
+scale_fill_albers_diverging_5 <- function(
+  low_family  = "red",
+  high_family = albers_complement(low_family),
+  neutral = "#e5e7eb",
+  labels = ggplot2::waiver(),
+  ...
+) {
+  low  <- albers_palette(low_family)
+  high <- albers_palette(high_family)
+  vals <- c(low[["A900"]], low[["A500"]], neutral, high[["A500"]], high[["A900"]])
+  ggplot2::scale_fill_manual(values = unname(vals), labels = labels, ...)
+}
+
+#' @rdname scale_fill_albers_diverging_5
+#' @export
+scale_color_albers_diverging_5 <- function(
+  low_family  = "red",
+  high_family = albers_complement(low_family),
+  neutral = "#e5e7eb",
+  labels = ggplot2::waiver(),
+  ...
+) {
+  low  <- albers_palette(low_family)
+  high <- albers_palette(high_family)
+  vals <- c(low[["A900"]], low[["A500"]], neutral, high[["A500"]], high[["A900"]])
+  ggplot2::scale_color_manual(values = unname(vals), labels = labels, ...)
+}
+
 #' Convenience scale: highlight vs other (color)
 #'
 #' Returns a manual color scale mapping a single highlighted group to a
 #' family tone (default A700) and all other points to a neutral gray.
-#'
+#' 
 #' @param family Palette family name.
 #' @param tone One of A900, A700, A500, A300 used for the highlight color.
 #' @param other Hex color used for non-highlight values.

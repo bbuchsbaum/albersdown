@@ -2,7 +2,7 @@
 :root{
   /* Semantic roles */
   --ink:#111111; --bg:#ffffff; --muted:#6b7280; --border:#e5e7eb; --code-bg:#f6f8fa;
-  --content: 72ch;
+  --content: 80ch;
   --anchor-offset: 72px;
   /* Palette (Red family) */
   --A900:#CD2D26; --A700:#DC3925; --A500:#E44926; --A300:#E35B2D;
