@@ -37,6 +37,15 @@ In the setup chunk:
 library(ggplot2) theme_set(albersdown::theme_albers(params\$family,
 base_size = 13))
 
+3.  Retrofit an existing package (replace prior theming)
+
+albersdown::use_albersdown( family = “red”, apply_to = “all”,
+force_replace = TRUE )
+
+Team one-liner (same defaults as above):
+
+albersdown::migrate_albersdown()
+
 ## Helpers
 
 - theme_albers(family = “red”)
@@ -66,21 +75,8 @@ base_size = 13))
 
 ## Albers theme
 
-This package uses the albersdown theme. Vignettes are styled with
-`vignettes/albers.css` and a local `vignettes/albers.js`; the palette
-family is provided via `params$family` (default ‘red’). The pkgdown site
-uses `template: { package: albersdown }`.
-
-## Albers theme
-
-This package uses the albersdown theme. Vignettes are styled with
-`vignettes/albers.css` and a local `vignettes/albers.js`; the palette
-family is provided via `params$family` (default ‘red’). The pkgdown site
-uses `template: { package: albersdown }`.
-
-## Albers theme
-
-This package uses the albersdown theme. Vignettes are styled with
-`vignettes/albers.css` and a local `vignettes/albers.js`; the palette
-family is provided via `params$family` (default ‘red’). The pkgdown site
-uses `template: { package: albersdown }`.
+This package uses the albersdown theme. Existing vignette theme hooks
+are replaced so `albers.css` and local `albers.js` render consistently
+on CRAN and GitHub Pages. The palette family is provided via
+`params$family` (default ‘red’). The pkgdown site uses
+`template: { package: albersdown }`.

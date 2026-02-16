@@ -25,6 +25,21 @@ scale_color_albers_diverging_5(
 
 ## Arguments
 
+- low_family, high_family:
+
+  Homage families for the two sides
+
+- neutral:
+
+  hex color for the midpoint (default matches CSS border)
+
 - labels:
 
   Optional labels for the five classes (low2, low1, mid, high1, high2)
+
+- ...:
+
+  Passed to
+  [`ggplot2::scale_fill_manual()`](https://ggplot2.tidyverse.org/reference/scale_manual.html)
+  or
+  [`ggplot2::scale_color_manual()`](https://ggplot2.tidyverse.org/reference/scale_manual.html).

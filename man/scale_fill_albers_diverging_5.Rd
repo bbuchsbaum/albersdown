@@ -22,7 +22,13 @@ scale_color_albers_diverging_5(
 )
 }
 \arguments{
+\item{low_family, high_family}{Homage families for the two sides}
+
+\item{neutral}{hex color for the midpoint (default matches CSS border)}
+
 \item{labels}{Optional labels for the five classes (low2, low1, mid, high1, high2)}
+
+\item{...}{Passed to \code{ggplot2::scale_fill_manual()} or \code{ggplot2::scale_color_manual()}.}
 }
 \description{
 Useful for binned choropleths or sliced residuals. The middle class uses

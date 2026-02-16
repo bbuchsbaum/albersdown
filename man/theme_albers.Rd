@@ -2,17 +2,35 @@
 % Please edit documentation in R/theme_albers.R
 \name{theme_albers}
 \alias{theme_albers}
-\title{Minimal, legible plot theme (uses family tones for accents)}
+\title{Minimal, legible plot theme inspired by Josef Albers}
 \usage{
-theme_albers(family = "red", base_size = 13, base_family = "system-ui")
+theme_albers(
+  family = "red",
+  preset = c("homage", "study", "structural", "adobe", "midnight"),
+  base_size = 13,
+  base_family = "sans",
+  bg = NULL,
+  fg = NULL,
+  grid_color = NULL
+)
 }
 \arguments{
 \item{family}{Palette family used by companion scales.}
 
+\item{preset}{Visual preset: \code{"homage"} (warm cream), \code{"study"}
+(clean white), \code{"structural"} (stark), \code{"adobe"} (earth tones),
+\code{"midnight"} (dark).}
+
 \item{base_size}{Base font size.}
 
 \item{base_family}{Base font family.}
+
+\item{bg}{Override background color (default derived from preset).}
+
+\item{fg}{Override foreground/text color (default derived from preset).}
+
+\item{grid_color}{Override grid line color (default derived from preset).}
 }
 \description{
-Minimal, legible plot theme (uses family tones for accents)
+Minimal, legible plot theme inspired by Josef Albers
 }

@@ -8,7 +8,8 @@ Description: A lightweight template package that standardizes pkgdown theming
     and provides an R Markdown vignette skeleton with local CSS, plus helper
     functions for ggplot2 and gt. Designed to be CRAN-friendly and easy to roll
     out across multiple packages.
-Depends: R (>= 3.5)
+URL: https://bbuchsbaum.github.io/albersdown/
+Depends: R (>= 4.1)
 Imports:
 Suggests:
     ggplot2,
@@ -27,3 +28,4 @@ RoxygenNote: 7.3.3
 LazyData: true
 VignetteBuilder: knitr
 Config/Needs/website: albersdown
+License: MIT + file LICENSE

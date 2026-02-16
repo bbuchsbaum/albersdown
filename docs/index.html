@@ -11,7 +11,7 @@
 <script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><link href="extra.css" rel="stylesheet">
-<meta property="og:title" content="Minimalist Theme and Vignette Kit for pkgdown and R Markdown">
+<script src="extra.js"></script><meta property="og:title" content="Minimalist Theme and Vignette Kit for pkgdown and R Markdown">
 <meta name="description" content="A lightweight template package that standardizes pkgdown theming and provides an R Markdown vignette skeleton with local CSS, plus helper functions for ggplot2 and gt. Designed to be CRAN-friendly and easy to roll out across multiple packages.">
 <meta property="og:description" content="A lightweight template package that standardizes pkgdown theming and provides an R Markdown vignette skeleton with local CSS, plus helper functions for ggplot2 and gt. Designed to be CRAN-friendly and easy to roll out across multiple packages.">
 </head>
@@ -78,6 +78,12 @@
 <p>output: rmarkdown::html_vignette css: albers.css</p>
 <p>In the setup chunk:</p>
 <p>library(ggplot2) theme_set(albersdown::theme_albers(params$family, base_size = 13))</p>
+<ol start="3" style="list-style-type: decimal">
+<li>Retrofit an existing package (replace prior theming)</li>
+</ol>
+<p>albersdown::use_albersdown( family = “red”, apply_to = “all”, force_replace = TRUE )</p>
+<p>Team one-liner (same defaults as above):</p>
+<p>albersdown::migrate_albersdown()</p>
 </div>
 <div class="section level2">
 <h2 id="helpers">Helpers<a class="anchor" aria-label="anchor" href="#helpers"></a>
@@ -112,27 +118,21 @@
 <script>document.addEventListener("DOMContentLoaded",function(){document.body.classList.add("palette-%s");});</script>
 ’, params$family))</li>
 </ul>
+<!-- albersdown:theme-note:start -->
 </div>
 <div class="section level2">
 <h2 id="albers-theme">Albers theme<a class="anchor" aria-label="anchor" href="#albers-theme"></a>
 </h2>
-<p>This package uses the albersdown theme. Vignettes are styled with <code>vignettes/albers.css</code> and a local <code>vignettes/albers.js</code>; the palette family is provided via <code>params$family</code> (default ‘red’). The pkgdown site uses <code>template: { package: albersdown }</code>.</p>
-</div>
-<div class="section level2">
-<h2 id="albers-theme-1">Albers theme<a class="anchor" aria-label="anchor" href="#albers-theme-1"></a>
-</h2>
-<p>This package uses the albersdown theme. Vignettes are styled with <code>vignettes/albers.css</code> and a local <code>vignettes/albers.js</code>; the palette family is provided via <code>params$family</code> (default ‘red’). The pkgdown site uses <code>template: { package: albersdown }</code>.</p>
-</div>
-<div class="section level2">
-<h2 id="albers-theme-2">Albers theme<a class="anchor" aria-label="anchor" href="#albers-theme-2"></a>
-</h2>
-<p>This package uses the albersdown theme. Vignettes are styled with <code>vignettes/albers.css</code> and a local <code>vignettes/albers.js</code>; the palette family is provided via <code>params$family</code> (default ‘red’). The pkgdown site uses <code>template: { package: albersdown }</code>.</p>
+<p>This package uses the albersdown theme. Existing vignette theme hooks are replaced so <code>albers.css</code> and local <code>albers.js</code> render consistently on CRAN and GitHub Pages. The palette family is provided via <code>params$family</code> (default ‘red’). The pkgdown site uses <code>template: { package: albersdown }</code>. <!-- albersdown:theme-note:end --></p>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="license">
 <h2 data-toc-skip>License</h2>
-<ul class="list-unstyled"><li>
-</li></ul>
+<ul class="list-unstyled">
+<li>
+<a href="https://opensource.org/licenses/mit-license.php" class="external-link">MIT</a> + file <a href="LICENSE-text.html">LICENSE</a>
+</li>
+</ul>
 </div>
 
 

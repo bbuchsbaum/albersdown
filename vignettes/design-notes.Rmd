@@ -11,8 +11,10 @@ params:
   family: violet
   base_size: 13
   content_width: 80
-vignette: |
-  %\VignetteIndexEntry{Design notes: Homage system} %\VignetteEngine{knitr::rmarkdown} %\VignetteEncoding{UTF-8}
+vignette: >
+  %\VignetteIndexEntry{Design notes: Homage system}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 css: albers.css
 resource_files:
 - albers.css
@@ -20,14 +22,11 @@ resource_files:
 includes:
   in_header: |-
     <script src="albers.js"></script>
-    <script>document.addEventListener('DOMContentLoaded',()=>document.body.classList.add('palette-red'));</script>
+    <script>document.addEventListener('DOMContentLoaded',function(){document.body.classList.add('palette-violet');});</script>
 
 ---
 
 ```{r setup, include=FALSE}
-if (requireNamespace("ggplot2", quietly = TRUE) && requireNamespace("albersdown", quietly = TRUE)) ggplot2::theme_set(albersdown::theme_albers(params$family))
-if (requireNamespace("ggplot2", quietly = TRUE) && requireNamespace("albersdown", quietly = TRUE)) ggplot2::theme_set(albersdown::theme_albers(params$family))
-if (requireNamespace("ggplot2", quietly = TRUE) && requireNamespace("albersdown", quietly = TRUE)) ggplot2::theme_set(albersdown::theme_albers(params$family))
 knitr::opts_chunk$set(
   collapse = TRUE, comment = "#>", fig.align = "center", fig.retina = 2,
   out.width = "100%", fig.width = 7, fig.asp = 0.618, message = FALSE, warning = FALSE

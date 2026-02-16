@@ -4,12 +4,18 @@
 \alias{gt_albers}
 \title{Quiet, legible gt style with subtle stripe from A300}
 \usage{
-gt_albers(x, family = "red")
+gt_albers(
+  x,
+  family = "red",
+  preset = c("homage", "study", "structural", "adobe", "midnight")
+)
 }
 \arguments{
 \item{x}{A \code{gt} table}
 
 \item{family}{Palette family for subtle accents}
+
+\item{preset}{Visual preset (default \code{"homage"}). See \code{\link[=albers_presets]{albers_presets()}}.}
 }
 \description{
 Quiet, legible gt style with subtle stripe from A300

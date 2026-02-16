@@ -2,9 +2,16 @@
 #'
 #' @param x A `gt` table
 #' @param family Palette family for subtle accents
+#' @param preset Visual preset (default \code{"homage"}). See [albers_presets()].
 #' @export
-gt_albers <- function(x, family = "red") {
+gt_albers <- function(
+  x,
+  family = "red",
+  preset = c("homage", "study", "structural", "adobe", "midnight")
+) {
+  preset <- match.arg(preset)
   pal <- albers_palette(family)
+  colors <- .preset_colors(preset)
   stripe <- pal[["A300"]]
   x |>
     gt::opt_row_striping() |>
@@ -14,14 +21,15 @@ gt_albers <- function(x, family = "red") {
       data_row.padding = gt::px(6),
       table.border.top.color = "transparent",
       table.border.bottom.color = "transparent",
+      table.background.color = colors$bg,
       heading.align = "left"
     ) |>
     gt::tab_style(
-      style = list(gt::cell_borders(sides = "bottom", color = "#e5e7eb")),
+      style = list(gt::cell_borders(sides = "bottom", color = colors$border)),
       locations = gt::cells_body()
     ) |>
     gt::tab_style(
-      style = gt::cell_text(color = "#6b7280"),
+      style = gt::cell_text(color = colors$muted),
       locations = gt::cells_title(groups = "subtitle")
     ) |>
     gt::tab_style(

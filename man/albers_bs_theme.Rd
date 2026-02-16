@@ -4,7 +4,24 @@
 \alias{albers_bs_theme}
 \title{bs_theme for pkgdown (light/dark aware)}
 \usage{
-albers_bs_theme(accent = "#1f6feb", bg = "#ffffff", fg = "#111111")
+albers_bs_theme(
+  family = "red",
+  preset = c("homage", "study", "structural", "adobe", "midnight"),
+  accent = NULL,
+  bg = NULL,
+  fg = NULL
+)
+}
+\arguments{
+\item{family}{Palette family name (default \code{"red"}).}
+
+\item{preset}{Visual preset (default \code{"homage"}). See \code{\link[=albers_presets]{albers_presets()}}.}
+
+\item{accent}{Primary accent color (default A700 of the chosen family).}
+
+\item{bg}{Background color (default derived from preset).}
+
+\item{fg}{Foreground/text color (default derived from preset).}
 }
 \description{
 Convenience wrapper exposing core variables; most consumers won't need this

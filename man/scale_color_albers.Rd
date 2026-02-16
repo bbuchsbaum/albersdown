@@ -2,9 +2,12 @@
 % Please edit documentation in R/theme_albers.R
 \name{scale_color_albers}
 \alias{scale_color_albers}
+\alias{scale_fill_albers}
 \title{Scales that use the family's tones (discrete/continuous)}
 \usage{
 scale_color_albers(family = "red", discrete = TRUE, ...)
+
+scale_fill_albers(family = "red", discrete = TRUE, ...)
 }
 \arguments{
 \item{family}{Palette family.}

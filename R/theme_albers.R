@@ -14,26 +14,122 @@ albers_palette <- function(family = c("red","lapis","ochre","teal","green","viol
   )
 }
 
-#' Minimal, legible plot theme (uses family tones for accents)
+#' Color values for named Albers presets
+#'
+#' Each preset captures ground, surface, ink, and accent-role colours
+#' inspired by different periods of Josef Albers' body of work.
+#'
+#' \describe{
+#'   \item{homage}{Warm cream ground evoking the raw linen of \emph{Homage to the Square}.}
+#'   \item{study}{Clean near-white, the analytical plates of \emph{Interaction of Color}.}
+#'   \item{structural}{Stark cool grey, the precision of \emph{Structural Constellations}.}
+#'   \item{adobe}{Warm sand, Albers' studies of Mexican adobe architecture.}
+#'   \item{midnight}{Deep indigo-black for dark-theme contexts.}
+#' }
+#'
+#' @param preset One of \code{"homage"}, \code{"study"}, \code{"structural"},
+#'   \code{"adobe"}, \code{"midnight"}.
+#' @return Named list with bg, fg, surface, muted, grid, border, code_bg.
+#' @keywords internal
+.preset_colors <- function(preset = "homage") {
+  switch(preset,
+    homage = list(
+      bg = "#f6f3ee", fg = "#171717", surface = "#ffffff",
+      muted = "#5e636b", grid = "#e5e1d8",
+      border = "#ddd8cf", code_bg = "#f3f1ec"
+    ),
+    study = list(
+      bg = "#fafaf8", fg = "#1a1a1a", surface = "#ffffff",
+      muted = "#6b7280", grid = "#e8e8e4",
+      border = "#e2e2de", code_bg = "#f5f5f2"
+    ),
+    structural = list(
+      bg = "#edecea", fg = "#111111", surface = "#f8f7f4",
+      muted = "#4a4e56", grid = "#d4d0c6",
+      border = "#c8c4b8", code_bg = "#e8e6e0"
+    ),
+    adobe = list(
+      bg = "#f0e8db", fg = "#2c1e12", surface = "#f9f4ec",
+      muted = "#6b5d4f", grid = "#ddd4c5",
+      border = "#d8cfc0", code_bg = "#ede6da"
+    ),
+    midnight = list(
+      bg = "#0e1117", fg = "#e6e1d4", surface = "#161b24",
+      muted = "#9498a4", grid = "#252a36",
+      border = "#2a2f3c", code_bg = "#111520"
+    )
+  )
+}
+
+#' List available Albers presets
+#'
+#' Returns the names of the five built-in presets, each inspired by a
+#' different period or series in Josef Albers' work.
+#'
+#' @return Character vector of preset names.
+#' @export
+albers_presets <- function() {
+  c("homage", "study", "structural", "adobe", "midnight")
+}
+
+#' Minimal, legible plot theme inspired by Josef Albers
 #'
 #' @param family Palette family used by companion scales.
+#' @param preset Visual preset: \code{"homage"} (warm cream), \code{"study"}
+#'   (clean white), \code{"structural"} (stark), \code{"adobe"} (earth tones),
+#'   \code{"midnight"} (dark).
 #' @param base_size Base font size.
 #' @param base_family Base font family.
+#' @param bg Override background color (default derived from preset).
+#' @param fg Override foreground/text color (default derived from preset).
+#' @param grid_color Override grid line color (default derived from preset).
 #' @export
-theme_albers <- function(family = "red", base_size = 13, base_family = "system-ui") {
+theme_albers <- function(
+  family = "red",
+  preset = c("homage", "study", "structural", "adobe", "midnight"),
+  base_size = 13,
+  base_family = "sans",
+  bg = NULL,
+  fg = NULL,
+  grid_color = NULL
+) {
+  preset <- match.arg(preset)
   pal <- albers_palette(family)
+  colors <- .preset_colors(preset)
+
+  bg <- bg %||% colors$bg
+  fg <- fg %||% colors$fg
+  grid_color <- grid_color %||% colors$grid
+  muted <- colors$muted
+
   ggplot2::theme_minimal(base_size = base_size, base_family = base_family) +
     ggplot2::theme(
-      panel.grid.major = ggplot2::element_line(color = "#e5e7eb", linewidth = 0.3),
+      plot.background = ggplot2::element_rect(fill = bg, colour = NA),
+      panel.background = ggplot2::element_rect(fill = bg, colour = NA),
+      panel.grid.major = ggplot2::element_line(color = grid_color, linewidth = 0.25),
       panel.grid.minor = ggplot2::element_blank(),
-      plot.title = ggplot2::element_text(face = "bold", margin = ggplot2::margin(b = 8)),
-      plot.subtitle = ggplot2::element_text(color = "#374151", margin = ggplot2::margin(b = 10)),
-      plot.caption = ggplot2::element_text(color = "#6b7280", margin = ggplot2::margin(t = 10)),
+      plot.title = ggplot2::element_text(
+        face = "bold", color = fg,
+        margin = ggplot2::margin(b = 6)
+      ),
+      plot.title.position = "plot",
+      plot.subtitle = ggplot2::element_text(
+        color = muted,
+        margin = ggplot2::margin(b = 10)
+      ),
+      plot.caption = ggplot2::element_text(
+        color = muted, hjust = 0,
+        margin = ggplot2::margin(t = 10)
+      ),
+      plot.caption.position = "plot",
       legend.position = "top",
       legend.title = ggplot2::element_text(face = "bold"),
-      axis.title.x = ggplot2::element_text(margin = ggplot2::margin(t = 6)),
-      axis.title.y = ggplot2::element_text(margin = ggplot2::margin(r = 6)),
-      plot.background = ggplot2::element_rect(fill = NA, colour = NA)
+      axis.title = ggplot2::element_text(color = fg),
+      axis.title.x = ggplot2::element_text(margin = ggplot2::margin(t = 8)),
+      axis.title.y = ggplot2::element_text(margin = ggplot2::margin(r = 8)),
+      axis.text = ggplot2::element_text(color = muted),
+      strip.text = ggplot2::element_text(face = "bold", color = fg),
+      plot.margin = ggplot2::margin(12, 12, 12, 12)
     )
 }
 
@@ -49,6 +145,7 @@ scale_color_albers <- function(family = "red", discrete = TRUE, ...) {
   else ggplot2::scale_color_gradient(low = pal[["A300"]], high = pal[["A900"]], ...)
 }
 
+#' @rdname scale_color_albers
 #' @export
 scale_fill_albers <- function(family = "red", discrete = TRUE, ...) {
   pal <- albers_palette(family)
@@ -199,7 +296,9 @@ scale_fill_albers_diverging_n <- function(
 #' Useful for binned choropleths or sliced residuals. The middle class uses
 #' the neutral color.
 #'
+#' @inheritParams scale_color_albers_diverging
 #' @param labels Optional labels for the five classes (low2, low1, mid, high1, high2)
+#' @param ... Passed to `ggplot2::scale_fill_manual()` or `ggplot2::scale_color_manual()`.
 #' @export
 scale_fill_albers_diverging_5 <- function(
   low_family  = "red",

@@ -2,14 +2,33 @@
 #'
 #' Convenience wrapper exposing core variables; most consumers won't need this
 #' directly if they use `template: { package: albersdown }`.
+#'
+#' @param family Palette family name (default \code{"red"}).
+#' @param preset Visual preset (default \code{"homage"}). See [albers_presets()].
+#' @param accent Primary accent color (default A700 of the chosen family).
+#' @param bg Background color (default derived from preset).
+#' @param fg Foreground/text color (default derived from preset).
 #' @export
-albers_bs_theme <- function(accent = "#1f6feb", bg = "#ffffff", fg = "#111111") {
+albers_bs_theme <- function(
+  family = "red",
+  preset = c("homage", "study", "structural", "adobe", "midnight"),
+  accent = NULL,
+  bg = NULL,
+  fg = NULL
+) {
+  preset <- match.arg(preset)
+  pal <- albers_palette(family)
+  colors <- .preset_colors(preset)
+
+  accent <- accent %||% pal[["A700"]]
+  bg <- bg %||% colors$bg
+  fg <- fg %||% colors$fg
+
   bslib::bs_theme(
     version = 5,
-    bg = bg, fg = fg, primary = accent, secondary = "#6b7280",
+    bg = bg, fg = fg, primary = accent, secondary = colors$muted,
     base_font = bslib::font_collection("system-ui"),
     heading_font = bslib::font_collection("system-ui"),
     code_font = bslib::font_collection("ui-monospace")
   )
 }
-

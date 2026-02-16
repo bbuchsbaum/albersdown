@@ -10,9 +10,11 @@ doctor report.
 ``` r
 use_albersdown(
   family = "red",
+  preset = c("homage", "study", "structural", "adobe", "midnight"),
   apply_to = c("all", "new"),
   dry_run = FALSE,
-  fallback_extra = c("auto", "always", "never")
+  fallback_extra = c("auto", "always", "never"),
+  force_replace = TRUE
 )
 ```
 
@@ -21,6 +23,11 @@ use_albersdown(
 - family:
 
   one of: "red","lapis","ochre","teal","green","violet"
+
+- preset:
+
+  Visual preset (default `"homage"`). See
+  [`albers_presets()`](https://bbuchsbaum.github.io/albersdown/reference/albers_presets.md).
 
 - apply_to:
 
@@ -43,3 +50,9 @@ use_albersdown(
     custom setups).
 
   - "never": never copy site-wide fallbacks.
+
+- force_replace:
+
+  if TRUE (default), overwrite existing albersdown assets and replace
+  existing vignette CSS/header hooks so albersdown becomes the active
+  theme.

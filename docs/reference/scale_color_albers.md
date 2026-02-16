@@ -6,6 +6,8 @@ Scales that use the family's tones (discrete/continuous)
 
 ``` r
 scale_color_albers(family = "red", discrete = TRUE, ...)
+
+scale_fill_albers(family = "red", discrete = TRUE, ...)
 ```
 
 ## Arguments

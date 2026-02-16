@@ -6,13 +6,17 @@
 \usage{
 use_albersdown(
   family = "red",
+  preset = c("homage", "study", "structural", "adobe", "midnight"),
   apply_to = c("all", "new"),
   dry_run = FALSE,
-  fallback_extra = c("auto", "always", "never")
+  fallback_extra = c("auto", "always", "never"),
+  force_replace = TRUE
 )
 }
 \arguments{
 \item{family}{one of: "red","lapis","ochre","teal","green","violet"}
+
+\item{preset}{Visual preset (default \code{"homage"}). See \code{\link[=albers_presets]{albers_presets()}}.}
 
 \item{apply_to}{"all" to patch every \emph{.Rmd/}.qmd in vignettes/, or "new" to only add the template and assets}
 
@@ -25,6 +29,9 @@ package does not use \code{template: { package: albersdown }} in \verb{_pkgdown.
 \item "always": always copy to \verb{pkgdown/} (useful as a safety net or for custom setups).
 \item "never": never copy site-wide fallbacks.
 }}
+
+\item{force_replace}{if TRUE (default), overwrite existing albersdown assets and
+replace existing vignette CSS/header hooks so albersdown becomes the active theme.}
 }
 \description{
 Turn-key retrofit to adopt the albersdown theme in an existing package.
