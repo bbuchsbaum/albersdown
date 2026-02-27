@@ -10,6 +10,7 @@ params:
   family: "red"   # choices: red, lapis, ochre, teal, green, violet
   base_size: 13
   content_width: 80   # in ch units
+  style: "minimal"    # choices: minimal (default), balanced, assertive
 vignette: >
   %\VignetteIndexEntry{Getting started}
   %\VignetteEngine{knitr::rmarkdown}
@@ -26,6 +27,7 @@ knitr::opts_chunk$set(
   out.width = "100%", fig.width = 7, fig.asp = 0.618, message = FALSE, warning = FALSE
 )
 set.seed(123); options(pillar.sigfig = 7, width = 80)
+`%||%` <- function(a, b) if (is.null(a)) b else a
 library(ggplot2)
 if (requireNamespace("ggplot2", quietly = TRUE) && requireNamespace("albersdown", quietly = TRUE)) {
   ggplot2::theme_set(albersdown::theme_albers(params$family, base_size = params$base_size))
@@ -36,16 +38,28 @@ if (requireNamespace("ggplot2", quietly = TRUE) && requireNamespace("albersdown"
 cat(sprintf('<script>document.addEventListener("DOMContentLoaded",function(){document.body.classList.add("palette-%s");});</script>', params$family))
 ```
 
+```{r albers-style, echo=FALSE, results='asis'}
+style_class <- switch(
+  tolower(params$style %||% "balanced"),
+  minimal = "style-minimal",
+  assertive = "style-assertive",
+  balanced = ""
+)
+if (nzchar(style_class)) {
+  cat(sprintf('<script>document.addEventListener("DOMContentLoaded",function(){document.body.classList.remove("style-minimal","style-assertive");document.body.classList.add("%s");});</script>', style_class))
+}
+```
+
 ```{r content-width, echo=FALSE, results='asis'}
 cat(sprintf('<style>:root{--content:%sch}</style>', params$content_width))
 ```
 
-<!-- Optional Albers hero tile and hairline rule (kept minimal; comment out if not wanted) -->
+<!-- Optional Albers hero tile and structural ribbon rule -->
 <div class="homage-hero" aria-hidden="true"></div>
 <div class="hr-notch" role="presentation"></div>
 
 ```{r anchors, echo=FALSE, results='asis'}
-cat('<script>document.addEventListener("DOMContentLoaded",function(){document.querySelectorAll("h2, h3").forEach(function(h){if(!h.id)return;if(h.querySelector("a.anchor"))return;var a=document.createElement("a");a.href="#"+h.id;a.className="anchor";a.textContent="▣";a.setAttribute("aria-label","Link to this section");a.setAttribute("title","Link to this section");h.appendChild(a);});});</script>')
+cat('<script>document.addEventListener("DOMContentLoaded",function(){document.querySelectorAll("h2, h3").forEach(function(h){if(!h.id)return;if(h.querySelector("a.anchor"))return;var a=document.createElement("a");a.href="#"+h.id;a.className="anchor";a.textContent="—";a.setAttribute("aria-label","Link to this section");a.setAttribute("title","Link to this section");h.appendChild(a);});});</script>')
 ```
 
 ## Goal

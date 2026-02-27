@@ -61,7 +61,7 @@
 
     
     
-<script>document.addEventListener("DOMContentLoaded",function(){document.body.classList.add("palette-violet");});</script><style>:root{--content:80ch}</style>
+<script>document.addEventListener("DOMContentLoaded",function(){document.body.classList.add("palette-violet");});</script><script>document.addEventListener("DOMContentLoaded",function(){document.body.classList.remove("style-minimal","style-assertive");document.body.classList.add("style-minimal");});</script><style>:root{--content:80ch}</style>
 <div class="homage-hero" aria-hidden="true">
 
 </div>
@@ -73,9 +73,10 @@
 </h2>
 <ul>
 <li>One family per page (A900/A700/A500/A300 → roles)</li>
-<li>Links + focus use AA tones; anchors show ▣ on hover</li>
-<li>Callouts and tables use quiet A300 tints; code blocks are flat with
-a small corner square</li>
+<li>Links + focus use AA tones; anchors reveal a typographic dash on
+hover</li>
+<li>Callouts and tables use quiet A300 tints; code blocks use a
+structural left ribbon</li>
 </ul>
 </div>
 <div class="section level2">
@@ -86,7 +87,7 @@ four tones:</p>
 <ul>
 <li>A900: links and focus in light mode; strongest contrast</li>
 <li>A700: highlights (one series per plot); nav active marker</li>
-<li>A500: borders, anchors (▣), code-corner square, hr notch</li>
+<li>A500: borders, dash anchors, code ribbons, structural rules</li>
 <li>A300: tints for callouts and table stripe; links/focus in dark
 mode</li>
 </ul>
@@ -125,7 +126,11 @@ contrasts.</p>
 <h2 id="links-anchors">Links, anchors, and rhythm<a class="anchor" aria-label="anchor" href="#links-anchors"></a>
 </h2>
 <p>Links and focus rings always meet AA. Move the cursor over H2/H3 to
-reveal the square anchor glyph ▣.</p>
+reveal the structural dash anchor.</p>
+<p>Style modes - <code>style: minimal</code> (default): lighter rules
+and quieter dash language. - <code>style: balanced</code>: the
+calibrated middle ground. - <code>style: assertive</code>: stronger
+edges and more emphatic structural marks.</p>
 <div class="hr-notch" role="presentation">
 
 </div>
@@ -141,8 +146,8 @@ Keep them short and purposeful.</p>
 <code class="sourceCode R"><span><span class="co"># a small, readable function</span></span>
 <span><span class="va">foo</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span> <span class="cn">NA_real_</span> <span class="kw">else</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
 <span><span class="fu">foo</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p>The code fence has no drop shadow and includes a small A500 square in
-the top-left corner—a minimal homage.</p>
+<p>The code fence stays flat: no drop shadow, with an A500 left ribbon
+and a compact copy control.</p>
 </div>
 <div class="section level2">
 <h2 id="tables">Tables<a class="anchor" aria-label="anchor" href="#tables"></a>

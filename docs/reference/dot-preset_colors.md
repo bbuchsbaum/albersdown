@@ -1,7 +1,7 @@
 # Color values for named Albers presets
 
 Each preset captures ground, surface, ink, and accent-role colours
-inspired by different periods of Josef Albers' body of work.
+inspired by Bauhaus, Le Corbusier, and Josef Albers.
 
 ## Usage
 
@@ -23,19 +23,19 @@ Named list with bg, fg, surface, muted, grid, border, code_bg.
 
 - homage:
 
-  Warm cream ground evoking the raw linen of *Homage to the Square*.
+  Cool gallery white, the Bauhaus exhibition wall.
 
 - study:
 
-  Clean near-white, the analytical plates of *Interaction of Color*.
+  Pure analytical white from *Interaction of Color* plates.
 
 - structural:
 
-  Stark cool grey, the precision of *Structural Constellations*.
+  Cool concrete (béton brut), shadowless precision.
 
 - adobe:
 
-  Warm sand, Albers' studies of Mexican adobe architecture.
+  Warm architectural grey, Le Corbusier béton.
 
 - midnight:
 

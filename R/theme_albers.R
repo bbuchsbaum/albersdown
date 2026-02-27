@@ -17,13 +17,13 @@ albers_palette <- function(family = c("red","lapis","ochre","teal","green","viol
 #' Color values for named Albers presets
 #'
 #' Each preset captures ground, surface, ink, and accent-role colours
-#' inspired by different periods of Josef Albers' body of work.
+#' inspired by Bauhaus, Le Corbusier, and Josef Albers.
 #'
 #' \describe{
-#'   \item{homage}{Warm cream ground evoking the raw linen of \emph{Homage to the Square}.}
-#'   \item{study}{Clean near-white, the analytical plates of \emph{Interaction of Color}.}
-#'   \item{structural}{Stark cool grey, the precision of \emph{Structural Constellations}.}
-#'   \item{adobe}{Warm sand, Albers' studies of Mexican adobe architecture.}
+#'   \item{homage}{Cool gallery white, the Bauhaus exhibition wall.}
+#'   \item{study}{Pure analytical white from \emph{Interaction of Color} plates.}
+#'   \item{structural}{Cool concrete (b\enc{é}{e}ton brut), shadowless precision.}
+#'   \item{adobe}{Warm architectural grey, Le Corbusier b\enc{é}{e}ton.}
 #'   \item{midnight}{Deep indigo-black for dark-theme contexts.}
 #' }
 #'
@@ -34,29 +34,29 @@ albers_palette <- function(family = c("red","lapis","ochre","teal","green","viol
 .preset_colors <- function(preset = "homage") {
   switch(preset,
     homage = list(
-      bg = "#f6f3ee", fg = "#171717", surface = "#ffffff",
-      muted = "#5e636b", grid = "#e5e1d8",
-      border = "#ddd8cf", code_bg = "#f3f1ec"
+      bg = "#f3f5f7", fg = "#17181a", surface = "#ffffff",
+      muted = "#636b76", grid = "#dde2e8",
+      border = "#d5dae1", code_bg = "#ecf0f4"
     ),
     study = list(
-      bg = "#fafaf8", fg = "#1a1a1a", surface = "#ffffff",
-      muted = "#6b7280", grid = "#e8e8e4",
-      border = "#e2e2de", code_bg = "#f5f5f2"
+      bg = "#f7f9fb", fg = "#17181a", surface = "#ffffff",
+      muted = "#68717d", grid = "#e5e9ef",
+      border = "#dde2e8", code_bg = "#f1f4f8"
     ),
     structural = list(
-      bg = "#edecea", fg = "#111111", surface = "#f8f7f4",
-      muted = "#4a4e56", grid = "#d4d0c6",
-      border = "#c8c4b8", code_bg = "#e8e6e0"
+      bg = "#e6e9ed", fg = "#101214", surface = "#f1f3f6",
+      muted = "#4b5360", grid = "#ccd3db",
+      border = "#c1c8d0", code_bg = "#e0e5ea"
     ),
     adobe = list(
-      bg = "#f0e8db", fg = "#2c1e12", surface = "#f9f4ec",
-      muted = "#6b5d4f", grid = "#ddd4c5",
-      border = "#d8cfc0", code_bg = "#ede6da"
+      bg = "#ece9e7", fg = "#1f1c19", surface = "#f3f1ef",
+      muted = "#66615d", grid = "#d4cfcb",
+      border = "#ccc7c3", code_bg = "#e3dfdc"
     ),
     midnight = list(
-      bg = "#0e1117", fg = "#e6e1d4", surface = "#161b24",
-      muted = "#9498a4", grid = "#252a36",
-      border = "#2a2f3c", code_bg = "#111520"
+      bg = "#0d1117", fg = "#e8e6e1", surface = "#151b24",
+      muted = "#9aa2b0", grid = "#303745",
+      border = "#2c3342", code_bg = "#111722"
     )
   )
 }
@@ -75,9 +75,9 @@ albers_presets <- function() {
 #' Minimal, legible plot theme inspired by Josef Albers
 #'
 #' @param family Palette family used by companion scales.
-#' @param preset Visual preset: \code{"homage"} (warm cream), \code{"study"}
-#'   (clean white), \code{"structural"} (stark), \code{"adobe"} (earth tones),
-#'   \code{"midnight"} (dark).
+#' @param preset Visual preset: \code{"homage"} (gallery white), \code{"study"}
+#'   (analytical white), \code{"structural"} (concrete), \code{"adobe"}
+#'   (warm architectural grey), \code{"midnight"} (dark).
 #' @param base_size Base font size.
 #' @param base_family Base font family.
 #' @param bg Override background color (default derived from preset).
@@ -101,34 +101,57 @@ theme_albers <- function(
   fg <- fg %||% colors$fg
   grid_color <- grid_color %||% colors$grid
   muted <- colors$muted
+  surface <- colors$surface
+  border <- colors$border
+  strip_alpha <- if (preset == "midnight") 0.18 else 0.11
+  strip_fill <- grDevices::adjustcolor(pal[["A300"]], alpha.f = strip_alpha)
+  legend_bg <- grDevices::adjustcolor(surface, alpha.f = 0.97)
 
   ggplot2::theme_minimal(base_size = base_size, base_family = base_family) +
     ggplot2::theme(
       plot.background = ggplot2::element_rect(fill = bg, colour = NA),
-      panel.background = ggplot2::element_rect(fill = bg, colour = NA),
-      panel.grid.major = ggplot2::element_line(color = grid_color, linewidth = 0.25),
+      panel.background = ggplot2::element_rect(fill = surface, colour = NA),
+      panel.border = ggplot2::element_rect(fill = NA, colour = border, linewidth = 0.33),
+      panel.grid.major = ggplot2::element_line(color = grid_color, linewidth = 0.3),
       panel.grid.minor = ggplot2::element_blank(),
+      panel.spacing = grid::unit(10, "pt"),
+      axis.line = ggplot2::element_line(color = border, linewidth = 0.24),
+      axis.ticks = ggplot2::element_line(color = border, linewidth = 0.24),
+      axis.ticks.length = grid::unit(2.5, "pt"),
       plot.title = ggplot2::element_text(
         face = "bold", color = fg,
+        lineheight = 1.04,
         margin = ggplot2::margin(b = 6)
       ),
       plot.title.position = "plot",
       plot.subtitle = ggplot2::element_text(
         color = muted,
+        lineheight = 1.2,
         margin = ggplot2::margin(b = 10)
       ),
       plot.caption = ggplot2::element_text(
-        color = muted, hjust = 0,
+        color = muted, hjust = 0, size = ggplot2::rel(0.9),
         margin = ggplot2::margin(t = 10)
       ),
       plot.caption.position = "plot",
       legend.position = "top",
-      legend.title = ggplot2::element_text(face = "bold"),
+      legend.title = ggplot2::element_text(face = "bold", color = fg),
+      legend.text = ggplot2::element_text(color = muted),
+      legend.background = ggplot2::element_rect(fill = legend_bg, colour = border, linewidth = 0.3),
+      legend.box.background = ggplot2::element_rect(fill = legend_bg, colour = border, linewidth = 0.3),
+      legend.key = ggplot2::element_rect(fill = legend_bg, colour = NA),
+      legend.key.width = grid::unit(14, "pt"),
+      legend.key.height = grid::unit(8, "pt"),
       axis.title = ggplot2::element_text(color = fg),
       axis.title.x = ggplot2::element_text(margin = ggplot2::margin(t = 8)),
       axis.title.y = ggplot2::element_text(margin = ggplot2::margin(r = 8)),
       axis.text = ggplot2::element_text(color = muted),
-      strip.text = ggplot2::element_text(face = "bold", color = fg),
+      strip.background = ggplot2::element_rect(fill = strip_fill, colour = border, linewidth = 0.3),
+      strip.text = ggplot2::element_text(
+        face = "bold",
+        color = fg,
+        margin = ggplot2::margin(4, 4, 4, 4)
+      ),
       plot.margin = ggplot2::margin(12, 12, 12, 12)
     )
 }
@@ -370,4 +393,141 @@ scale_fill_albers_highlight <- function(
   pal <- albers_palette(family)
   vals <- stats::setNames(c(pal[[tone]], other), c(highlight, other_name))
   ggplot2::scale_fill_manual(values = vals, ...)
+}
+
+#' Distinct, colorblind-friendly fill palette across families
+#'
+#' Uses one high-contrast tone (default A700) from different families
+#' to maximize separation between filled regions. Fill counterpart of
+#' \code{\link{scale_color_albers_distinct}}.
+#'
+#' @inheritParams scale_color_albers_distinct
+#' @param ... Passed to \code{ggplot2::scale_fill_manual()}.
+#' @export
+scale_fill_albers_distinct <- function(n = NULL, tone = c("A700", "A900", "A500"), ...) {
+  tone <- match.arg(tone)
+  families <- c("red", "teal", "lapis", "ochre", "green", "violet")
+  cols <- vapply(families, function(f) albers_palette(f)[[tone]], character(1))
+  if (is.null(n)) n <- length(cols)
+  ggplot2::scale_fill_manual(values = unname(cols[seq_len(min(n, length(cols)))]), ...)
+}
+
+#' Stripped theme for maps, brain surfaces, and abstract compositions
+#'
+#' Extends \code{\link{theme_albers}} by removing axes, grid lines, ticks,
+#' and panel border -- leaving only the plot background, titles, and legend.
+#' Useful for spatial visualizations where coordinate axes are meaningless.
+#'
+#' @inheritParams theme_albers
+#' @export
+theme_albers_void <- function(
+  family = "red",
+  preset = c("homage", "study", "structural", "adobe", "midnight"),
+  base_size = 13,
+  base_family = "sans",
+  bg = NULL,
+  fg = NULL
+) {
+  theme_albers(
+    family = family, preset = preset,
+    base_size = base_size, base_family = base_family,
+    bg = bg, fg = fg
+  ) +
+    ggplot2::theme(
+      axis.line        = ggplot2::element_blank(),
+      axis.text        = ggplot2::element_blank(),
+      axis.ticks       = ggplot2::element_blank(),
+      axis.title       = ggplot2::element_blank(),
+      panel.border     = ggplot2::element_blank(),
+      panel.grid.major = ggplot2::element_blank(),
+      panel.grid.minor = ggplot2::element_blank()
+    )
+}
+
+#' Interpolate n colors along a palette family gradient
+#'
+#' Uses \code{\link[grDevices]{colorRampPalette}} to interpolate between the
+#' four tones of a family (A900 \enc{→}{->} A300), producing an arbitrary
+#' number of evenly spaced colors.
+#'
+#' @param family Palette family name.
+#' @param n Number of colors to return.
+#' @param reverse If \code{TRUE}, return colors from light to dark.
+#' @return Character vector of \code{n} hex colors.
+#' @export
+albers_ramp <- function(family = "red", n = 9, reverse = FALSE) {
+  pal <- albers_palette(family)
+  ramp <- grDevices::colorRampPalette(unname(pal))
+  cols <- ramp(n)
+  if (reverse) rev(cols) else cols
+}
+
+#' Visual swatch of Albers palette families and presets
+#'
+#' Draws a tile plot showing the four tones of each palette family, optionally
+#' faceted by preset ground colors. Useful for quickly previewing the design
+#' system in a notebook or presentation.
+#'
+#' @param families Character vector of families to show.
+#'   Defaults to all six.
+#' @param show_presets If \code{TRUE}, add a row of preset ground colors
+#'   below the palette tones. Defaults to \code{FALSE}.
+#' @return A \code{ggplot} object.
+#' @export
+albers_swatch <- function(
+  families = c("red", "lapis", "ochre", "teal", "green", "violet"),
+  show_presets = FALSE
+) {
+  tones <- c("A900", "A700", "A500", "A300")
+
+  rows <- do.call(rbind, lapply(families, function(fam) {
+    pal <- albers_palette(fam)
+    data.frame(
+      family = fam,
+      tone   = factor(tones, levels = tones),
+      hex    = unname(pal[tones]),
+      type   = "palette",
+      stringsAsFactors = FALSE
+    )
+  }))
+
+  if (show_presets) {
+    preset_rows <- do.call(rbind, lapply(albers_presets(), function(p) {
+      cols <- .preset_colors(p)
+      data.frame(
+        family = p,
+        tone   = factor(c("bg", "surface", "border", "muted"),
+                        levels = c("bg", "surface", "border", "muted")),
+        hex    = c(cols$bg, cols$surface, cols$border, cols$muted),
+        type   = "preset",
+        stringsAsFactors = FALSE
+      )
+    }))
+    rows <- rbind(rows, preset_rows)
+  }
+
+  rows$family <- factor(rows$family, levels = unique(rows$family))
+
+  # avoid R CMD check NOTEs for NSE column references
+  tone <- family <- hex <- NULL
+
+  ggplot2::ggplot(rows, ggplot2::aes(x = tone, y = family, fill = hex)) +
+    ggplot2::geom_tile(color = "white", linewidth = 1.5) +
+    ggplot2::scale_fill_identity() +
+    ggplot2::geom_text(
+      ggplot2::aes(label = hex),
+      size = 2.8, color = ifelse(
+        grDevices::col2rgb(rows$hex)[1, ] * 0.299 +
+        grDevices::col2rgb(rows$hex)[2, ] * 0.587 +
+        grDevices::col2rgb(rows$hex)[3, ] * 0.114 > 150,
+        "#17181a", "#f3f5f7"
+      )
+    ) +
+    ggplot2::coord_equal() +
+    theme_albers_void(preset = "study") +
+    ggplot2::theme(
+      axis.text.x = ggplot2::element_text(color = "#636b76", size = 9),
+      axis.text.y = ggplot2::element_text(color = "#17181a", size = 10, face = "bold", hjust = 1)
+    ) +
+    ggplot2::labs(x = NULL, y = NULL)
 }

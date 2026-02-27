@@ -15,14 +15,14 @@ Named list with bg, fg, surface, muted, grid, border, code_bg.
 }
 \description{
 Each preset captures ground, surface, ink, and accent-role colours
-inspired by different periods of Josef Albers' body of work.
+inspired by Bauhaus, Le Corbusier, and Josef Albers.
 }
 \details{
 \describe{
-\item{homage}{Warm cream ground evoking the raw linen of \emph{Homage to the Square}.}
-\item{study}{Clean near-white, the analytical plates of \emph{Interaction of Color}.}
-\item{structural}{Stark cool grey, the precision of \emph{Structural Constellations}.}
-\item{adobe}{Warm sand, Albers' studies of Mexican adobe architecture.}
+\item{homage}{Cool gallery white, the Bauhaus exhibition wall.}
+\item{study}{Pure analytical white from \emph{Interaction of Color} plates.}
+\item{structural}{Cool concrete (b\enc{é}{e}ton brut), shadowless precision.}
+\item{adobe}{Warm architectural grey, Le Corbusier b\enc{é}{e}ton.}
 \item{midnight}{Deep indigo-black for dark-theme contexts.}
 }
 }

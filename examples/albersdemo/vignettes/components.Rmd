@@ -38,7 +38,7 @@ cat(sprintf('<style>:root{--content:%sch}</style>', params$content_width))
 ```
 
 ```{r anchors, echo=FALSE, results='asis'}
-cat('<script>document.addEventListener("DOMContentLoaded",function(){document.querySelectorAll("h2, h3").forEach(function(h){if(!h.id)return;if(h.querySelector("a.anchor"))return;var a=document.createElement("a");a.href="#"+h.id;a.className="anchor";a.textContent="▣";a.setAttribute("aria-label","Link to this section");a.setAttribute("title","Link to this section");h.appendChild(a);});});</script>')
+cat('<script>document.addEventListener("DOMContentLoaded",function(){document.querySelectorAll("h2, h3").forEach(function(h){if(!h.id)return;if(h.querySelector("a.anchor"))return;var a=document.createElement("a");a.href="#"+h.id;a.className="anchor";a.textContent="—";a.setAttribute("aria-label","Link to this section");a.setAttribute("title","Link to this section");h.appendChild(a);});});</script>')
 ```
 
 <div class="homage-hero--letterbox" aria-hidden="true"></div>
@@ -46,7 +46,7 @@ cat('<script>document.addEventListener("DOMContentLoaded",function(){document.qu
 
 ## Anchors, links, and callouts {#anchors}
 
-Anchors ▣ appear on hover/focus at the right edge of H2/H3. Links use the family’s AA tone (e.g., [pkgdown docs](https://pkgdown.r-lib.org/)).
+Dash anchors appear on hover/focus at the right edge of H2/H3. Links use the family’s AA tone (e.g., [pkgdown docs](https://pkgdown.r-lib.org/)).
 
 > TIP: Keep callouts crisp; the A300 tint stays at ≈8%.
 
@@ -95,4 +95,3 @@ if (requireNamespace("gt", quietly = TRUE)) {
 - Getting started: `articles/getting-started.html`
 - Design notes: `articles/design-notes.html`
 - pkgdown docs: https://pkgdown.r-lib.org/
-

@@ -81,5 +81,5 @@ Choosing a palette family per page
 
 <!-- albersdown:theme-note:start -->
 ## Albers theme
-This package uses the albersdown theme. Existing vignette theme hooks are replaced so `albers.css` and local `albers.js` render consistently on CRAN and GitHub Pages. The palette family is provided via `params$family` (default 'red'). The pkgdown site uses `template: { package: albersdown }`.
+This package uses the albersdown theme. Existing vignette theme hooks are replaced so `albers.css` and local `albers.js` render consistently on CRAN and GitHub Pages. The palette family is provided via `params$family` (default 'lapis'). The pkgdown site uses `template: { package: albersdown }`.
 <!-- albersdown:theme-note:end -->

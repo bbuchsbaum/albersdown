@@ -41,7 +41,11 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">gt_albers</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
 <span>  family <span class="op">=</span> <span class="st">"red"</span>,</span>
-<span>  preset <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"homage"</span>, <span class="st">"study"</span>, <span class="st">"structural"</span>, <span class="st">"adobe"</span>, <span class="st">"midnight"</span><span class="op">)</span></span>
+<span>  preset <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"homage"</span>, <span class="st">"study"</span>, <span class="st">"structural"</span>, <span class="st">"adobe"</span>, <span class="st">"midnight"</span><span class="op">)</span>,</span>
+<span>  base_size <span class="op">=</span> <span class="fl">14</span>,</span>
+<span>  width <span class="op">=</span> <span class="fl">720</span>,</span>
+<span>  bg <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  fg <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -59,6 +63,22 @@
 
 <dt id="arg-preset">preset<a class="anchor" aria-label="anchor" href="#arg-preset"></a></dt>
 <dd><p>Visual preset (default <code>"homage"</code>). See <code><a href="albers_presets.html">albers_presets()</a></code>.</p></dd>
+
+
+<dt id="arg-base-size">base_size<a class="anchor" aria-label="anchor" href="#arg-base-size"></a></dt>
+<dd><p>Base font size in pixels (default 14).</p></dd>
+
+
+<dt id="arg-width">width<a class="anchor" aria-label="anchor" href="#arg-width"></a></dt>
+<dd><p>Table width in pixels (default 720). Use <code>NULL</code> for auto.</p></dd>
+
+
+<dt id="arg-bg">bg<a class="anchor" aria-label="anchor" href="#arg-bg"></a></dt>
+<dd><p>Override background color (default derived from preset).</p></dd>
+
+
+<dt id="arg-fg">fg<a class="anchor" aria-label="anchor" href="#arg-fg"></a></dt>
+<dd><p>Override text color (default derived from preset).</p></dd>
 
 </dl></div>
 

@@ -1,5 +1,4 @@
 url: https://bbuchsbaum.github.io/albersdown/
-
 template:
   package: albersdown
   bootstrap: 5

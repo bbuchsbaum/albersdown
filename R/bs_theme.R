@@ -26,9 +26,25 @@ albers_bs_theme <- function(
 
   bslib::bs_theme(
     version = 5,
-    bg = bg, fg = fg, primary = accent, secondary = colors$muted,
-    base_font = bslib::font_collection("system-ui"),
-    heading_font = bslib::font_collection("system-ui"),
-    code_font = bslib::font_collection("ui-monospace")
+    bg = bg,
+    fg = fg,
+    primary = accent,
+    secondary = colors$muted,
+    base_font = bslib::font_collection("Avenir Next", "Gill Sans", "system-ui"),
+    heading_font = bslib::font_collection("Avenir Next", "Gill Sans", "system-ui"),
+    code_font = bslib::font_collection(
+      "ui-monospace", "SFMono-Regular", "Menlo", "Consolas", "monospace"
+    ),
+    `enable-rounded` = FALSE,
+    `enable-shadows` = FALSE,
+    `border-radius` = "0",
+    `border-radius-sm` = "0",
+    `border-radius-lg` = "0",
+    `headings-font-weight` = 700,
+    `font-size-base` = "1.05rem",
+    `body-secondary-color` = colors$muted,
+    `body-tertiary-bg` = colors$surface,
+    `border-color` = colors$border,
+    `code-bg` = colors$code_bg
   )
 }

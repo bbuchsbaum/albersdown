@@ -7,7 +7,11 @@
 gt_albers(
   x,
   family = "red",
-  preset = c("homage", "study", "structural", "adobe", "midnight")
+  preset = c("homage", "study", "structural", "adobe", "midnight"),
+  base_size = 14,
+  width = 720,
+  bg = NULL,
+  fg = NULL
 )
 }
 \arguments{
@@ -16,6 +20,14 @@ gt_albers(
 \item{family}{Palette family for subtle accents}
 
 \item{preset}{Visual preset (default \code{"homage"}). See \code{\link[=albers_presets]{albers_presets()}}.}
+
+\item{base_size}{Base font size in pixels (default 14).}
+
+\item{width}{Table width in pixels (default 720). Use \code{NULL} for auto.}
+
+\item{bg}{Override background color (default derived from preset).}
+
+\item{fg}{Override text color (default derived from preset).}
 }
 \description{
 Quiet, legible gt style with subtle stripe from A300

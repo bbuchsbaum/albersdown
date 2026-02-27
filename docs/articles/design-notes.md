@@ -3,9 +3,9 @@
 ## Overview
 
 - One family per page (A900/A700/A500/A300 → roles)
-- Links + focus use AA tones; anchors show ▣ on hover
-- Callouts and tables use quiet A300 tints; code blocks are flat with a
-  small corner square
+- Links + focus use AA tones; anchors reveal a typographic dash on hover
+- Callouts and tables use quiet A300 tints; code blocks use a structural
+  left ribbon
 
 ## Palette families and roles
 
@@ -14,7 +14,7 @@ four tones:
 
 - A900: links and focus in light mode; strongest contrast
 - A700: highlights (one series per plot); nav active marker
-- A500: borders, anchors (▣), code-corner square, hr notch
+- A500: borders, dash anchors, code ribbons, structural rules
 - A300: tints for callouts and table stripe; links/focus in dark mode
 
 ## Image-derived palettes
@@ -57,7 +57,11 @@ scales to emphasize contrasts.
 ## Links, anchors, and rhythm
 
 Links and focus rings always meet AA. Move the cursor over H2/H3 to
-reveal the square anchor glyph ▣.
+reveal the structural dash anchor.
+
+Style modes - `style: minimal` (default): lighter rules and quieter dash
+language. - `style: balanced`: the calibrated middle ground. -
+`style: assertive`: stronger edges and more emphatic structural marks.
 
 ## Callouts and code blocks
 
@@ -70,8 +74,8 @@ foo <- function(x) if (length(x) == 0) NA_real_ else mean(x)
 foo(c(1, 2, 3))
 ```
 
-The code fence has no drop shadow and includes a small A500 square in
-the top-left corner—a minimal homage.
+The code fence stays flat: no drop shadow, with an A500 left ribbon and
+a compact copy control.
 
 ## Tables
 
