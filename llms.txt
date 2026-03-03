@@ -1,0 +1,163 @@
+# albersdown
+
+Minimalist theme and vignette kit for pkgdown and R Markdown.
+
+- One line to theme pkgdown sites via a template package.
+- Vignettes ship with local CSS for CRAN-friendly offline builds.
+- Helper functions for ggplot2 and gt align plots/tables with the house
+  style.
+
+## Install (template package)
+
+This package is meant to live on GitHub and be pinned by consumers.
+
+Install with pak: pak::pak(“bbuchsbaum/albersdown”).
+
+## Use in a consuming package
+
+1.  pkgdown site theme
+
+\_pkgdown.yml:
+
+template: package: albersdown
+
+DESCRIPTION:
+
+Config/Needs/website: bbuchsbaum/albersdown
+
+2.  Vignettes (offline & styled)
+
+Create a new vignette using the “Albers Vignette” template (or run
+albersdown::use_albers_vignettes()). The skeleton includes:
+
+output: rmarkdown::html_vignette css: albers.css
+
+In the setup chunk:
+
+library(ggplot2) theme_set(albersdown::theme_albers(params\$family,
+base_size = 13))
+
+3.  Retrofit an existing package (replace prior theming)
+
+albersdown::use_albersdown( family = “red”, apply_to = “all”,
+force_replace = TRUE )
+
+Team one-liner (same defaults as above):
+
+albersdown::migrate_albersdown()
+
+## Helpers
+
+- theme_albers(family = “red”)
+- scale_color_albers(family = “red”, discrete = TRUE, …)
+- scale_fill_albers(family = “red”, discrete = TRUE, …)
+- scale_color_albers_highlight(family = “red”, tone = “A700”, other =
+  “#9aa0a6”)
+- scale_fill_albers_highlight(family = “red”, tone = “A700”, other =
+  “#9aa0a6”)
+- gt_albers(x, family = “red”)
+
+## Notes
+
+- Keep vignette CSS local to satisfy CRAN’s no-network rule.
+- Pin a release tag in Config/Needs/website for deterministic site
+  builds.
+
+## Choosing a palette family per page
+
+- Families: red, lapis, ochre, teal, green, violet.
+- In YAML, add: params: family: “red”
+- In setup, call: theme_set(albersdown::theme_albers(params\$family))
+- If plot text feels small, increase `base_size` (e.g., 13–14):
+  `theme_set(albersdown::theme_albers(params$family, base_size = 14))`
+- Add body class so CSS tokens switch by family: cat(sprintf(’
+  ’, params\$family))
+
+## Albers theme
+
+This package uses the albersdown theme. Existing vignette theme hooks
+are replaced so `albers.css` and local `albers.js` render consistently
+on CRAN and GitHub Pages. The palette family is provided via
+`params$family` (default ‘lapis’). The pkgdown site uses
+`template: { package: albersdown }`.
+
+# Package index
+
+## All functions
+
+- [`albers_bs_theme()`](https://bbuchsbaum.github.io/albersdown/reference/albers_bs_theme.md)
+  : bs_theme for pkgdown (light/dark aware)
+- [`albers_palette()`](https://bbuchsbaum.github.io/albersdown/reference/albers_palette.md)
+  : Return four-tone Homage family by name
+- [`albers_palette_img()`](https://bbuchsbaum.github.io/albersdown/reference/albers_palette_img.md)
+  : Image-derived Homage palettes (A900 -\> A300)
+- [`albers_presets()`](https://bbuchsbaum.github.io/albersdown/reference/albers_presets.md)
+  : List available Albers presets
+- [`albers_ramp()`](https://bbuchsbaum.github.io/albersdown/reference/albers_ramp.md)
+  : Interpolate n colors along a palette family gradient
+- [`albers_swatch()`](https://bbuchsbaum.github.io/albersdown/reference/albers_swatch.md)
+  : Visual swatch of Albers palette families and presets
+- [`gt_albers()`](https://bbuchsbaum.github.io/albersdown/reference/gt_albers.md)
+  : Quiet, legible gt style with subtle stripe from A300
+- [`migrate_albersdown()`](https://bbuchsbaum.github.io/albersdown/reference/migrate_albersdown.md)
+  : One-command migration to latest albersdown
+- [`scale_color_albers()`](https://bbuchsbaum.github.io/albersdown/reference/scale_color_albers.md)
+  [`scale_fill_albers()`](https://bbuchsbaum.github.io/albersdown/reference/scale_color_albers.md)
+  : Scales that use the family's tones (discrete/continuous)
+- [`scale_color_albers_distinct()`](https://bbuchsbaum.github.io/albersdown/reference/scale_color_albers_distinct.md)
+  : Distinct, colorblind-friendly line palette across families
+- [`scale_color_albers_diverging()`](https://bbuchsbaum.github.io/albersdown/reference/scale_color_albers_diverging.md)
+  : Diverging color scale (continuous)
+- [`scale_color_albers_diverging_n()`](https://bbuchsbaum.github.io/albersdown/reference/scale_color_albers_diverging_n.md)
+  : Diverging color scale with multiple stops (continuous)
+- [`scale_color_albers_highlight()`](https://bbuchsbaum.github.io/albersdown/reference/scale_color_albers_highlight.md)
+  : Convenience scale: highlight vs other (color)
+- [`scale_color_albers_img()`](https://bbuchsbaum.github.io/albersdown/reference/scale_color_albers_img.md)
+  [`scale_fill_albers_img()`](https://bbuchsbaum.github.io/albersdown/reference/scale_color_albers_img.md)
+  : Image-derived sequential color scale
+- [`scale_color_albers_img_diverging()`](https://bbuchsbaum.github.io/albersdown/reference/scale_color_albers_img_diverging.md)
+  : Image-derived diverging color scale (gradientn)
+- [`scale_color_albers_img_red_teal()`](https://bbuchsbaum.github.io/albersdown/reference/scale_color_albers_img_red_teal.md)
+  [`scale_color_albers_img_lapis_ochre()`](https://bbuchsbaum.github.io/albersdown/reference/scale_color_albers_img_red_teal.md)
+  [`scale_color_albers_img_green_red()`](https://bbuchsbaum.github.io/albersdown/reference/scale_color_albers_img_red_teal.md)
+  [`scale_fill_albers_img_red_teal()`](https://bbuchsbaum.github.io/albersdown/reference/scale_color_albers_img_red_teal.md)
+  [`scale_fill_albers_img_lapis_ochre()`](https://bbuchsbaum.github.io/albersdown/reference/scale_color_albers_img_red_teal.md)
+  [`scale_fill_albers_img_green_red()`](https://bbuchsbaum.github.io/albersdown/reference/scale_color_albers_img_red_teal.md)
+  : Pre-canned image-derived diverging pairs
+- [`scale_fill_albers_distinct()`](https://bbuchsbaum.github.io/albersdown/reference/scale_fill_albers_distinct.md)
+  : Distinct, colorblind-friendly fill palette across families
+- [`scale_fill_albers_diverging()`](https://bbuchsbaum.github.io/albersdown/reference/scale_fill_albers_diverging.md)
+  : Diverging fill scale (continuous)
+- [`scale_fill_albers_diverging_5()`](https://bbuchsbaum.github.io/albersdown/reference/scale_fill_albers_diverging_5.md)
+  [`scale_color_albers_diverging_5()`](https://bbuchsbaum.github.io/albersdown/reference/scale_fill_albers_diverging_5.md)
+  : 5-class diverging (discrete)
+- [`scale_fill_albers_diverging_n()`](https://bbuchsbaum.github.io/albersdown/reference/scale_fill_albers_diverging_n.md)
+  : Diverging fill scale with multiple stops (continuous)
+- [`scale_fill_albers_highlight()`](https://bbuchsbaum.github.io/albersdown/reference/scale_fill_albers_highlight.md)
+  : Convenience scale: highlight vs other (fill)
+- [`scale_fill_albers_img_diverging()`](https://bbuchsbaum.github.io/albersdown/reference/scale_fill_albers_img_diverging.md)
+  : Image-derived diverging fill scale (gradientn)
+- [`scale_linetype_albers()`](https://bbuchsbaum.github.io/albersdown/reference/scale_linetype_albers.md)
+  : Discrete linetype scale to pair with Albers colors
+- [`theme_albers()`](https://bbuchsbaum.github.io/albersdown/reference/theme_albers.md)
+  : Minimal, legible plot theme inspired by Josef Albers
+- [`theme_albers_void()`](https://bbuchsbaum.github.io/albersdown/reference/theme_albers_void.md)
+  : Stripped theme for maps, brain surfaces, and abstract compositions
+- [`use_albers_vignettes()`](https://bbuchsbaum.github.io/albersdown/reference/use_albers_vignettes.md)
+  : Configure current package to use albersdown (back-compat wrapper)
+- [`use_albersdown()`](https://bbuchsbaum.github.io/albersdown/reference/use_albersdown.md)
+  : One-shot setup for existing packages
+
+# Articles
+
+### Vignettes
+
+- [Albersdown: Getting
+  started](https://bbuchsbaum.github.io/albersdown/articles/getting-started.md):
+
+  Theme + vignette kit demonstration
+
+- [Design notes: Homage
+  system](https://bbuchsbaum.github.io/albersdown/articles/design-notes.md):
+
+  Visual tokens, palette families, and component rules for albersdown.
