@@ -18,6 +18,9 @@ scale_fill_albers_diverging_n(
 
 \item{...}{passed to ggplot2::scale_color_gradient2()}
 }
+\value{
+A \code{ggplot2} scale object.
+}
 \description{
 Diverging fill scale with multiple stops (continuous)
 }

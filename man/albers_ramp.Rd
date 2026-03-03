@@ -21,3 +21,6 @@ Uses \code{\link[grDevices]{colorRampPalette}} to interpolate between the
 four tones of a family (A900 \enc{→}{->} A300), producing an arbitrary
 number of evenly spaced colors.
 }
+\examples{
+albers_ramp("lapis", n = 5)
+}

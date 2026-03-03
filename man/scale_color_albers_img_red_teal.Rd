@@ -26,6 +26,9 @@ scale_fill_albers_img_green_red(neutral = "#E4E0D9", ...)
 
 \item{...}{Passed to the underlying gradientn scale}
 }
+\value{
+A \code{ggplot2} scale object.
+}
 \description{
 Pre-canned image-derived diverging pairs
 }

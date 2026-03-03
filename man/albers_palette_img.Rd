@@ -9,7 +9,13 @@ albers_palette_img(family = c("red", "lapis", "ochre", "teal", "green"))
 \arguments{
 \item{family}{One of "red","lapis","ochre","teal","green"}
 }
+\value{
+Named character vector of four hex colors (A900, A700, A500, A300).
+}
 \description{
 Four-tone families distilled from the uploaded grid; order is
 darkest to lightest (A900, A700, A500, A300).
+}
+\examples{
+albers_palette_img("red")
 }

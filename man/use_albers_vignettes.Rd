@@ -6,6 +6,16 @@
 \usage{
 use_albers_vignettes()
 }
+\value{
+\code{TRUE} invisibly.
+}
 \description{
 This wrapper preserves the old name and forwards to \code{use_albersdown()}.
+}
+\examples{
+\donttest{
+if (interactive()) {
+  use_albers_vignettes()
+}
+}
 }

@@ -9,6 +9,13 @@ albers_palette(family = c("red", "lapis", "ochre", "teal", "green", "violet"))
 \arguments{
 \item{family}{One of "red", "lapis", "ochre", "teal".}
 }
+\value{
+Named character vector of four hex colors (A900, A700, A500, A300).
+}
 \description{
 Return four-tone Homage family by name
+}
+\examples{
+albers_palette("red")
+albers_palette("lapis")
 }

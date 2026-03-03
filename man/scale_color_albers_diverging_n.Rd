@@ -18,6 +18,9 @@ scale_color_albers_diverging_n(
 
 \item{...}{passed to ggplot2::scale_color_gradient2()}
 }
+\value{
+A \code{ggplot2} scale object.
+}
 \description{
 Uses a 5-stop palette (low2, low1, neutral, high1, high2) for smoother
 transitions around the midpoint.

@@ -5,3 +5,11 @@
 ^\.DS_Store$
 ^examples$
 ^\.claude($|/)
+^\.omc($|/)
+^.*\.Rcheck$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+^repomix-output\.txt$
+^cran-comments\.md$
+^CRAN-SUBMISSION$

@@ -13,6 +13,9 @@ scale_fill_albers_distinct(n = NULL, tone = c("A700", "A900", "A500"), ...)
 
 \item{...}{Passed to \code{ggplot2::scale_fill_manual()}.}
 }
+\value{
+A \code{ggplot2} scale object.
+}
 \description{
 Uses one high-contrast tone (default A700) from different families
 to maximize separation between filled regions. Fill counterpart of

@@ -8,7 +8,14 @@
 #' @param accent Primary accent color (default A700 of the chosen family).
 #' @param bg Background color (default derived from preset).
 #' @param fg Foreground/text color (default derived from preset).
+#' @return A \code{bslib::bs_theme} object.
 #' @export
+#' @examples
+#' \donttest{
+#' if (requireNamespace("bslib", quietly = TRUE)) {
+#'   albers_bs_theme()
+#' }
+#' }
 albers_bs_theme <- function(
   family = "red",
   preset = c("homage", "study", "structural", "adobe", "midnight"),
@@ -16,6 +23,12 @@ albers_bs_theme <- function(
   bg = NULL,
   fg = NULL
 ) {
+
+  if (!requireNamespace("bslib", quietly = TRUE)) {
+    stop("Package 'bslib' is required for albers_bs_theme(). ",
+         "Install it with install.packages(\"bslib\").", call. = FALSE)
+  }
+
   preset <- match.arg(preset)
   pal <- albers_palette(family)
   colors <- .preset_colors(preset)

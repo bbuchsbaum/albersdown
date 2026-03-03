@@ -5,7 +5,14 @@
 #'
 #' @param family one of: "red","lapis","ochre","teal","green","violet"
 #' @param dry_run if TRUE, report changes without writing files.
+#' @return \code{TRUE} invisibly.
 #' @export
+#' @examples
+#' \donttest{
+#' if (interactive()) {
+#'   migrate_albersdown(dry_run = TRUE)
+#' }
+#' }
 migrate_albersdown <- function(family = "red", dry_run = FALSE) {
   use_albersdown(
     family = family,

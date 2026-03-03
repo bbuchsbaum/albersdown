@@ -9,6 +9,9 @@ scale_linetype_albers(...)
 \arguments{
 \item{...}{Passed to \code{ggplot2::scale_linetype_manual()}.}
 }
+\value{
+A \code{ggplot2} scale object.
+}
 \description{
 Provides a sensible set of linetypes for multi-series line charts.
 }

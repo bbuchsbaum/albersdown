@@ -30,6 +30,9 @@ scale_color_albers_diverging_5(
 
 \item{...}{Passed to \code{ggplot2::scale_fill_manual()} or \code{ggplot2::scale_color_manual()}.}
 }
+\value{
+A \code{ggplot2} scale object.
+}
 \description{
 Useful for binned choropleths or sliced residuals. The middle class uses
 the neutral color.

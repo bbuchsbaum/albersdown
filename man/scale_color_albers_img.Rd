@@ -16,6 +16,9 @@ scale_fill_albers_img(family = "red", discrete = TRUE, ...)
 
 \item{...}{Passed to underlying ggplot2 scale.}
 }
+\value{
+A \code{ggplot2} scale object.
+}
 \description{
 Image-derived sequential color scale
 }

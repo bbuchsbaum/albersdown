@@ -31,6 +31,17 @@ theme_albers(
 
 \item{grid_color}{Override grid line color (default derived from preset).}
 }
+\value{
+A \code{ggplot2} theme object.
+}
 \description{
 Minimal, legible plot theme inspired by Josef Albers
+}
+\examples{
+\donttest{
+if (requireNamespace("ggplot2", quietly = TRUE)) {
+  ggplot2::ggplot(mtcars, ggplot2::aes(wt, mpg)) +
+    ggplot2::geom_point() + theme_albers()
+}
+}
 }

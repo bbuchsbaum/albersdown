@@ -11,7 +11,17 @@ migrate_albersdown(family = "red", dry_run = FALSE)
 
 \item{dry_run}{if TRUE, report changes without writing files.}
 }
+\value{
+\code{TRUE} invisibly.
+}
 \description{
 Convenience helper for existing packages that already use albersdown and
 need to replace older vignette/site wiring with the latest defaults.
+}
+\examples{
+\donttest{
+if (interactive()) {
+  migrate_albersdown(dry_run = TRUE)
+}
+}
 }

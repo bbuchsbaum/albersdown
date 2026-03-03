@@ -13,8 +13,20 @@ scale_color_albers_distinct(n = NULL, tone = c("A700", "A900", "A500"), ...)
 
 \item{...}{Passed to \code{ggplot2::scale_color_manual()}.}
 }
+\value{
+A \code{ggplot2} scale object.
+}
 \description{
 Uses one high-contrast tone (default A700) from different families
 to maximize separation between lines. This departs from the
 single-family aesthetic but improves readability for multi-series lines.
+}
+\examples{
+\donttest{
+if (requireNamespace("ggplot2", quietly = TRUE)) {
+  df <- data.frame(x = 1:6, y = 1:6, g = paste0("G", 1:6))
+  ggplot2::ggplot(df, ggplot2::aes(x, y, color = g)) +
+    ggplot2::geom_point() + scale_color_albers_distinct()
+}
+}
 }

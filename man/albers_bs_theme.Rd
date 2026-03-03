@@ -23,7 +23,17 @@ albers_bs_theme(
 
 \item{fg}{Foreground/text color (default derived from preset).}
 }
+\value{
+A \code{bslib::bs_theme} object.
+}
 \description{
 Convenience wrapper exposing core variables; most consumers won't need this
 directly if they use \code{template: { package: albersdown }}.
+}
+\examples{
+\donttest{
+if (requireNamespace("bslib", quietly = TRUE)) {
+  albers_bs_theme()
+}
+}
 }

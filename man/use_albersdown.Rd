@@ -33,8 +33,18 @@ package does not use \code{template: { package: albersdown }} in \verb{_pkgdown.
 \item{force_replace}{if TRUE (default), overwrite existing albersdown assets and
 replace existing vignette CSS/header hooks so albersdown becomes the active theme.}
 }
+\value{
+\code{TRUE} invisibly.
+}
 \description{
 Turn-key retrofit to adopt the albersdown theme in an existing package.
 Copies local assets for CRAN-safe vignettes, ensures pkgdown template,
 optionally patches all vignettes, writes a README note, and prints a doctor report.
+}
+\examples{
+\donttest{
+if (interactive()) {
+  use_albersdown(dry_run = TRUE)
+}
+}
 }

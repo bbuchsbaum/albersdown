@@ -26,6 +26,9 @@ scale_color_albers_highlight(
 
 \item{...}{Passed to \code{ggplot2::scale_color_manual()}.}
 }
+\value{
+A \code{ggplot2} scale object.
+}
 \description{
 Returns a manual color scale mapping a single highlighted group to a
 family tone (default A700) and all other points to a neutral gray.

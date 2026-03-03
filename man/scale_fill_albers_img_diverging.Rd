@@ -20,6 +20,9 @@ scale_fill_albers_img_diverging(
 
 \item{...}{Passed to ggplot2::scale_fill_gradientn}
 }
+\value{
+A \code{ggplot2} scale object.
+}
 \description{
 Image-derived diverging fill scale (gradientn)
 }

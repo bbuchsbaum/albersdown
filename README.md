@@ -1,6 +1,11 @@
 albersdown
 ===============================
 
+<!-- badges: start -->
+[![R-CMD-check](https://github.com/bbuchsbaum/albersdown/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/bbuchsbaum/albersdown/actions/workflows/R-CMD-check.yaml)
+[![pkgdown](https://github.com/bbuchsbaum/albersdown/actions/workflows/pkgdown.yaml/badge.svg)](https://bbuchsbaum.github.io/albersdown/)
+<!-- badges: end -->
+
 Minimalist theme and vignette kit for pkgdown and R Markdown.
 
 - One line to theme pkgdown sites via a template package.
@@ -12,7 +17,7 @@ Install (template package)
 
 This package is meant to live on GitHub and be pinned by consumers.
 
-Install with pak: pak::pak("your-org/albersdown@v1.0.0").
+Install with pak: pak::pak("bbuchsbaum/albersdown").
 
 Use in a consuming package
 -------------------------
@@ -26,7 +31,7 @@ template:
 
 DESCRIPTION:
 
-Config/Needs/website: your-org/albersdown@v1.0.0
+Config/Needs/website: bbuchsbaum/albersdown
 
 2) Vignettes (offline & styled)
 

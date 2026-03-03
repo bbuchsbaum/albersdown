@@ -13,3 +13,6 @@ Character vector of preset names.
 Returns the names of the five built-in presets, each inspired by a
 different period or series in Josef Albers' work.
 }
+\examples{
+albers_presets()
+}

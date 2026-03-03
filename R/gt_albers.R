@@ -7,7 +7,15 @@
 #' @param width Table width in pixels (default 720). Use \code{NULL} for auto.
 #' @param bg Override background color (default derived from preset).
 #' @param fg Override text color (default derived from preset).
+#' @return A styled \code{gt} table object.
 #' @export
+#' @examples
+#' \donttest{
+#' if (requireNamespace("gt", quietly = TRUE)) {
+#'   tbl <- gt::gt(head(mtcars))
+#'   gt_albers(tbl)
+#' }
+#' }
 gt_albers <- function(
   x,
   family = "red",
@@ -17,6 +25,12 @@ gt_albers <- function(
   bg = NULL,
   fg = NULL
 ) {
+
+  if (!requireNamespace("gt", quietly = TRUE)) {
+    stop("Package 'gt' is required for gt_albers(). ",
+         "Install it with install.packages(\"gt\").", call. = FALSE)
+  }
+
   preset <- match.arg(preset)
   pal <- albers_palette(family)
   colors <- .preset_colors(preset)
@@ -49,9 +63,8 @@ gt_albers <- function(
       style = gt::cell_text(color = colors$muted),
       locations = gt::cells_title(groups = "subtitle")
     ) |>
-    gt::tab_style(
-      style = gt::cell_fill(color = stripe),
-      locations = gt::cells_body(rows = gt::odd())
+    gt::tab_options(
+      row.striping.background_color = stripe
     ) |>
     gt::tab_style(
       style = list(gt::cell_borders(

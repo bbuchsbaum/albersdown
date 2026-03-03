@@ -16,6 +16,17 @@ scale_fill_albers(family = "red", discrete = TRUE, ...)
 
 \item{...}{Passed to underlying \code{ggplot2} scale.}
 }
+\value{
+A \code{ggplot2} scale object.
+}
 \description{
 Scales that use the family's tones (discrete/continuous)
+}
+\examples{
+\donttest{
+if (requireNamespace("ggplot2", quietly = TRUE)) {
+  ggplot2::ggplot(iris, ggplot2::aes(Sepal.Length, Sepal.Width,
+    color = Species)) + ggplot2::geom_point() + scale_color_albers()
+}
+}
 }

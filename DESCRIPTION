@@ -1,18 +1,24 @@
 Package: albersdown
 Type: Package
-Title: Minimalist Theme and Vignette Kit for pkgdown and R Markdown
+Title: Minimalist Theme and Vignette Kit for 'pkgdown' and R Markdown
 Version: 1.0.0
-Authors@R: c(person(given = "Albersdown", family = "Authors", role = c("aut","cre"),
-    email = "you@example.com"))
-Description: A lightweight template package that standardizes pkgdown theming
-    and provides an R Markdown vignette skeleton with local CSS, plus helper
-    functions for ggplot2 and gt. Designed to be CRAN-friendly and easy to roll
-    out across multiple packages.
-URL: https://bbuchsbaum.github.io/albersdown/
+Authors@R: c(person(given = "Bradley R.", family = "Buchsbaum", role = c("aut","cre"),
+    email = "brad.buchsbaum@gmail.com"))
+Description: Provides a minimalist 'ggplot2' theme, colour scales, and
+    'pkgdown' template built around a curated colour palette system.
+    Includes helpers to apply consistent theming to 'ggplot2' plots, 'gt'
+    tables, and 'bslib' Bootstrap 5 sites, along with one-command setup
+    functions for adopting the style across an R package.
+URL: https://github.com/bbuchsbaum/albersdown,
+    https://bbuchsbaum.github.io/albersdown/
+BugReports: https://github.com/bbuchsbaum/albersdown/issues
 Depends: R (>= 4.1)
 Imports:
+    grDevices,
+    grid,
+    stats,
+    ggplot2
 Suggests:
-    ggplot2,
     gt,
     bslib,
     usethis,
@@ -25,7 +31,6 @@ Suggests:
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
-LazyData: true
 VignetteBuilder: knitr
 Config/Needs/website: albersdown
 License: MIT + file LICENSE

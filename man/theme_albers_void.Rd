@@ -28,6 +28,9 @@ theme_albers_void(
 
 \item{fg}{Override foreground/text color (default derived from preset).}
 }
+\value{
+A \code{ggplot2} theme object.
+}
 \description{
 Extends \code{\link{theme_albers}} by removing axes, grid lines, ticks,
 and panel border -- leaving only the plot background, titles, and legend.

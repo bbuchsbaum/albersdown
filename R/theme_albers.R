@@ -1,7 +1,11 @@
 #' Return four-tone Homage family by name
 #'
 #' @param family One of "red", "lapis", "ochre", "teal".
+#' @return Named character vector of four hex colors (A900, A700, A500, A300).
 #' @export
+#' @examples
+#' albers_palette("red")
+#' albers_palette("lapis")
 albers_palette <- function(family = c("red","lapis","ochre","teal","green","violet")) {
   family <- match.arg(family)
   switch(family,
@@ -68,6 +72,8 @@ albers_palette <- function(family = c("red","lapis","ochre","teal","green","viol
 #'
 #' @return Character vector of preset names.
 #' @export
+#' @examples
+#' albers_presets()
 albers_presets <- function() {
   c("homage", "study", "structural", "adobe", "midnight")
 }
@@ -83,7 +89,15 @@ albers_presets <- function() {
 #' @param bg Override background color (default derived from preset).
 #' @param fg Override foreground/text color (default derived from preset).
 #' @param grid_color Override grid line color (default derived from preset).
+#' @return A \code{ggplot2} theme object.
 #' @export
+#' @examples
+#' \donttest{
+#' if (requireNamespace("ggplot2", quietly = TRUE)) {
+#'   ggplot2::ggplot(mtcars, ggplot2::aes(wt, mpg)) +
+#'     ggplot2::geom_point() + theme_albers()
+#' }
+#' }
 theme_albers <- function(
   family = "red",
   preset = c("homage", "study", "structural", "adobe", "midnight"),
@@ -161,7 +175,15 @@ theme_albers <- function(
 #' @param family Palette family.
 #' @param discrete Whether to use a discrete palette; if FALSE, uses a gradient.
 #' @param ... Passed to underlying `ggplot2` scale.
+#' @return A \code{ggplot2} scale object.
 #' @export
+#' @examples
+#' \donttest{
+#' if (requireNamespace("ggplot2", quietly = TRUE)) {
+#'   ggplot2::ggplot(iris, ggplot2::aes(Sepal.Length, Sepal.Width,
+#'     color = Species)) + ggplot2::geom_point() + scale_color_albers()
+#' }
+#' }
 scale_color_albers <- function(family = "red", discrete = TRUE, ...) {
   pal <- albers_palette(family)
   if (discrete) ggplot2::scale_color_manual(values = unname(pal[c("A900","A700","A500","A300")]), ...)
@@ -185,7 +207,16 @@ scale_fill_albers <- function(family = "red", discrete = TRUE, ...) {
 #' @param n Number of colors needed; defaults to length of available families (6).
 #' @param tone One of "A700", "A900", or "A500".
 #' @param ... Passed to `ggplot2::scale_color_manual()`.
+#' @return A \code{ggplot2} scale object.
 #' @export
+#' @examples
+#' \donttest{
+#' if (requireNamespace("ggplot2", quietly = TRUE)) {
+#'   df <- data.frame(x = 1:6, y = 1:6, g = paste0("G", 1:6))
+#'   ggplot2::ggplot(df, ggplot2::aes(x, y, color = g)) +
+#'     ggplot2::geom_point() + scale_color_albers_distinct()
+#' }
+#' }
 scale_color_albers_distinct <- function(n = NULL, tone = c("A700", "A900", "A500"), ...) {
   tone <- match.arg(tone)
   families <- c("red","teal","lapis","ochre","green","violet")
@@ -198,6 +229,7 @@ scale_color_albers_distinct <- function(n = NULL, tone = c("A700", "A900", "A500
 #'
 #' Provides a sensible set of linetypes for multi-series line charts.
 #' @param ... Passed to `ggplot2::scale_linetype_manual()`.
+#' @return A \code{ggplot2} scale object.
 #' @export
 scale_linetype_albers <- function(...) {
   ggplot2::scale_linetype_manual(values = c("solid","dashed","dotdash","dotted","longdash","twodash"), ...)
@@ -248,6 +280,7 @@ albers_diverging_spec <- function(
 #' @param midpoint numeric midpoint for the diverging scale (default 0)
 #' @param neutral hex color for the midpoint (default matches CSS border)
 #' @param ... passed to ggplot2::scale_color_gradient2()
+#' @return A \code{ggplot2} scale object.
 #' @export
 scale_color_albers_diverging <- function(
   low_family  = "red",
@@ -267,6 +300,7 @@ scale_color_albers_diverging <- function(
 #' Diverging fill scale (continuous)
 #'
 #' @inheritParams scale_color_albers_diverging
+#' @return A \code{ggplot2} scale object.
 #' @export
 scale_fill_albers_diverging <- function(
   low_family  = "red",
@@ -289,6 +323,7 @@ scale_fill_albers_diverging <- function(
 #' transitions around the midpoint.
 #'
 #' @inheritParams scale_color_albers_diverging
+#' @return A \code{ggplot2} scale object.
 #' @export
 scale_color_albers_diverging_n <- function(
   low_family  = "red",
@@ -303,6 +338,7 @@ scale_color_albers_diverging_n <- function(
 #' Diverging fill scale with multiple stops (continuous)
 #'
 #' @inheritParams scale_color_albers_diverging_n
+#' @return A \code{ggplot2} scale object.
 #' @export
 scale_fill_albers_diverging_n <- function(
   low_family  = "red",
@@ -322,6 +358,7 @@ scale_fill_albers_diverging_n <- function(
 #' @inheritParams scale_color_albers_diverging
 #' @param labels Optional labels for the five classes (low2, low1, mid, high1, high2)
 #' @param ... Passed to `ggplot2::scale_fill_manual()` or `ggplot2::scale_color_manual()`.
+#' @return A \code{ggplot2} scale object.
 #' @export
 scale_fill_albers_diverging_5 <- function(
   low_family  = "red",
@@ -362,6 +399,7 @@ scale_color_albers_diverging_5 <- function(
 #' @param highlight Name of the value that should receive the highlight color.
 #' @param other_name Name of the value that should receive the neutral color.
 #' @param ... Passed to `ggplot2::scale_color_manual()`.
+#' @return A \code{ggplot2} scale object.
 #' @export
 scale_color_albers_highlight <- function(
   family = "red",
@@ -380,6 +418,7 @@ scale_color_albers_highlight <- function(
 #' Convenience scale: highlight vs other (fill)
 #'
 #' @inheritParams scale_color_albers_highlight
+#' @return A \code{ggplot2} scale object.
 #' @export
 scale_fill_albers_highlight <- function(
   family = "red",
@@ -403,6 +442,7 @@ scale_fill_albers_highlight <- function(
 #'
 #' @inheritParams scale_color_albers_distinct
 #' @param ... Passed to \code{ggplot2::scale_fill_manual()}.
+#' @return A \code{ggplot2} scale object.
 #' @export
 scale_fill_albers_distinct <- function(n = NULL, tone = c("A700", "A900", "A500"), ...) {
   tone <- match.arg(tone)
@@ -419,6 +459,7 @@ scale_fill_albers_distinct <- function(n = NULL, tone = c("A700", "A900", "A500"
 #' Useful for spatial visualizations where coordinate axes are meaningless.
 #'
 #' @inheritParams theme_albers
+#' @return A \code{ggplot2} theme object.
 #' @export
 theme_albers_void <- function(
   family = "red",
@@ -455,6 +496,8 @@ theme_albers_void <- function(
 #' @param reverse If \code{TRUE}, return colors from light to dark.
 #' @return Character vector of \code{n} hex colors.
 #' @export
+#' @examples
+#' albers_ramp("lapis", n = 5)
 albers_ramp <- function(family = "red", n = 9, reverse = FALSE) {
   pal <- albers_palette(family)
   ramp <- grDevices::colorRampPalette(unname(pal))
@@ -474,6 +517,12 @@ albers_ramp <- function(family = "red", n = 9, reverse = FALSE) {
 #'   below the palette tones. Defaults to \code{FALSE}.
 #' @return A \code{ggplot} object.
 #' @export
+#' @examples
+#' \donttest{
+#' if (requireNamespace("ggplot2", quietly = TRUE)) {
+#'   albers_swatch()
+#' }
+#' }
 albers_swatch <- function(
   families = c("red", "lapis", "ochre", "teal", "green", "violet"),
   show_presets = FALSE

@@ -29,6 +29,17 @@ gt_albers(
 
 \item{fg}{Override text color (default derived from preset).}
 }
+\value{
+A styled \code{gt} table object.
+}
 \description{
 Quiet, legible gt style with subtle stripe from A300
+}
+\examples{
+\donttest{
+if (requireNamespace("gt", quietly = TRUE)) {
+  tbl <- gt::gt(head(mtcars))
+  gt_albers(tbl)
+}
+}
 }

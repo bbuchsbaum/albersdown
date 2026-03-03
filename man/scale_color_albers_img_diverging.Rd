@@ -20,6 +20,9 @@ scale_color_albers_img_diverging(
 
 \item{...}{Passed to ggplot2::scale_color_gradientn}
 }
+\value{
+A \code{ggplot2} scale object.
+}
 \description{
 Image-derived diverging color scale (gradientn)
 }

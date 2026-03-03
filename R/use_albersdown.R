@@ -15,7 +15,14 @@
 #'   - "never": never copy site-wide fallbacks.
 #' @param force_replace if TRUE (default), overwrite existing albersdown assets and
 #'   replace existing vignette CSS/header hooks so albersdown becomes the active theme.
+#' @return \code{TRUE} invisibly.
 #' @export
+#' @examples
+#' \donttest{
+#' if (interactive()) {
+#'   use_albersdown(dry_run = TRUE)
+#' }
+#' }
 use_albersdown <- function(
   family = "red",
   preset = c("homage", "study", "structural", "adobe", "midnight"),

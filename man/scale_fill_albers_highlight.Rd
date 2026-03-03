@@ -26,6 +26,9 @@ scale_fill_albers_highlight(
 
 \item{...}{Passed to \code{ggplot2::scale_color_manual()}.}
 }
+\value{
+A \code{ggplot2} scale object.
+}
 \description{
 Convenience scale: highlight vs other (fill)
 }

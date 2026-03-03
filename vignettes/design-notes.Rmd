@@ -14,7 +14,9 @@ params:
   content_width: 80
   style: minimal
 vignette: |
-  %\VignetteIndexEntry{Design notes: Homage system} %\VignetteEngine{knitr::rmarkdown} %\VignetteEncoding{UTF-8}
+  %\VignetteIndexEntry{Design notes: Homage system}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 css: albers.css
 resource_files:
 - albers.css

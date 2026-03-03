@@ -24,3 +24,10 @@ Draws a tile plot showing the four tones of each palette family, optionally
 faceted by preset ground colors. Useful for quickly previewing the design
 system in a notebook or presentation.
 }
+\examples{
+\donttest{
+if (requireNamespace("ggplot2", quietly = TRUE)) {
+  albers_swatch()
+}
+}
+}

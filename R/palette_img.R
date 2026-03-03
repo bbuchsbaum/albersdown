@@ -6,7 +6,10 @@
 #' darkest to lightest (A900, A700, A500, A300).
 #'
 #' @param family One of "red","lapis","ochre","teal","green"
+#' @return Named character vector of four hex colors (A900, A700, A500, A300).
 #' @export
+#' @examples
+#' albers_palette_img("red")
 albers_palette_img <- function(family = c("red","lapis","ochre","teal","green")) {
   family <- match.arg(family)
   switch(
@@ -24,6 +27,7 @@ albers_palette_img <- function(family = c("red","lapis","ochre","teal","green"))
 #' @inheritParams albers_palette_img
 #' @param discrete Whether to use discrete palette; if FALSE uses a gradient.
 #' @param ... Passed to underlying ggplot2 scale.
+#' @return A \code{ggplot2} scale object.
 #' @export
 scale_color_albers_img <- function(family = "red", discrete = TRUE, ...) {
   pal <- albers_palette_img(family)
@@ -57,6 +61,7 @@ albers_diverging_img <- function(low_family, high_family, neutral = "#E4E0D9") {
 #'
 #' @inheritParams albers_diverging_img
 #' @param ... Passed to ggplot2::scale_color_gradientn
+#' @return A \code{ggplot2} scale object.
 #' @export
 scale_color_albers_img_diverging <- function(low_family, high_family, neutral = "#E4E0D9", ...) {
   sp <- albers_diverging_img(low_family, high_family, neutral)
@@ -67,6 +72,7 @@ scale_color_albers_img_diverging <- function(low_family, high_family, neutral = 
 #'
 #' @inheritParams scale_color_albers_img_diverging
 #' @param ... Passed to ggplot2::scale_fill_gradientn
+#' @return A \code{ggplot2} scale object.
 #' @export
 scale_fill_albers_img_diverging <- function(low_family, high_family, neutral = "#E4E0D9", ...) {
   sp <- albers_diverging_img(low_family, high_family, neutral)
@@ -77,6 +83,7 @@ scale_fill_albers_img_diverging <- function(low_family, high_family, neutral = "
 #'
 #' @param neutral Midpoint color (default from image); use "#e5e7eb" to match site CSS
 #' @param ... Passed to the underlying gradientn scale
+#' @return A \code{ggplot2} scale object.
 #' @export
 scale_color_albers_img_red_teal <- function(neutral = "#E4E0D9", ...) {
   scale_color_albers_img_diverging("red", "teal", neutral, ...)

@@ -10,7 +10,9 @@ params:
   family: red
   preset: midnight
 vignette: |
-  %\VignetteIndexEntry{Albersdown: Getting started} %\VignetteEngine{knitr::rmarkdown} %\VignetteEncoding{UTF-8}
+  %\VignetteIndexEntry{Albersdown: Getting started}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 css: albers.css
 resource_files:
 - albers.css
