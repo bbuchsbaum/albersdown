@@ -8,6 +8,7 @@ output:
     toc_depth: 2
 params:
   family: "red"   # choices: red, lapis, ochre, teal, green, violet
+  preset: "study" # choices: study, structural, adobe, midnight
   base_size: 13
   content_width: 80   # in ch units
   style: "minimal"    # choices: minimal (default), balanced, assertive
@@ -30,12 +31,20 @@ set.seed(123); options(pillar.sigfig = 7, width = 80)
 `%||%` <- function(a, b) if (is.null(a)) b else a
 library(ggplot2)
 if (requireNamespace("ggplot2", quietly = TRUE) && requireNamespace("albersdown", quietly = TRUE)) {
-  ggplot2::theme_set(albersdown::theme_albers(params$family, base_size = params$base_size))
+  ggplot2::theme_set(albersdown::theme_albers(
+    family = params$family,
+    preset = params$preset,
+    base_size = params$base_size
+  ))
 }
 ```
 
 ```{r albers-family, echo=FALSE, results='asis'}
 cat(sprintf('<script>document.addEventListener("DOMContentLoaded",function(){document.body.classList.add("palette-%s");});</script>', params$family))
+```
+
+```{r albers-preset, echo=FALSE, results='asis'}
+cat(sprintf('<script>document.addEventListener("DOMContentLoaded",function(){document.body.classList.add("preset-%s");});</script>', params$preset))
 ```
 
 ```{r albers-style, echo=FALSE, results='asis'}
@@ -56,6 +65,7 @@ cat(sprintf('<style>:root{--content:%sch}</style>', params$content_width))
 
 <!-- Optional Albers hero tile and structural ribbon rule -->
 <div class="homage-hero" aria-hidden="true"></div>
+<div class="albers-composition" data-seed="template-vignette" data-density="6" aria-hidden="true"></div>
 <div class="hr-notch" role="presentation"></div>
 
 ```{r anchors, echo=FALSE, results='asis'}

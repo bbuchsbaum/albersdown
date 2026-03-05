@@ -8,7 +8,7 @@ output:
     toc_depth: 2
 params:
   family: red
-  preset: midnight
+  preset: study
 vignette: |
   %\VignetteIndexEntry{Albersdown: Getting started}
   %\VignetteEngine{knitr::rmarkdown}
@@ -20,7 +20,6 @@ resource_files:
 includes:
   in_header: |-
     <script src="albers.js"></script>
-    <script>document.addEventListener('DOMContentLoaded',function(){document.body.classList.add('palette-lapis','preset-midnight');});</script>
 
 ---
 
@@ -32,7 +31,10 @@ knitr::opts_chunk$set(
 set.seed(123); options(pillar.sigfig = 7, width = 80)
 library(ggplot2)
 if (requireNamespace("albersdown", quietly = TRUE)) {
-  ggplot2::theme_set(albersdown::theme_albers(params$family))
+  ggplot2::theme_set(albersdown::theme_albers(
+    family = params$family,
+    preset = params$preset
+  ))
 }
 ```
 
@@ -40,9 +42,26 @@ if (requireNamespace("albersdown", quietly = TRUE)) {
 cat(sprintf('<script>document.addEventListener("DOMContentLoaded",function(){document.body.classList.add("palette-%s");});</script>', params$family))
 ```
 
+```{r albers-preset, echo=FALSE, results='asis'}
+cat(sprintf('<script>document.addEventListener("DOMContentLoaded",function(){document.body.classList.add("preset-%s");});</script>', params$preset))
+```
+
 ## Overview
 
 This vignette shows how the shared theme and vignette CSS work together. Links and focus rings use the family’s accessible tone; callouts and stripes use a quiet tint.
+
+<div class="albers-plate" aria-hidden="true">
+  <div class="albers-plate__outer"></div>
+  <div class="albers-plate__inner"></div>
+  <div class="albers-plate__core"></div>
+</div>
+
+## New feature highlights
+
+- Design tokens + contrast guardrails: see `vignette("design-notes")`, section `#whats-new` and `#contrast-guardrails`.
+- Generative composition motif + semantic callouts: see `vignette("design-notes")`, sections `#whats-new` and `#semantic-callouts`.
+- Interactive visual tuning (family/preset/style/width): see `vignette("theme-lab")`.
+- Dark + non-red accent gallery: see `vignette("theme-showcase")`.
 
 ## Code + output
 

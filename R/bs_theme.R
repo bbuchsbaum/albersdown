@@ -43,10 +43,10 @@ albers_bs_theme <- function(
     fg = fg,
     primary = accent,
     secondary = colors$muted,
-    base_font = bslib::font_collection("Avenir Next", "Gill Sans", "system-ui"),
-    heading_font = bslib::font_collection("Avenir Next", "Gill Sans", "system-ui"),
+    base_font = bslib::font_collection("Avenir Next", "Gill Sans", "Trebuchet MS", "system-ui"),
+    heading_font = bslib::font_collection("Avenir Next", "Gill Sans", "Century Gothic", "Trebuchet MS", "system-ui"),
     code_font = bslib::font_collection(
-      "ui-monospace", "SFMono-Regular", "Menlo", "Consolas", "monospace"
+      "Iosevka Term", "JetBrains Mono", "ui-monospace", "SFMono-Regular", "Menlo", "Consolas", "monospace"
     ),
     `enable-rounded` = FALSE,
     `enable-shadows` = FALSE,

@@ -1,0 +1,135 @@
+---
+title: 'Theme Showcase: Dark + Accent Families'
+name: theme-showcase
+description: A focused gallery for midnight preset and non-red accent families.
+output:
+  rmarkdown::html_vignette:
+    toc: yes
+    toc_depth: 2
+params:
+  family: violet
+  preset: midnight
+  base_size: 13
+  content_width: 80
+  style: minimal
+vignette: |
+  %\VignetteIndexEntry{Theme Showcase: Dark + Accent Families}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+css: albers.css
+resource_files:
+- albers.css
+- albers.js
+includes:
+  in_header: |-
+    <script src="albers.js"></script>
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE, comment = "#>", fig.align = "center", fig.retina = 2,
+  out.width = "100%", fig.width = 7, fig.asp = 0.618, message = FALSE, warning = FALSE
+)
+`%||%` <- function(a, b) if (is.null(a)) b else a
+library(ggplot2)
+if (requireNamespace("ggplot2", quietly = TRUE) && requireNamespace("albersdown", quietly = TRUE)) {
+  ggplot2::theme_set(albersdown::theme_albers(
+    family = params$family,
+    preset = params$preset,
+    base_size = params$base_size
+  ))
+}
+```
+
+```{r albers-family, echo=FALSE, results='asis'}
+cat(sprintf('<script>document.addEventListener("DOMContentLoaded",function(){document.body.classList.add("palette-%s");});</script>', params$family))
+```
+
+```{r albers-preset, echo=FALSE, results='asis'}
+cat(sprintf('<script>document.addEventListener("DOMContentLoaded",function(){document.body.classList.add("preset-%s");});</script>', params$preset))
+```
+
+```{r albers-style, echo=FALSE, results='asis'}
+style_class <- switch(
+  tolower(params$style %||% "balanced"),
+  minimal = "style-minimal",
+  assertive = "style-assertive",
+  balanced = ""
+)
+if (nzchar(style_class)) {
+  cat(sprintf('<script>document.addEventListener("DOMContentLoaded",function(){document.body.classList.remove("style-minimal","style-assertive");document.body.classList.add("%s");});</script>', style_class))
+}
+cat(sprintf('<style>:root{--content:%sch}</style>', params$content_width))
+```
+
+## Why this vignette?
+
+This page is a dedicated showcase for combinations that intentionally depart
+from the default light red look:
+
+- dark ground (`preset: midnight`)
+- alternate accent families (`lapis`, `ochre`, `teal`, `green`, `violet`)
+
+<div class="albers-plate" aria-hidden="true">
+  <div class="albers-plate__outer"></div>
+  <div class="albers-plate__inner"></div>
+  <div class="albers-plate__core"></div>
+</div>
+
+## Midnight page, production-style plot
+
+```{r dark-preview}
+ggplot(mtcars, aes(wt, mpg, colour = factor(cyl))) +
+  geom_point(size = 2.2) +
+  albersdown::scale_color_albers_distinct() +
+  labs(
+    title = "Midnight preset on a vignette page",
+    subtitle = "Dark ground with high-contrast family accents",
+    colour = "cyl"
+  )
+```
+
+## Accent family comparison
+
+```{r accent-families, fig.height=5.6}
+families <- c("red", "lapis", "ochre", "teal", "green", "violet")
+accent_a700 <- vapply(families, function(f) albersdown::albers_palette(f)[["A700"]], character(1))
+
+plot_df <- do.call(rbind, lapply(seq_along(families), function(i) {
+  d <- mtcars
+  d$family <- families[[i]]
+  d$mpg_offset <- d$mpg + (i - (length(families) + 1) / 2) * 0.25
+  d
+}))
+
+ggplot(plot_df, aes(wt, mpg_offset, colour = family)) +
+  geom_point(alpha = 0.85, size = 1.7) +
+  facet_wrap(~family, ncol = 3) +
+  scale_color_manual(values = accent_a700) +
+  labs(
+    title = "A700 accents across all families",
+    subtitle = "Same geometry, different accent family",
+    x = "wt",
+    y = "mpg (offset)"
+  ) +
+  theme(legend.position = "none")
+```
+
+## Copy-ready presets
+
+```{r recipes-table}
+recipes <- data.frame(
+  profile = c("dark-violet-minimal", "dark-lapis-minimal", "dark-teal-assertive"),
+  family = c("violet", "lapis", "teal"),
+  preset = c("midnight", "midnight", "midnight"),
+  style = c("minimal", "minimal", "assertive"),
+  stringsAsFactors = FALSE
+)
+knitr::kable(recipes, format = "html")
+```
+
+## Next step
+
+- Use `vignette("theme-lab")` for interactive tuning.
+- Keep `vignette("getting-started")` and `vignette("design-notes")` on the
+  default light red presentation for baseline docs clarity.

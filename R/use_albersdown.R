@@ -39,7 +39,7 @@ use_albersdown <- function(
   .add_website_dep(dry_run = dry_run)
   .copy_resources(dry_run = dry_run, fallback_extra = fallback_extra, force_replace = force_replace)
   if (apply_to == "all") .patch_all_rmds(family = family, preset = preset, dry_run = dry_run, force_replace = force_replace)
-  .write_readme_snippet(family = family, dry_run = dry_run)
+  .write_readme_snippet(family = family, preset = preset, dry_run = dry_run)
   .doctor(family = family)
   invisible(TRUE)
 }
@@ -157,7 +157,8 @@ use_albersdown <- function(
     return(invisible(FALSE))
   }
 
-  y$params <- .modify_list(list(family = family, preset = preset), y$params %||% list())
+  # Explicit function arguments should override pre-existing YAML params.
+  y$params <- .modify_list(y$params %||% list(), list(family = family, preset = preset))
 
   is_qmd <- grepl("\\.qmd$", basename(path), ignore.case = TRUE)
   if (is_qmd) {
@@ -228,7 +229,7 @@ use_albersdown <- function(
   invisible(TRUE)
 }
 
-.write_readme_snippet <- function(family, dry_run = FALSE) {
+.write_readme_snippet <- function(family, preset = "homage", dry_run = FALSE) {
   if (!file.exists("README.md")) return(invisible(TRUE))
 
   start_tag <- "<!-- albersdown:theme-note:start -->"
@@ -237,8 +238,10 @@ use_albersdown <- function(
     start_tag,
     "## Albers theme",
     paste0(
-      "This package uses the albersdown theme. Existing vignette theme hooks are replaced so `albers.css` and local `albers.js` render consistently on CRAN and GitHub Pages. The palette family is provided via `params$family` (default '",
+      "This package uses the albersdown theme. Existing vignette theme hooks are replaced so `albers.css` and local `albers.js` render consistently on CRAN and GitHub Pages. The defaults are configured via `params$family` and `params$preset` (family = '",
       family,
+      "', preset = '",
+      preset,
       "'). The pkgdown site uses `template: { package: albersdown }`."
     ),
     end_tag
@@ -265,14 +268,30 @@ use_albersdown <- function(
 .doctor <- function(family) {
   if (requireNamespace("cli", quietly = TRUE)) cli::cli_h2("Doctor") else message("Doctor")
 
+  score <- 100
+  issues <- character()
+  penalize <- function(points, msg, level = c("warning", "info")) {
+    level <- match.arg(level)
+    score <<- max(0, score - points)
+    issues <<- c(issues, sprintf("-%d %s", points, msg))
+    if (requireNamespace("cli", quietly = TRUE)) {
+      if (level == "warning") cli::cli_alert_warning(msg) else cli::cli_alert_info(msg)
+    } else {
+      message(msg)
+    }
+  }
+
   ok_css <- file.exists("vignettes/albers.css")
   ok_js <- file.exists("vignettes/albers.js")
-  if (requireNamespace("cli", quietly = TRUE)) {
-    cli::cli_alert_success("CSS present: {ok_css}")
-    cli::cli_alert_success("JS present:  {ok_js}")
+  if (ok_css) {
+    if (requireNamespace("cli", quietly = TRUE)) cli::cli_alert_success("CSS present: {ok_css}") else message(sprintf("CSS present: %s", ok_css))
   } else {
-    message(sprintf("CSS present: %s", ok_css))
-    message(sprintf("JS present: %s", ok_js))
+    penalize(25, "Missing vignettes/albers.css; themed vignettes will not render as intended")
+  }
+  if (ok_js) {
+    if (requireNamespace("cli", quietly = TRUE)) cli::cli_alert_success("JS present:  {ok_js}") else message(sprintf("JS present: %s", ok_js))
+  } else {
+    penalize(15, "Missing vignettes/albers.js; anchors/copy/composition behaviors will be absent")
   }
 
   src_css_local <- file.path("inst", "rmarkdown", "templates", "albers_vignette", "skeleton", "albers.css")
@@ -281,12 +300,12 @@ use_albersdown <- function(
   src_js <- if (file.exists(src_js_local)) src_js_local else system.file("pkgdown/assets/albers.js", package = "albersdown")
   if (ok_css && nzchar(src_css) && file.exists(src_css)) {
     if (!identical(.md5(src_css), .md5("vignettes/albers.css"))) {
-      if (requireNamespace("cli", quietly = TRUE)) cli::cli_alert_warning("vignettes/albers.css is not the packaged version (drift detected)") else message("vignettes/albers.css drift detected")
+      penalize(8, "vignettes/albers.css is not the packaged version (drift detected)")
     }
   }
   if (ok_js && nzchar(src_js) && file.exists(src_js)) {
     if (!identical(.md5(src_js), .md5("vignettes/albers.js"))) {
-      if (requireNamespace("cli", quietly = TRUE)) cli::cli_alert_warning("vignettes/albers.js is not the packaged version (drift detected)") else message("vignettes/albers.js drift detected")
+      penalize(5, "vignettes/albers.js is not the packaged version (drift detected)")
     }
   }
 
@@ -294,8 +313,7 @@ use_albersdown <- function(
     cfg <- tryCatch(yaml::read_yaml("_pkgdown.yml"), error = function(e) NULL)
     tpl <- if (is.list(cfg)) (cfg$template %||% list()) else list()
     if (!identical(tpl$package, "albersdown")) {
-      msg <- "_pkgdown.yml template does not point at albersdown; pkgdown theme replacement is incomplete"
-      if (requireNamespace("cli", quietly = TRUE)) cli::cli_alert_warning(msg) else message(msg)
+      penalize(18, "_pkgdown.yml template does not point at albersdown; pkgdown theme replacement is incomplete")
     }
   }
 
@@ -303,22 +321,31 @@ use_albersdown <- function(
   if (length(v)) {
     missing_css <- v[!vapply(v, function(path) any(grepl("albers\\.css", readLines(path, warn = FALSE))), logical(1))]
     if (length(missing_css)) {
-      if (requireNamespace("cli", quietly = TRUE)) cli::cli_alert_warning("These vignettes do not reference albers.css: {missing_css}") else message(sprintf("These vignettes do not reference albers.css: %s", paste(basename(missing_css), collapse = ", ")))
+      penalize(min(18, 6 * length(missing_css)), sprintf(
+        "These vignettes do not reference albers.css: %s",
+        paste(basename(missing_css), collapse = ", ")
+      ))
     }
 
     missing_js <- v[!vapply(v, function(path) any(grepl("albers\\.js", readLines(path, warn = FALSE))), logical(1))]
     if (length(missing_js)) {
-      if (requireNamespace("cli", quietly = TRUE)) cli::cli_alert_warning("These vignettes do not reference albers.js: {missing_js}") else message(sprintf("These vignettes do not reference albers.js: %s", paste(basename(missing_js), collapse = ", ")))
+      penalize(min(15, 5 * length(missing_js)), sprintf(
+        "These vignettes do not reference albers.js: %s",
+        paste(basename(missing_js), collapse = ", ")
+      ))
     }
 
     family_ok <- vapply(v, function(path) any(grepl("palette-", readLines(path, warn = FALSE))), logical(1))
     if (!all(family_ok)) {
-      if (requireNamespace("cli", quietly = TRUE)) cli::cli_alert_info("Some vignettes omit any palette script; they may fall back to default tokens") else message("Some vignettes omit any palette script; they may fall back to default tokens")
+      penalize(8, "Some vignettes omit any palette script; they may fall back to default tokens", level = "info")
     }
 
     dup_theme <- v[vapply(v, function(path) sum(grepl("ggplot2::theme_set\\(albersdown::theme_albers\\(", readLines(path, warn = FALSE), perl = TRUE)) > 1, logical(1))]
     if (length(dup_theme)) {
-      if (requireNamespace("cli", quietly = TRUE)) cli::cli_alert_warning("These vignettes define albers theme_set multiple times: {dup_theme}") else message(sprintf("These vignettes define albers theme_set multiple times: %s", paste(basename(dup_theme), collapse = ", ")))
+      penalize(6, sprintf(
+        "These vignettes define albers theme_set multiple times: %s",
+        paste(basename(dup_theme), collapse = ", ")
+      ))
     }
   }
 
@@ -327,12 +354,35 @@ use_albersdown <- function(
     has_anchor <- any(grepl("\\.anchor\\s*\\{", css))
     has_hover <- any(grepl("h2:hover \\.anchor|h3:hover \\.anchor", css))
     if (has_anchor && !has_hover) {
-      msg <- "pkgdown/extra.css defines .anchor but misses hover/focus rules; anchors may always show"
-      if (requireNamespace("cli", quietly = TRUE)) cli::cli_alert_warning(msg) else message(msg)
+      penalize(5, "pkgdown/extra.css defines .anchor but misses hover/focus rules; anchors may always show")
     }
   }
 
-  invisible(TRUE)
+  contrast <- .doctor_contrast_report()
+  if (isFALSE(contrast$ok)) {
+    penalize(20, sprintf(
+      "Contrast checks found %d failing combinations (minimum ratio %.2f)",
+      length(contrast$failures),
+      contrast$min_ratio
+    ))
+  } else if (isTRUE(contrast$ok)) {
+    if (requireNamespace("cli", quietly = TRUE)) {
+      cli::cli_alert_success("Contrast checks passed across palette/preset matrix (minimum ratio {format(round(contrast$min_ratio, 2), nsmall = 2)})")
+    } else {
+      message(sprintf("Contrast checks passed (minimum ratio %.2f)", contrast$min_ratio))
+    }
+  } else {
+    penalize(4, "Contrast checks skipped (token file or yaml package unavailable)", level = "info")
+  }
+
+  grade <- if (score >= 92) "A" else if (score >= 84) "B" else if (score >= 72) "C" else if (score >= 60) "D" else "F"
+  if (requireNamespace("cli", quietly = TRUE)) {
+    cli::cli_alert_info("Design quality score: {score}/100 ({grade})")
+  } else {
+    message(sprintf("Design quality score: %d/100 (%s)", score, grade))
+  }
+
+  invisible(list(score = score, grade = grade, issues = issues, contrast = contrast))
 }
 
 `%||%` <- function(a, b) if (is.null(a)) b else a
@@ -346,6 +396,93 @@ use_albersdown <- function(
 .md5 <- function(path) {
   if (!file.exists(path)) return(NA_character_)
   as.character(utils::head(tools::md5sum(path), 1L))
+}
+
+.load_albers_tokens <- function() {
+  if (!requireNamespace("yaml", quietly = TRUE)) return(NULL)
+  local_tokens <- file.path("inst", "tokens", "albers-tokens.yml")
+  pkg_tokens <- system.file("tokens", "albers-tokens.yml", package = "albersdown")
+  token_path <- if (file.exists(local_tokens)) local_tokens else pkg_tokens
+  if (!nzchar(token_path) || !file.exists(token_path)) return(NULL)
+  tryCatch(yaml::read_yaml(token_path), error = function(e) NULL)
+}
+
+.hex_to_rgb <- function(hex) {
+  if (!is.character(hex) || length(hex) != 1L || !nzchar(hex)) return(NULL)
+  x <- trimws(hex)
+  if (grepl("^#[0-9A-Fa-f]{3}$", x)) {
+    x <- paste0("#", paste(rep(substring(x, 2, 4), each = 2), collapse = ""))
+  }
+  if (!grepl("^#[0-9A-Fa-f]{6}$", x)) return(NULL)
+  as.numeric(grDevices::col2rgb(x)) / 255
+}
+
+.linear_channel <- function(u) ifelse(u <= 0.03928, u / 12.92, ((u + 0.055) / 1.055)^2.4)
+
+.relative_luminance <- function(hex) {
+  rgb <- .hex_to_rgb(hex)
+  if (is.null(rgb)) return(NA_real_)
+  lin <- .linear_channel(rgb)
+  0.2126 * lin[1] + 0.7152 * lin[2] + 0.0722 * lin[3]
+}
+
+.contrast_ratio <- function(fg, bg) {
+  lf <- .relative_luminance(fg)
+  lb <- .relative_luminance(bg)
+  if (any(is.na(c(lf, lb)))) return(NA_real_)
+  l1 <- max(lf, lb)
+  l2 <- min(lf, lb)
+  (l1 + 0.05) / (l2 + 0.05)
+}
+
+.doctor_contrast_report <- function(min_ratio = 4.5) {
+  tokens <- .load_albers_tokens()
+  if (is.null(tokens) || is.null(tokens$families)) {
+    return(list(ok = NA, min_ratio = NA_real_, failures = character(), checked = integer()))
+  }
+
+  presets <- list(
+    homage = list(bg = "#f3f5f7", ink = "#17181a"),
+    study = list(bg = "#f7f9fb", ink = "#17181a"),
+    structural = list(bg = "#e6e9ed", ink = "#101214"),
+    adobe = list(bg = "#ece9e7", ink = "#1f1c19"),
+    midnight = list(bg = "#0d1117", ink = "#e8e6e1")
+  )
+
+  checks <- list()
+
+  for (preset_name in names(presets)) {
+    checks[[paste0("body-light-", preset_name)]] <- .contrast_ratio(
+      presets[[preset_name]]$ink,
+      presets[[preset_name]]$bg
+    )
+  }
+
+  for (family_name in names(tokens$families)) {
+    fam <- tokens$families[[family_name]]
+    for (preset_name in names(presets)) {
+      link_fg <- if (identical(preset_name, "midnight") && !is.null(fam$dark$accent_ink)) fam$dark$accent_ink else fam$A900
+      checks[[paste0("link-light-", family_name, "-", preset_name)]] <- .contrast_ratio(
+        link_fg,
+        presets[[preset_name]]$bg
+      )
+    }
+    if (!is.null(fam$dark$accent_ink)) {
+      checks[[paste0("link-dark-", family_name)]] <- .contrast_ratio(fam$dark$accent_ink, "#111315")
+    }
+  }
+
+  checks[["body-dark-default"]] <- .contrast_ratio("#ece8de", "#111315")
+  vals <- unlist(checks, use.names = TRUE)
+  vals <- vals[!is.na(vals)]
+  failing <- names(vals[vals < min_ratio])
+
+  list(
+    ok = length(failing) == 0,
+    min_ratio = if (length(vals)) min(vals) else NA_real_,
+    failures = failing,
+    checked = names(vals)
+  )
 }
 
 .uses_albers_template <- function() {

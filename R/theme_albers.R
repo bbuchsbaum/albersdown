@@ -9,7 +9,7 @@
 albers_palette <- function(family = c("red","lapis","ochre","teal","green","violet")) {
   family <- match.arg(family)
   switch(family,
-    red    = c(A900 = "#CD2D26", A700 = "#DC3925", A500 = "#E44926", A300 = "#E35B2D"),
+    red    = c(A900 = "#C22B23", A700 = "#DC3925", A500 = "#E44926", A300 = "#E35B2D"),
     lapis  = c(A900 = "#1B2A74", A700 = "#20399C", A500 = "#2C4FCC", A300 = "#4968D6"),
     ochre  = c(A900 = "#6F5200", A700 = "#8B6700", A500 = "#B48900", A300 = "#D7A700"),
     teal   = c(A900 = "#0D4A4A", A700 = "#0F5E5E", A500 = "#127373", A300 = "#2F8C8C"),
