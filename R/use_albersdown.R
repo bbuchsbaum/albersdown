@@ -213,15 +213,47 @@ use_albersdown <- function(
       perl = TRUE
     )
 
+    canonical <- function(indent = "") {
+      paste0(
+        indent,
+        "if (requireNamespace(\"ggplot2\", quietly = TRUE) && requireNamespace(\"albersdown\", quietly = TRUE)) ",
+        "ggplot2::theme_set(albersdown::theme_albers(family = params$family, preset = params$preset))"
+      )
+    }
+
     target <- "ggplot2::theme_set\\(albersdown::theme_albers\\("
     idx <- grep(target, lines, perl = TRUE)
-    if (length(idx) > 1) lines <- lines[-idx[-length(idx)]]
-    if (length(idx) >= 1) return(lines)
+    if (length(idx)) {
+      keep <- rep(TRUE, length(lines))
+      for (k in seq_along(idx)) {
+        i <- idx[[k]]
+        original <- lines[[i]]
+        indent <- sub("^(\\s*).*", "\\1", lines[[i]], perl = TRUE)
+        if (k == 1L) lines[[i]] <- canonical(indent) else keep[[i]] <- FALSE
+
+        # Collapse any older multi-line theme_albers() call to the canonical one-liner.
+        if (!grepl("\\)\\)\\s*$", original, perl = TRUE)) {
+          j <- i + 1L
+          while (j <= length(lines)) {
+            if (grepl("^\\s*```", lines[[j]]) ||
+                grepl("^\\s*if\\s*\\(", lines[[j]]) ||
+                grepl("^\\s*}\\s*$", lines[[j]])) {
+              break
+            }
+            keep[[j]] <- FALSE
+            if (grepl("^\\s*\\)\\)\\s*$", lines[[j]], perl = TRUE)) break
+            j <- j + 1L
+          }
+        }
+      }
+
+      return(lines[keep])
+    }
 
     setup_chunk <- grep("^```\\{r[^}]*setup", lines)
     if (!length(setup_chunk)) return(lines)
 
-    inject <- "if (requireNamespace(\"ggplot2\", quietly = TRUE) && requireNamespace(\"albersdown\", quietly = TRUE)) ggplot2::theme_set(albersdown::theme_albers(params$family))"
+    inject <- canonical()
     append(lines, inject, after = setup_chunk[1])
   }
 

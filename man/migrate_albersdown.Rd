@@ -4,10 +4,16 @@
 \alias{migrate_albersdown}
 \title{One-command migration to latest albersdown}
 \usage{
-migrate_albersdown(family = "red", dry_run = FALSE)
+migrate_albersdown(
+  family = "red",
+  preset = c("homage", "study", "structural", "adobe", "midnight"),
+  dry_run = FALSE
+)
 }
 \arguments{
 \item{family}{one of: "red","lapis","ochre","teal","green","violet"}
+
+\item{preset}{Visual preset (default \code{"homage"}). See \code{\link[=albers_presets]{albers_presets()}}.}
 
 \item{dry_run}{if TRUE, report changes without writing files.}
 }
@@ -16,12 +22,13 @@ migrate_albersdown(family = "red", dry_run = FALSE)
 }
 \description{
 Convenience helper for existing packages that already use albersdown and
-need to replace older vignette/site wiring with the latest defaults.
+need to replace older vignette/site wiring with the latest defaults while
+choosing an Albers accent family and preset.
 }
 \examples{
 \donttest{
 if (interactive()) {
-  migrate_albersdown(dry_run = TRUE)
+  migrate_albersdown(family = "teal", preset = "midnight", dry_run = TRUE)
 }
 }
 }

@@ -1,3 +1,9 @@
+# albersdown development
+
+* `migrate_albersdown()` now exposes the full Albers family/preset choices and
+  migrated vignettes now apply both `params$family` and `params$preset` in the
+  injected `theme_albers()` call.
+
 # albersdown 1.0.0
 
 * Initial CRAN release.

@@ -24,6 +24,7 @@ Suggests:
     usethis,
     yaml,
     cli,
+    testthat,
     viridisLite,
     knitr,
     rmarkdown,
@@ -34,3 +35,4 @@ RoxygenNote: 7.3.3
 VignetteBuilder: knitr
 Config/Needs/website: albersdown
 License: MIT + file LICENSE
+Config/testthat/edition: 3
