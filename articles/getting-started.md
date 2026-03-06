@@ -6,6 +6,19 @@ This vignette shows how the shared theme and vignette CSS work together.
 Links and focus rings use the family’s accessible tone; callouts and
 stripes use a quiet tint.
 
+## New feature highlights
+
+- Design tokens + contrast guardrails: see
+  [`vignette("design-notes")`](https://bbuchsbaum.github.io/albersdown/articles/design-notes.md),
+  section `#whats-new` and `#contrast-guardrails`.
+- Generative composition motif + semantic callouts: see
+  [`vignette("design-notes")`](https://bbuchsbaum.github.io/albersdown/articles/design-notes.md),
+  sections `#whats-new` and `#semantic-callouts`.
+- Interactive visual tuning (family/preset/style/width): see
+  [`vignette("theme-lab")`](https://bbuchsbaum.github.io/albersdown/articles/theme-lab.md).
+- Dark + non-red accent gallery: see
+  [`vignette("theme-showcase")`](https://bbuchsbaum.github.io/albersdown/articles/theme-showcase.md).
+
 ## Code + output
 
 ``` r

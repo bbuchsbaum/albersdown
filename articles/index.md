@@ -11,3 +11,14 @@
   system](https://bbuchsbaum.github.io/albersdown/articles/design-notes.md):
 
   Visual tokens, palette families, and component rules for albersdown.
+
+- [Theme Lab: Tune Family, Preset, and
+  Rhythm](https://bbuchsbaum.github.io/albersdown/articles/theme-lab.md):
+
+  Interactive controls for palette family, preset, style intensity, and
+  content width.
+
+- [Theme Showcase: Dark + Accent
+  Families](https://bbuchsbaum.github.io/albersdown/articles/theme-showcase.md):
+
+  A focused gallery for midnight preset and non-red accent families.

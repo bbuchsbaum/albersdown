@@ -65,9 +65,9 @@ if (requireNamespace("bslib", quietly = TRUE)) {
 #> $body-tertiary-bg: #ffffff !default;
 #> $border-color: #d5dae1 !default;
 #> $code-bg: #ecf0f4 !default;
-#> $font-family-base: 'Avenir Next', 'Gill Sans', system-ui !default;
-#> $font-family-monospace: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace !default;
-#> $headings-font-family: 'Avenir Next', 'Gill Sans', system-ui !default;
+#> $font-family-base: 'Avenir Next', 'Gill Sans', 'Trebuchet MS', system-ui !default;
+#> $font-family-monospace: 'Iosevka Term', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace !default;
+#> $headings-font-family: 'Avenir Next', 'Gill Sans', 'Century Gothic', 'Trebuchet MS', system-ui !default;
 #> $primary: #DC3925 !default;
 #> $secondary: #636B76 !default;
 #> $white: #F3F5F7 !default;

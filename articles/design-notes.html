@@ -61,12 +61,100 @@
 
     
     
-<script>document.addEventListener("DOMContentLoaded",function(){document.body.classList.add("palette-violet");});</script><script>document.addEventListener("DOMContentLoaded",function(){document.body.classList.remove("style-minimal","style-assertive");document.body.classList.add("style-minimal");});</script><style>:root{--content:80ch}</style>
+<script>document.addEventListener("DOMContentLoaded",function(){document.body.classList.add("palette-red");});</script><script>document.addEventListener("DOMContentLoaded",function(){document.body.classList.add("preset-study");});</script><script>document.addEventListener("DOMContentLoaded",function(){document.body.classList.remove("style-minimal","style-assertive");document.body.classList.add("style-minimal");});</script><style>:root{--content:80ch}</style>
 <div class="homage-hero" aria-hidden="true">
+
+</div>
+<div class="albers-plate" aria-hidden="true">
+<div class="albers-plate__outer">
+
+</div>
+<div class="albers-plate__inner">
+
+</div>
+<div class="albers-plate__core">
+
+</div>
+</div>
+<div class="albers-composition" data-seed="design-notes" data-density="7" aria-hidden="true">
 
 </div>
 <div class="hr-notch" role="presentation">
 
+</div>
+<div class="section level2">
+<h2 id="whats-new">What’s new in this release<a class="anchor" aria-label="anchor" href="#whats-new"></a>
+</h2>
+<ul>
+<li>Token-driven design system
+(<code>inst/tokens/albers-tokens.yml</code>) now controls families,
+presets, and dark calibrations.</li>
+<li>Deterministic composition blocks (<code>.albers-composition</code>)
+add a signature visual motif.</li>
+<li>Semantic callout variants (<code>callout-note</code>,
+<code>callout-insight</code>, <code>callout-warning</code>,
+<code>callout-experiment</code>) are available.</li>
+<li>Contrast validation now checks family/preset combinations against AA
+thresholds.</li>
+</ul>
+<div class="section level3">
+<h3 id="semantic-callouts">Semantic callouts<a class="anchor" aria-label="anchor" href="#semantic-callouts"></a>
+</h3>
+<div class="callout callout-note">
+<p>Use <code>callout-note</code> for neutral guidance.</p>
+</div>
+<div class="callout callout-insight">
+<p>Use <code>callout-insight</code> for interpretation and design
+intent.</p>
+</div>
+<div class="callout callout-warning">
+<p>Use <code>callout-warning</code> when a choice has clear
+tradeoffs.</p>
+</div>
+<div class="callout callout-experiment">
+<p>Use <code>callout-experiment</code> for exploratory or provisional
+guidance.</p>
+</div>
+</div>
+<div class="section level3">
+<h3 id="typography-syntax">Typography and syntax tone<a class="anchor" aria-label="anchor" href="#typography-syntax"></a>
+</h3>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">mpg</span> <span class="op">~</span> <span class="va">wt</span> <span class="op">+</span> <span class="va">hp</span>, data <span class="op">=</span> <span class="va">mtcars</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;                Estimate Std. Error   t value     Pr(&gt;|t|)</span></span>
+<span><span class="co">#&gt; (Intercept) 37.22727012 1.59878754 23.284689 2.565459e-20</span></span>
+<span><span class="co">#&gt; wt          -3.87783074 0.63273349 -6.128695 1.119647e-06</span></span>
+<span><span class="co">#&gt; hp          -0.03177295 0.00902971 -3.518712 1.451229e-03</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="contrast-guardrails">Contrast guardrail example<a class="anchor" aria-label="anchor" href="#contrast-guardrails"></a>
+</h3>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">contrast_ratio</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">fg</span>, <span class="va">bg</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">to_rgb</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu">grDevices</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grDevices/col2rgb.html" class="external-link">col2rgb</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span> <span class="op">/</span> <span class="fl">255</span></span>
+<span>  <span class="va">to_lin</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">u</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">u</span> <span class="op">&lt;=</span> <span class="fl">0.03928</span>, <span class="va">u</span> <span class="op">/</span> <span class="fl">12.92</span>, <span class="op">(</span><span class="op">(</span><span class="va">u</span> <span class="op">+</span> <span class="fl">0.055</span><span class="op">)</span> <span class="op">/</span> <span class="fl">1.055</span><span class="op">)</span><span class="op">^</span><span class="fl">2.4</span><span class="op">)</span></span>
+<span>  <span class="va">luma</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="va">rgb</span> <span class="op">&lt;-</span> <span class="fu">to_rgb</span><span class="op">(</span><span class="va">x</span><span class="op">)</span>; <span class="va">lin</span> <span class="op">&lt;-</span> <span class="fu">to_lin</span><span class="op">(</span><span class="va">rgb</span><span class="op">)</span></span>
+<span>    <span class="fl">0.2126</span> <span class="op">*</span> <span class="va">lin</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">+</span> <span class="fl">0.7152</span> <span class="op">*</span> <span class="va">lin</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span> <span class="op">+</span> <span class="fl">0.0722</span> <span class="op">*</span> <span class="va">lin</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span></span>
+<span>  <span class="op">}</span></span>
+<span>  <span class="va">l1</span> <span class="op">&lt;-</span> <span class="fu">luma</span><span class="op">(</span><span class="va">fg</span><span class="op">)</span>; <span class="va">l2</span> <span class="op">&lt;-</span> <span class="fu">luma</span><span class="op">(</span><span class="va">bg</span><span class="op">)</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="va">l1</span> <span class="op">&lt;</span> <span class="va">l2</span><span class="op">)</span> <span class="op">{</span> <span class="va">tmp</span> <span class="op">&lt;-</span> <span class="va">l1</span>; <span class="va">l1</span> <span class="op">&lt;-</span> <span class="va">l2</span>; <span class="va">l2</span> <span class="op">&lt;-</span> <span class="va">tmp</span> <span class="op">}</span></span>
+<span>  <span class="op">(</span><span class="va">l1</span> <span class="op">+</span> <span class="fl">0.05</span><span class="op">)</span> <span class="op">/</span> <span class="op">(</span><span class="va">l2</span> <span class="op">+</span> <span class="fl">0.05</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="va">ratio_structural</span> <span class="op">&lt;-</span> <span class="fu">contrast_ratio</span><span class="op">(</span><span class="st">"#C22B23"</span>, <span class="st">"#e6e9ed"</span><span class="op">)</span></span>
+<span><span class="va">ratio_adobe</span> <span class="op">&lt;-</span> <span class="fu">contrast_ratio</span><span class="op">(</span><span class="st">"#C22B23"</span>, <span class="st">"#ece9e7"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/stopifnot.html" class="external-link">stopifnot</a></span><span class="op">(</span><span class="va">ratio_structural</span> <span class="op">&gt;=</span> <span class="fl">4.5</span>, <span class="va">ratio_adobe</span> <span class="op">&gt;=</span> <span class="fl">4.5</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>  context <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"structural bg"</span>, <span class="st">"adobe bg"</span><span class="op">)</span>,</span>
+<span>  ratio <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">ratio_structural</span>, <span class="va">ratio_adobe</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt;         context    ratio</span></span>
+<span><span class="co">#&gt; 1 structural bg 4.706474</span></span>
+<span><span class="co">#&gt; 2      adobe bg 4.742774</span></span></code></pre></div>
+</div>
 </div>
 <div class="section level2 overview">
 <h2 class="overview" id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
@@ -100,15 +188,27 @@ page. When you want a different aesthetic (pulled from the grid image),
 use the image-derived palettes and scales. They mirror the API and are
 fully opt-in.</p>
 <p>Sequential (image-based)</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mtcars</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">wt</span>, <span class="va">mpg</span>, colour <span class="op">=</span> <span class="va">hp</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">2.2</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Image-derived sequential (lapis)"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">albersdown</span><span class="fu">::</span><span class="fu"><a href="../reference/scale_color_albers_img.html">scale_color_albers_img</a></span><span class="op">(</span><span class="st">"lapis"</span>, discrete <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu">albersdown</span><span class="fu">::</span><span class="fu"><a href="../reference/scale_color_albers_img.html">scale_color_albers_img</a></span><span class="op">(</span></span>
+<span>    <span class="st">"lapis"</span>,</span>
+<span>    discrete <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>    breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">150</span>, <span class="fl">200</span>, <span class="fl">250</span>, <span class="fl">300</span><span class="op">)</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guides.html" class="external-link">guides</a></span><span class="op">(</span></span>
+<span>    colour <span class="op">=</span> <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guide_colourbar.html" class="external-link">guide_colorbar</a></span><span class="op">(</span></span>
+<span>      title.position <span class="op">=</span> <span class="st">"top"</span>,</span>
+<span>      barheight <span class="op">=</span> <span class="fu">grid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit</a></span><span class="op">(</span><span class="fl">70</span>, <span class="st">"pt"</span><span class="op">)</span>,</span>
+<span>      barwidth <span class="op">=</span> <span class="fu">grid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit</a></span><span class="op">(</span><span class="fl">10</span>, <span class="st">"pt"</span><span class="op">)</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"right"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="design-notes_files/figure-html/img-seq-1.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;"></p>
 <p>Diverging (image-based)</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/transform.html" class="external-link">transform</a></span><span class="op">(</span><span class="fu">datasets</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/r/datasets/faithful.html" class="external-link">faithful</a></span>, centered <span class="op">=</span> <span class="va">waiting</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">waiting</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">df</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">eruptions</span>, <span class="va">centered</span>, colour <span class="op">=</span> <span class="va">centered</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">0.9</span><span class="op">)</span> <span class="op">+</span></span>
@@ -142,7 +242,7 @@ edges and more emphatic structural marks.</p>
 <p>TIP: Callouts use an A500 border and a subtle A300 tint (≈8–10%).
 Keep them short and purposeful.</p>
 </blockquote>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># a small, readable function</span></span>
 <span><span class="va">foo</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span> <span class="cn">NA_real_</span> <span class="kw">else</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
 <span><span class="fu">foo</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
@@ -154,7 +254,7 @@ and a compact copy control.</p>
 </h2>
 <p>Base HTML tables pick up a quiet A300 zebra stripe and thin
 borders.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span><span class="op">)</span>, format <span class="op">=</span> <span class="st">"html"</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr>
@@ -303,7 +403,7 @@ Valiant
 <div class="section level2">
 <h2 id="plots">Plots: one highlight, others neutral<a class="anchor" aria-label="anchor" href="#plots"></a>
 </h2>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mtcars</span><span class="op">$</span><span class="va">grp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">$</span><span class="va">cyl</span> <span class="op">==</span> <span class="fl">6</span>, <span class="st">"highlight"</span>, <span class="st">"other"</span><span class="op">)</span></span>
 <span><span class="va">mtcars</span><span class="op">$</span><span class="va">grp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">$</span><span class="va">grp</span>, levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"other"</span>, <span class="st">"highlight"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">mtcars</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">wt</span>, <span class="va">mpg</span>, color <span class="op">=</span> <span class="va">grp</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>

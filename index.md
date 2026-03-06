@@ -73,6 +73,12 @@ Team one-liner (same defaults as above):
 albersdown::migrate_albersdown()
 ```
 
+Migration also exposes the Albers theme surface directly:
+
+``` r
+albersdown::migrate_albersdown(family = "teal", preset = "midnight")
+```
+
 ## Helpers
 
 - theme_albers(family = “red”, preset = “homage”)

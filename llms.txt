@@ -73,6 +73,12 @@ Team one-liner (same defaults as above):
 albersdown::migrate_albersdown()
 ```
 
+Migration also exposes the Albers theme surface directly:
+
+``` r
+albersdown::migrate_albersdown(family = "teal", preset = "midnight")
+```
+
 ## Helpers
 
 - theme_albers(family = “red”, preset = “homage”)
@@ -205,3 +211,14 @@ The pkgdown site uses `template: { package: albersdown }`.
   system](https://bbuchsbaum.github.io/albersdown/articles/design-notes.md):
 
   Visual tokens, palette families, and component rules for albersdown.
+
+- [Theme Lab: Tune Family, Preset, and
+  Rhythm](https://bbuchsbaum.github.io/albersdown/articles/theme-lab.md):
+
+  Interactive controls for palette family, preset, style intensity, and
+  content width.
+
+- [Theme Showcase: Dark + Accent
+  Families](https://bbuchsbaum.github.io/albersdown/articles/theme-showcase.md):
+
+  A focused gallery for midnight preset and non-red accent families.

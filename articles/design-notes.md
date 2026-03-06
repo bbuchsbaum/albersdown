@@ -1,5 +1,65 @@
 # Design notes: Homage system
 
+## What’s new in this release
+
+- Token-driven design system (`inst/tokens/albers-tokens.yml`) now
+  controls families, presets, and dark calibrations.
+- Deterministic composition blocks (`.albers-composition`) add a
+  signature visual motif.
+- Semantic callout variants (`callout-note`, `callout-insight`,
+  `callout-warning`, `callout-experiment`) are available.
+- Contrast validation now checks family/preset combinations against AA
+  thresholds.
+
+### Semantic callouts
+
+Use `callout-note` for neutral guidance.
+
+Use `callout-insight` for interpretation and design intent.
+
+Use `callout-warning` when a choice has clear tradeoffs.
+
+Use `callout-experiment` for exploratory or provisional guidance.
+
+### Typography and syntax tone
+
+``` r
+fit <- lm(mpg ~ wt + hp, data = mtcars)
+coef(summary(fit))
+#>                Estimate Std. Error   t value     Pr(>|t|)
+#> (Intercept) 37.22727012 1.59878754 23.284689 2.565459e-20
+#> wt          -3.87783074 0.63273349 -6.128695 1.119647e-06
+#> hp          -0.03177295 0.00902971 -3.518712 1.451229e-03
+```
+
+### Contrast guardrail example
+
+``` r
+contrast_ratio <- function(fg, bg) {
+  to_rgb <- function(x) as.numeric(grDevices::col2rgb(x)) / 255
+  to_lin <- function(u) ifelse(u <= 0.03928, u / 12.92, ((u + 0.055) / 1.055)^2.4)
+  luma <- function(x) {
+    rgb <- to_rgb(x); lin <- to_lin(rgb)
+    0.2126 * lin[1] + 0.7152 * lin[2] + 0.0722 * lin[3]
+  }
+  l1 <- luma(fg); l2 <- luma(bg)
+  if (l1 < l2) { tmp <- l1; l1 <- l2; l2 <- tmp }
+  (l1 + 0.05) / (l2 + 0.05)
+}
+
+ratio_structural <- contrast_ratio("#C22B23", "#e6e9ed")
+ratio_adobe <- contrast_ratio("#C22B23", "#ece9e7")
+stopifnot(ratio_structural >= 4.5, ratio_adobe >= 4.5)
+
+data.frame(
+  context = c("structural bg", "adobe bg"),
+  ratio = c(ratio_structural, ratio_adobe)
+)
+#>         context    ratio
+#> 1 structural bg 4.706474
+#> 2      adobe bg 4.742774
+```
+
 ## Overview
 
 - One family per page (A900/A700/A500/A300 → roles)
@@ -31,7 +91,19 @@ mtcars |>
   ggplot(aes(wt, mpg, colour = hp)) +
   geom_point(size = 2.2) +
   labs(title = "Image-derived sequential (lapis)") +
-  albersdown::scale_color_albers_img("lapis", discrete = FALSE)
+  albersdown::scale_color_albers_img(
+    "lapis",
+    discrete = FALSE,
+    breaks = c(100, 150, 200, 250, 300)
+  ) +
+  ggplot2::guides(
+    colour = ggplot2::guide_colorbar(
+      title.position = "top",
+      barheight = grid::unit(70, "pt"),
+      barwidth = grid::unit(10, "pt")
+    )
+  ) +
+  ggplot2::theme(legend.position = "right")
 ```
 
 ![](design-notes_files/figure-html/img-seq-1.png)
