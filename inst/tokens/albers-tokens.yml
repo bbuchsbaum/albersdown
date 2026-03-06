@@ -1,0 +1,139 @@
+families:
+  red:
+    A900: "#C22B23"
+    A700: "#DC3925"
+    A500: "#E44926"
+    A300: "#E35B2D"
+    accent_hover: "#A9351F"
+    accent_tint: "rgba(228, 73, 38, 0.09)"
+    accent_band: "rgba(228, 73, 38, 0.14)"
+    dark:
+      accent_ink: "#FFB8A9"
+      accent_hover: "#FFD2C7"
+      accent_tint: "rgba(228, 73, 38, 0.24)"
+      accent_band: "rgba(228, 73, 38, 0.30)"
+  lapis:
+    A900: "#1B2A74"
+    A700: "#20399C"
+    A500: "#2C4FCC"
+    A300: "#4968D6"
+    accent_hover: "#1A377F"
+    accent_tint: "rgba(44, 79, 204, 0.10)"
+    accent_band: "rgba(44, 79, 204, 0.15)"
+    dark:
+      accent_ink: "#AAB9FF"
+      accent_hover: "#C6D0FF"
+      accent_tint: "rgba(73, 104, 214, 0.24)"
+      accent_band: "rgba(73, 104, 214, 0.30)"
+  ochre:
+    A900: "#6F5200"
+    A700: "#8B6700"
+    A500: "#B48900"
+    A300: "#D7A700"
+    accent_hover: "#7A5C00"
+    accent_tint: "rgba(180, 137, 0, 0.10)"
+    accent_band: "rgba(180, 137, 0, 0.16)"
+    dark:
+      accent_ink: "#FFD46E"
+      accent_hover: "#FFE4A7"
+      accent_tint: "rgba(180, 137, 0, 0.24)"
+      accent_band: "rgba(180, 137, 0, 0.31)"
+  teal:
+    A900: "#0D4A4A"
+    A700: "#0F5E5E"
+    A500: "#127373"
+    A300: "#2F8C8C"
+    accent_hover: "#0F6060"
+    accent_tint: "rgba(18, 115, 115, 0.10)"
+    accent_band: "rgba(18, 115, 115, 0.15)"
+    dark:
+      accent_ink: "#9BDCD9"
+      accent_hover: "#B8E8E5"
+      accent_tint: "rgba(47, 140, 140, 0.24)"
+      accent_band: "rgba(47, 140, 140, 0.30)"
+  green:
+    A900: "#1B5E20"
+    A700: "#2E7D32"
+    A500: "#388E3C"
+    A300: "#66BB6A"
+    accent_hover: "#2E7D32"
+    accent_tint: "rgba(56, 142, 60, 0.10)"
+    accent_band: "rgba(56, 142, 60, 0.15)"
+    dark:
+      accent_ink: "#AFE7B1"
+      accent_hover: "#CAF0CB"
+      accent_tint: "rgba(102, 187, 106, 0.24)"
+      accent_band: "rgba(102, 187, 106, 0.30)"
+  violet:
+    A900: "#4A148C"
+    A700: "#6A1B9A"
+    A500: "#8E24AA"
+    A300: "#BA68C8"
+    accent_ink_dark: "#D59AE7"
+    accent_hover: "#71208D"
+    accent_tint: "rgba(142, 36, 170, 0.11)"
+    accent_band: "rgba(142, 36, 170, 0.16)"
+    dark:
+      accent_ink: "#DFB3EC"
+      accent_hover: "#ECCFF4"
+      accent_tint: "rgba(186, 104, 200, 0.24)"
+      accent_band: "rgba(186, 104, 200, 0.31)"
+
+presets:
+  study:
+    bg: "#f7f9fb"
+    surface: "#ffffff"
+    surface_strong: "#fbfcfd"
+    ink: "#17181a"
+    muted: "#68717d"
+    border: "#dde2e8"
+    code_bg: "#f1f4f8"
+  structural:
+    bg: "#e6e9ed"
+    surface: "#f1f3f6"
+    surface_strong: "#eceff2"
+    ink: "#101214"
+    muted: "#4b5360"
+    border: "#c1c8d0"
+    code_bg: "#e0e5ea"
+    shadow_soft: "none"
+    shadow_card: "none"
+  adobe:
+    bg: "#ece9e7"
+    surface: "#f3f1ef"
+    surface_strong: "#efedeb"
+    ink: "#1f1c19"
+    muted: "#66615d"
+    border: "#ccc7c3"
+    code_bg: "#e3dfdc"
+    shadow_soft: "0 2px 7px rgba(0, 0, 0, 0.04)"
+    shadow_card: "0 2px 9px rgba(0, 0, 0, 0.05)"
+  midnight:
+    bg: "#0d1117"
+    surface: "#151b24"
+    surface_strong: "#1a212d"
+    ink: "#e8e6e1"
+    muted: "#9aa2b0"
+    border: "#2c3342"
+    code_bg: "#111722"
+    shadow_soft: "0 6px 20px rgba(0, 0, 0, 0.4)"
+    shadow_card: "0 6px 24px rgba(0, 0, 0, 0.45)"
+
+fonts:
+  body: '"Avenir Next", "Gill Sans", "Trebuchet MS", system-ui, -apple-system, sans-serif'
+  display: '"Avenir Next", "Gill Sans", "Century Gothic", "Trebuchet MS", system-ui, sans-serif'
+  mono: '"Iosevka Term", "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, "Liberation Mono", monospace'
+
+preset_typography:
+  study:
+    display: '"Avenir Next", "Gill Sans", "Trebuchet MS", system-ui, sans-serif'
+    heading_weight: 730
+  structural:
+    display: '"Franklin Gothic Medium", "Avenir Next", "Gill Sans", sans-serif'
+    heading_weight: 760
+  adobe:
+    display: '"Optima", "Avenir Next", "Gill Sans", sans-serif'
+    heading_weight: 720
+  midnight:
+    display: '"Avenir Next", "Gill Sans", "Trebuchet MS", sans-serif'
+    heading_weight: 740

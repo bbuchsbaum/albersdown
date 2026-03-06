@@ -1,0 +1,59 @@
+name: visual-regression
+
+on:
+  workflow_dispatch:
+
+permissions: read-all
+
+jobs:
+  visual-regression:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: r-lib/actions/setup-pandoc@v2
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::pkgdown, local::.
+          needs: website
+
+      - name: Build site
+        run: pkgdown::build_site(new_process = FALSE, install = FALSE)
+        shell: Rscript {0}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install JS dependencies
+        working-directory: tests/visual-regression
+        run: npm install
+
+      - name: Install Playwright browser
+        working-directory: tests/visual-regression
+        run: npx playwright install --with-deps chromium
+
+      - name: Capture matrix screenshots
+        working-directory: tests/visual-regression
+        run: |
+          python3 -m http.server 3456 --directory ../../docs >/tmp/albersdown-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill ${SERVER_PID}' EXIT
+          npx playwright test
+
+      - name: Upload visual artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-regression-artifacts
+          path: |
+            tests/visual-regression/test-results
+            tests/visual-regression/playwright-report
+            /tmp/albersdown-http.log

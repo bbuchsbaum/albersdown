@@ -8,6 +8,10 @@
 * GitHub Actions: ubuntu-latest (release), macOS-latest (release),
   windows-latest (release)
 
+## Package documentation
+
+Online documentation is available at: https://bbuchsbaum.github.io/albersdown/
+
 ## Downstream dependencies
 
 This is a new submission; there are no reverse dependencies.

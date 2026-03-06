@@ -13,3 +13,5 @@
 ^repomix-output\.txt$
 ^cran-comments\.md$
 ^CRAN-SUBMISSION$
+^tools$
+^tests/visual-regression($|/)
