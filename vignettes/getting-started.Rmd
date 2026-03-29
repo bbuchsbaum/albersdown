@@ -28,10 +28,11 @@ knitr::opts_chunk$set(
   collapse = TRUE, comment = "#>", fig.align = "center", fig.retina = 2,
   out.width = "100%", fig.width = 7, fig.asp = 0.618, message = FALSE, warning = FALSE
 )
-set.seed(123); options(pillar.sigfig = 7, width = 80)
+set.seed(123)
+oldopt <- options(pillar.sigfig = 7, width = 80)
 library(ggplot2)
 if (requireNamespace("albersdown", quietly = TRUE)) {
-  ggplot2::theme_set(albersdown::theme_albers(
+  oldtheme <- ggplot2::theme_set(albersdown::theme_albers(
     family = params$family,
     preset = params$preset
   ))
@@ -75,4 +76,9 @@ mtcars |>
   geom_point(size = 2.2) +
   labs(title = "Fuel efficiency vs. weight",
        subtitle = "Albers theme demo", x = "Weight (1000 lbs)", y = "MPG")
+```
+
+```{r cleanup, include=FALSE}
+options(oldopt)
+if (exists("oldtheme")) ggplot2::theme_set(oldtheme)
 ```

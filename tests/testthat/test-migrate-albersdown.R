@@ -1,11 +1,8 @@
 test_that("migrate_albersdown updates vignette params and theme call", {
   skip_if_not_installed("yaml")
 
-  old <- getwd()
   pkg <- file.path(tempdir(), paste0("albersdown-migrate-", Sys.getpid()))
   dir.create(pkg, recursive = TRUE, showWarnings = FALSE)
-  on.exit(setwd(old), add = TRUE)
-  setwd(pkg)
 
   writeLines(c(
     "Package: demo",
@@ -13,10 +10,10 @@ test_that("migrate_albersdown updates vignette params and theme call", {
     "Title: Demo",
     "Description: Demo package.",
     "License: MIT"
-  ), "DESCRIPTION")
+  ), file.path(pkg, "DESCRIPTION"))
 
-  writeLines("# Demo", "README.md")
-  dir.create("vignettes", showWarnings = FALSE)
+  writeLines("# Demo", file.path(pkg, "README.md"))
+  dir.create(file.path(pkg, "vignettes"), showWarnings = FALSE)
   writeLines(c(
     "---",
     "title: \"Demo\"",
@@ -40,11 +37,11 @@ test_that("migrate_albersdown updates vignette params and theme call", {
     "```",
     "",
     "Demo text."
-  ), file.path("vignettes", "demo.Rmd"))
+  ), file.path(pkg, "vignettes", "demo.Rmd"))
 
-  migrate_albersdown(family = "teal", preset = "midnight", dry_run = FALSE)
+  migrate_albersdown(path = pkg, family = "teal", preset = "midnight", dry_run = FALSE)
 
-  migrated <- readLines(file.path("vignettes", "demo.Rmd"), warn = FALSE)
+  migrated <- readLines(file.path(pkg, "vignettes", "demo.Rmd"), warn = FALSE)
   expect_true(any(grepl("^\\s+preset:\\s+midnight\\s*$", migrated)))
   expect_true(any(grepl("^\\s+family:\\s+teal\\s*$", migrated)))
   expect_true(any(grepl(

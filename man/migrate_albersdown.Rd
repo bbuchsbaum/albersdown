@@ -5,12 +5,17 @@
 \title{One-command migration to latest albersdown}
 \usage{
 migrate_albersdown(
+  path,
   family = "red",
   preset = c("homage", "study", "structural", "adobe", "midnight"),
   dry_run = FALSE
 )
 }
 \arguments{
+\item{path}{Path to the package directory.  Must be supplied explicitly;
+there is no default so that the function never writes to an unexpected
+location.}
+
 \item{family}{one of: "red","lapis","ochre","teal","green","violet"}
 
 \item{preset}{Visual preset (default \code{"homage"}). See \code{\link[=albers_presets]{albers_presets()}}.}
@@ -28,7 +33,7 @@ choosing an Albers accent family and preset.
 \examples{
 \donttest{
 if (interactive()) {
-  migrate_albersdown(family = "teal", preset = "midnight", dry_run = TRUE)
+  migrate_albersdown(path = ".", family = "teal", preset = "midnight", dry_run = TRUE)
 }
 }
 }

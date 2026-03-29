@@ -5,6 +5,7 @@
 \title{One-shot setup for existing packages}
 \usage{
 use_albersdown(
+  path,
   family = "red",
   preset = c("homage", "study", "structural", "adobe", "midnight"),
   apply_to = c("all", "new"),
@@ -14,6 +15,10 @@ use_albersdown(
 )
 }
 \arguments{
+\item{path}{Path to the package directory.  Must be supplied explicitly;
+there is no default so that the function never writes to an unexpected
+location.}
+
 \item{family}{one of: "red","lapis","ochre","teal","green","violet"}
 
 \item{preset}{Visual preset (default \code{"homage"}). See \code{\link[=albers_presets]{albers_presets()}}.}
@@ -44,7 +49,7 @@ optionally patches all vignettes, writes a README note, and prints a doctor repo
 \examples{
 \donttest{
 if (interactive()) {
-  use_albersdown(dry_run = TRUE)
+  use_albersdown(path = ".", dry_run = TRUE)
 }
 }
 }

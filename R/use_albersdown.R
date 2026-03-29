@@ -4,6 +4,9 @@
 #' Copies local assets for CRAN-safe vignettes, ensures pkgdown template,
 #' optionally patches all vignettes, writes a README note, and prints a doctor report.
 #'
+#' @param path Path to the package directory.  Must be supplied explicitly;
+#'   there is no default so that the function never writes to an unexpected
+#'   location.
 #' @param family one of: "red","lapis","ochre","teal","green","violet"
 #' @param preset Visual preset (default \code{"homage"}). See [albers_presets()].
 #' @param apply_to "all" to patch every *.Rmd/*.qmd in vignettes/, or "new" to only add the template and assets
@@ -20,10 +23,11 @@
 #' @examples
 #' \donttest{
 #' if (interactive()) {
-#'   use_albersdown(dry_run = TRUE)
+#'   use_albersdown(path = ".", dry_run = TRUE)
 #' }
 #' }
 use_albersdown <- function(
+  path,
   family = "red",
   preset = c("homage", "study", "structural", "adobe", "midnight"),
   apply_to = c("all", "new"),
@@ -34,6 +38,8 @@ use_albersdown <- function(
   apply_to <- match.arg(apply_to)
   preset <- match.arg(preset)
   fallback_extra <- match.arg(fallback_extra)
+  oldwd <- setwd(path)
+  on.exit(setwd(oldwd), add = TRUE)
   if (requireNamespace("cli", quietly = TRUE)) cli::cli_h1("albersdown setup") else message("albersdown setup")
   .ensure_pkgdown_template(dry_run = dry_run)
   .add_website_dep(dry_run = dry_run)

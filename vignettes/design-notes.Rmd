@@ -32,11 +32,12 @@ knitr::opts_chunk$set(
   collapse = TRUE, comment = "#>", fig.align = "center", fig.retina = 2,
   out.width = "100%", fig.width = 7, fig.asp = 0.618, message = FALSE, warning = FALSE
 )
-set.seed(123); options(pillar.sigfig = 7, width = 80)
+set.seed(123)
+oldopt <- options(pillar.sigfig = 7, width = 80)
 `%||%` <- function(a, b) if (is.null(a)) b else a
 library(ggplot2)
 if (requireNamespace("ggplot2", quietly = TRUE) && requireNamespace("albersdown", quietly = TRUE)) {
-  ggplot2::theme_set(albersdown::theme_albers(
+  oldtheme <- ggplot2::theme_set(albersdown::theme_albers(
     family = params$family,
     preset = params$preset,
     base_size = params$base_size
@@ -246,3 +247,8 @@ ggplot(mtcars, aes(wt, mpg, color = grp)) +
 - Getting started: `articles/getting-started.html`
 - pkgdown template docs: `reference/index.html`
 - Palette and roles: `#palettes`
+
+```{r cleanup, include=FALSE}
+options(oldopt)
+if (exists("oldtheme")) ggplot2::theme_set(oldtheme)
+```

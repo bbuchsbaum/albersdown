@@ -5,7 +5,9 @@ Version: 1.0.0
 Authors@R: c(person(given = "Bradley R.", family = "Buchsbaum", role = c("aut","cre"),
     email = "brad.buchsbaum@gmail.com"))
 Description: Provides a minimalist 'ggplot2' theme, colour scales, and
-    'pkgdown' template built around a curated colour palette system.
+    'pkgdown' template built around a curated colour palette system
+    inspired by Josef Albers' colour theory
+    (Albers (1963, ISBN:978-0-300-17935-4) "Interaction of Color").
     Includes helpers to apply consistent theming to 'ggplot2' plots, 'gt'
     tables, and 'bslib' Bootstrap 5 sites, along with one-command setup
     functions for adopting the style across an R package.
