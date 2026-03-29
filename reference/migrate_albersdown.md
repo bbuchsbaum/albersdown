@@ -8,6 +8,7 @@ while choosing an Albers accent family and preset.
 
 ``` r
 migrate_albersdown(
+  path,
   family = "red",
   preset = c("homage", "study", "structural", "adobe", "midnight"),
   dry_run = FALSE
@@ -15,6 +16,12 @@ migrate_albersdown(
 ```
 
 ## Arguments
+
+- path:
+
+  Path to the package directory. Must be supplied explicitly; there is
+  no default so that the function never writes to an unexpected
+  location.
 
 - family:
 
@@ -38,7 +45,7 @@ migrate_albersdown(
 ``` r
 # \donttest{
 if (interactive()) {
-  migrate_albersdown(family = "teal", preset = "midnight", dry_run = TRUE)
+  migrate_albersdown(path = ".", family = "teal", preset = "midnight", dry_run = TRUE)
 }
 # }
 ```

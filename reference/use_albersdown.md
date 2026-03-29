@@ -9,6 +9,7 @@ doctor report.
 
 ``` r
 use_albersdown(
+  path,
   family = "red",
   preset = c("homage", "study", "structural", "adobe", "midnight"),
   apply_to = c("all", "new"),
@@ -19,6 +20,12 @@ use_albersdown(
 ```
 
 ## Arguments
+
+- path:
+
+  Path to the package directory. Must be supplied explicitly; there is
+  no default so that the function never writes to an unexpected
+  location.
 
 - family:
 
@@ -66,7 +73,7 @@ use_albersdown(
 ``` r
 # \donttest{
 if (interactive()) {
-  use_albersdown(dry_run = TRUE)
+  use_albersdown(path = ".", dry_run = TRUE)
 }
 # }
 ```
