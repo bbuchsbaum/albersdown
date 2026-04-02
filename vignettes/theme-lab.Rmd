@@ -41,15 +41,39 @@ if (requireNamespace("ggplot2", quietly = TRUE) && requireNamespace("albersdown"
 ```
 
 ```{r albers-family, echo=FALSE, results='asis'}
-cat(sprintf('<script>document.addEventListener("DOMContentLoaded",function(){document.body.classList.add("palette-%s");});</script>', params$family))
+cat(sprintf(
+  paste0(
+    '<script>document.addEventListener("DOMContentLoaded",function(){',
+    'var families=["palette-red","palette-lapis","palette-ochre","palette-teal","palette-green","palette-violet"];',
+    'if(!families.some(function(cls){return document.body.classList.contains(cls);})){document.body.classList.add("palette-%s");}',
+    '});</script>'
+  ),
+  params$family
+))
 ```
 
 ```{r albers-preset, echo=FALSE, results='asis'}
-cat(sprintf('<script>document.addEventListener("DOMContentLoaded",function(){document.body.classList.add("preset-%s");});</script>', params$preset))
+cat(sprintf(
+  paste0(
+    '<script>document.addEventListener("DOMContentLoaded",function(){',
+    'var presets=["preset-study","preset-structural","preset-adobe","preset-midnight"];',
+    'if(!presets.some(function(cls){return document.body.classList.contains(cls);})){document.body.classList.add("preset-%s");}',
+    '});</script>'
+  ),
+  params$preset
+))
 ```
 
 ```{r albers-style, echo=FALSE, results='asis'}
-cat(sprintf('<script>document.addEventListener("DOMContentLoaded",function(){document.body.classList.remove("style-minimal","style-assertive");if("%s"!=="balanced") document.body.classList.add("style-%s");});</script>', params$style, params$style))
+cat(sprintf(
+  paste0(
+    '<script>document.addEventListener("DOMContentLoaded",function(){',
+    'if(!document.body.classList.contains("style-minimal") && !document.body.classList.contains("style-assertive") && "%s"!=="balanced") document.body.classList.add("style-%s");',
+    '});</script>'
+  ),
+  params$style,
+  params$style
+))
 cat(sprintf('<style>:root{--content:%sch}</style>', params$content_width))
 ```
 
@@ -72,53 +96,53 @@ That order gives the fastest path to a coherent page.
 4. Adjust content width to match prose density.
 
 <div class="theme-lab" data-albers-lab>
-  <div class="theme-lab__panel">
-    <div class="theme-lab__controls">
-      <div>
-        <label for="albers-family">Family</label>
-        <select id="albers-family" data-albers-control="family">
-          <option value="red">red</option>
-          <option value="lapis">lapis</option>
-          <option value="ochre">ochre</option>
-          <option value="teal">teal</option>
-          <option value="green">green</option>
-          <option value="violet">violet</option>
-        </select>
-      </div>
-      <div>
-        <label for="albers-preset">Preset</label>
-        <select id="albers-preset" data-albers-control="preset">
-          <option value="study">study</option>
-          <option value="structural">structural</option>
-          <option value="adobe">adobe</option>
-          <option value="midnight">midnight</option>
-        </select>
-      </div>
-      <div>
-        <label for="albers-style">Style</label>
-        <select id="albers-style" data-albers-control="style">
-          <option value="minimal">minimal</option>
-          <option value="balanced">balanced</option>
-          <option value="assertive">assertive</option>
-        </select>
-      </div>
-      <div>
-        <label for="albers-width">Content width (ch)</label>
-        <input id="albers-width" data-albers-control="width" type="number" min="60" max="100" value="80" />
-      </div>
-    </div>
+<div class="theme-lab__panel">
+  <div class="theme-lab__controls">
+  <div>
+  <label for="albers-family">Family</label>
+  <select id="albers-family" data-albers-control="family">
+  <option value="red">red</option>
+  <option value="lapis">lapis</option>
+  <option value="ochre">ochre</option>
+  <option value="teal">teal</option>
+  <option value="green">green</option>
+  <option value="violet">violet</option>
+  </select>
   </div>
+  <div>
+  <label for="albers-preset">Preset</label>
+  <select id="albers-preset" data-albers-control="preset">
+  <option value="study">study</option>
+  <option value="structural">structural</option>
+  <option value="adobe">adobe</option>
+  <option value="midnight">midnight</option>
+  </select>
+  </div>
+  <div>
+  <label for="albers-style">Style</label>
+  <select id="albers-style" data-albers-control="style">
+  <option value="minimal">minimal</option>
+  <option value="balanced">balanced</option>
+  <option value="assertive">assertive</option>
+  </select>
+  </div>
+  <div>
+  <label for="albers-width">Content width (ch)</label>
+  <input id="albers-width" data-albers-control="width" type="number" min="60" max="100" value="80" />
+  </div>
+  </div>
+</div>
 
-  <div class="theme-lab__preview">
-    <div class="theme-lab__chips">
-      <span class="albers-chip">A900</span>
-      <span class="albers-chip">A700</span>
-      <span class="albers-chip">A500</span>
-      <span class="albers-chip">A300</span>
-    </div>
-    <p data-albers-lab-summary>family=red | preset=study | style=minimal | width=80ch</p>
-    <div class="albers-composition albers-composition--dense" data-seed="theme-lab" data-density="8" aria-hidden="true"></div>
+<div class="theme-lab__preview">
+  <div class="theme-lab__chips">
+  <span class="albers-chip">A900</span>
+  <span class="albers-chip">A700</span>
+  <span class="albers-chip">A500</span>
+  <span class="albers-chip">A300</span>
   </div>
+  <p data-albers-lab-summary>family=red | preset=study | style=minimal | width=80ch</p>
+  <div class="albers-composition albers-composition--dense" data-seed="theme-lab" data-density="8" aria-hidden="true"></div>
+</div>
 </div>
 
 ## What Does Each Control Change?
