@@ -1,0 +1,123 @@
+---
+title: 'Theme Proof: Ochre + Structural'
+name: proof-ochre-structural
+description: Full-page proof vignette for the ochre family on the structural preset.
+output:
+  rmarkdown::html_vignette:
+    toc: yes
+    toc_depth: 2
+    css: albers.css
+    includes:
+      in_header: albers-header.html
+params:
+  family: ochre
+  preset: structural
+  base_size: 13
+  content_width: 74
+  style: minimal
+vignette: |
+  %\VignetteIndexEntry{Theme Proof: Ochre + Structural}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+resource_files:
+- albers.css
+- albers.js
+- albers-header.html
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE, comment = "#>", fig.align = "center", fig.retina = 2,
+  out.width = "100%", fig.width = 7, fig.asp = 0.618, message = FALSE, warning = FALSE
+)
+set.seed(11)
+oldopt <- options(pillar.sigfig = 7, width = 80)
+`%||%` <- function(a, b) if (is.null(a)) b else a
+library(ggplot2)
+if (requireNamespace("ggplot2", quietly = TRUE) && requireNamespace("albersdown", quietly = TRUE)) {
+  oldtheme <- ggplot2::theme_set(albersdown::theme_albers(
+    family = params$family,
+    preset = params$preset,
+    base_size = params$base_size
+  ))
+}
+```
+
+```{r albers-family, echo=FALSE, results='asis'}
+cat(sprintf('<script>document.addEventListener("DOMContentLoaded",function(){document.body.classList.add("palette-%s");});</script>', params$family))
+```
+
+```{r albers-preset, echo=FALSE, results='asis'}
+cat(sprintf('<script>document.addEventListener("DOMContentLoaded",function(){document.body.classList.add("preset-%s");});</script>', params$preset))
+```
+
+```{r albers-style, echo=FALSE, results='asis'}
+style_class <- switch(
+  tolower(params$style %||% "balanced"),
+  minimal = "style-minimal",
+  assertive = "style-assertive",
+  balanced = ""
+)
+if (nzchar(style_class)) {
+  cat(sprintf('<script>document.addEventListener("DOMContentLoaded",function(){document.body.classList.remove("style-minimal","style-assertive");document.body.classList.add("%s");});</script>', style_class))
+}
+```
+
+```{r content-width, echo=FALSE, results='asis'}
+cat(sprintf('<style>:root{--content:%sch}</style>', params$content_width))
+```
+
+<div class="homage-hero" aria-hidden="true"></div>
+<div class="hr-notch" role="presentation"></div>
+
+## What To Look For
+
+This proof page fixes the article to `ochre` plus `structural`.
+The family should show up in links, section dividers, plot highlights, and emphasis bands.
+
+The preset should feel more architectural than `study`: harder surfaces, flatter shadows,
+and a drier ground color behind the same typography and layout system.
+
+## Palette Evidence
+
+```{r}
+albersdown::albers_swatch(families = params$family, show_presets = TRUE) +
+  ggplot2::labs(
+    title = "Ochre palette tones with preset row",
+    subtitle = "A second full-page combination so users can compare fixed articles directly"
+  ) +
+  ggplot2::theme(legend.position = "none")
+```
+
+## Plot Evidence
+
+```{r}
+counts <- as.data.frame(table(mtcars$cyl))
+names(counts) <- c("cyl", "n")
+
+ggplot(counts, aes(cyl, n, fill = cyl)) +
+  geom_col(width = 0.72, color = "white") +
+  albersdown::scale_fill_albers(family = params$family) +
+  labs(
+    title = "Cylinder counts",
+    subtitle = "Fill accents should move to ochre while layout keeps the structural preset",
+    x = "Cylinders",
+    y = "Count",
+    fill = "Cylinders"
+  )
+```
+
+## Table Evidence
+
+```{r}
+knitr::kable(
+  aggregate(cbind(mpg, wt, hp) ~ cyl, data = mtcars, FUN = mean),
+  digits = 1,
+  caption = "Grouped summary to inspect borders, spacing, and the overall preset mood."
+)
+```
+
+```{r cleanup, include=FALSE}
+options(oldopt)
+if (exists("oldtheme")) ggplot2::theme_set(oldtheme)
+```

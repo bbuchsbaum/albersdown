@@ -7,6 +7,9 @@ output:
     toc: yes
     toc_depth: 2
     df_print: kable
+    css: albers.css
+    includes:
+      in_header: albers-header.html
 params:
   family: red
   preset: study
@@ -17,13 +20,10 @@ vignette: |
   %\VignetteIndexEntry{Design notes: Homage system}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
-css: albers.css
 resource_files:
 - albers.css
 - albers.js
-includes:
-  in_header: |-
-    <script src="albers.js"></script>
+- albers-header.html
 
 ---
 

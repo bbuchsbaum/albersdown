@@ -76,10 +76,12 @@ use_albersdown <- function(
   dir.create("vignettes", showWarnings = FALSE)
 
   src_css_v_local <- file.path("inst", "rmarkdown", "templates", "albers_vignette", "skeleton", "albers.css")
+  src_header_local <- file.path("inst", "rmarkdown", "templates", "albers_vignette", "skeleton", "albers-header.html")
   src_css_site_local <- file.path("inst", "pkgdown", "assets", "albers.css")
   src_js_local <- file.path("inst", "pkgdown", "assets", "albers.js")
 
   src_css_v <- if (file.exists(src_css_v_local)) src_css_v_local else system.file("rmarkdown/templates/albers_vignette/skeleton/albers.css", package = "albersdown")
+  src_header <- if (file.exists(src_header_local)) src_header_local else system.file("rmarkdown/templates/albers_vignette/skeleton/albers-header.html", package = "albersdown")
   src_css_site <- if (file.exists(src_css_site_local)) src_css_site_local else system.file("pkgdown/assets/albers.css", package = "albersdown")
   src_js <- if (file.exists(src_js_local)) src_js_local else system.file("pkgdown/assets/albers.js", package = "albersdown")
 
@@ -97,6 +99,13 @@ use_albersdown <- function(
     force_replace = force_replace,
     context = "vignette"
   )
+  .copy_with_policy(
+    src = src_header,
+    dst = file.path("vignettes", "albers-header.html"),
+    dry_run = dry_run,
+    force_replace = force_replace,
+    context = "vignette"
+  )
 
   if ((!nzchar(src_css_v) || !file.exists(src_css_v)) && !file.exists(file.path("vignettes", "albers.css"))) {
     msg <- "Packaged vignette CSS not found and vignettes/albers.css is missing; vignette styling will be absent"
@@ -104,6 +113,10 @@ use_albersdown <- function(
   }
   if ((!nzchar(src_js) || !file.exists(src_js)) && !file.exists(file.path("vignettes", "albers.js"))) {
     msg <- "Packaged vignette JS not found and vignettes/albers.js is missing; copy buttons/anchors may be absent"
+    if (requireNamespace("cli", quietly = TRUE)) cli::cli_alert_warning(msg) else message(msg)
+  }
+  if ((!nzchar(src_header) || !file.exists(src_header)) && !file.exists(file.path("vignettes", "albers-header.html"))) {
+    msg <- "Packaged vignette header include not found and vignettes/albers-header.html is missing; html_vignette head hooks will be absent"
     if (requireNamespace("cli", quietly = TRUE)) cli::cli_alert_warning(msg) else message(msg)
   }
 
@@ -184,22 +197,36 @@ use_albersdown <- function(
       force_replace = force_replace
     )
   } else {
-    y$output <- y$output %||% list(`rmarkdown::html_vignette` = list(toc = TRUE, toc_depth = 2))
+    output_cur <- y$output
+    html_vignette <- if (is.character(output_cur) && length(output_cur) == 1L) {
+      list()
+    } else if (is.list(output_cur)) {
+      output_cur[["rmarkdown::html_vignette"]] %||% list()
+    } else {
+      list()
+    }
 
-    css_cur <- .as_char_vec(y$css)
-    y$css <- if (force_replace) "albers.css" else unique(c(css_cur, "albers.css"))
+    if (is.null(html_vignette$toc)) html_vignette$toc <- TRUE
+    if (is.null(html_vignette$toc_depth)) html_vignette$toc_depth <- 2
+
+    css_cur <- .as_char_vec(html_vignette$css %||% y$css)
+    html_vignette$css <- if (force_replace) "albers.css" else unique(c(css_cur, "albers.css"))
+
+    includes_top <- if (is.list(y$includes)) y$includes else list()
+    includes_cur <- .modify_list(includes_top, html_vignette$includes %||% list())
+    includes_cur$in_header <- .upsert_in_header_path(
+      value = includes_cur$in_header,
+      force_replace = force_replace,
+      target = "albers-header.html"
+    )
+    html_vignette$includes <- includes_cur
+
+    y$output <- list(`rmarkdown::html_vignette` = html_vignette)
+    y$css <- NULL
+    y$includes <- NULL
 
     resources <- .as_char_vec(y$resource_files)
-    y$resource_files <- unique(c(resources, "albers.css", "albers.js"))
-
-    includes <- y$includes %||% list()
-    includes$in_header <- .upsert_in_header_block(
-      value = includes$in_header,
-      family = family,
-      preset = preset,
-      force_replace = force_replace
-    )
-    y$includes <- includes
+    y$resource_files <- unique(c(resources, "albers.css", "albers.js", "albers-header.html"))
   }
 
   new_head <- yaml::as.yaml(y)
@@ -263,7 +290,39 @@ use_albersdown <- function(
     append(lines, inject, after = setup_chunk[1])
   }
 
-  if (!dry_run) writeLines(ensure_theme(readLines(path, warn = FALSE)), path, useBytes = TRUE)
+  ensure_runtime_classes <- function(lines) {
+    lines <- .drop_named_chunks(lines, c("albers-family", "albers-preset", "albers-classes"))
+
+    setup_chunk <- grep("^```\\{r[^}]*setup", lines)
+    if (!length(setup_chunk)) return(lines)
+
+    setup_end <- which(seq_along(lines) > setup_chunk[1] & grepl("^```\\s*$", lines))
+    if (!length(setup_end)) return(lines)
+
+    inject <- c(
+      "```{r albers-classes, echo=FALSE, results='asis'}",
+      "cat(sprintf(",
+      "  paste0(",
+      "    '<script>document.addEventListener(\"DOMContentLoaded\",function(){',",
+      "    'document.body.classList.remove(\"palette-red\",\"palette-lapis\",\"palette-ochre\",\"palette-teal\",\"palette-green\",\"palette-violet\",\"preset-homage\",\"preset-study\",\"preset-structural\",\"preset-adobe\",\"preset-midnight\");',",
+      "    'document.body.classList.add(\"palette-%s\",\"preset-%s\");',",
+      "    '});</script>'",
+      "  ),",
+      "  params$family,",
+      "  params$preset",
+      "))",
+      "```"
+    )
+
+    append(lines, c("", inject), after = setup_end[1])
+  }
+
+  if (!dry_run) {
+    patched <- readLines(path, warn = FALSE)
+    patched <- ensure_theme(patched)
+    if (!is_qmd) patched <- ensure_runtime_classes(patched)
+    writeLines(patched, path, useBytes = TRUE)
+  }
   invisible(TRUE)
 }
 
@@ -321,6 +380,7 @@ use_albersdown <- function(
 
   ok_css <- file.exists("vignettes/albers.css")
   ok_js <- file.exists("vignettes/albers.js")
+  ok_header <- file.exists("vignettes/albers-header.html")
   if (ok_css) {
     if (requireNamespace("cli", quietly = TRUE)) cli::cli_alert_success("CSS present: {ok_css}") else message(sprintf("CSS present: %s", ok_css))
   } else {
@@ -331,11 +391,18 @@ use_albersdown <- function(
   } else {
     penalize(15, "Missing vignettes/albers.js; anchors/copy/composition behaviors will be absent")
   }
+  if (ok_header) {
+    if (requireNamespace("cli", quietly = TRUE)) cli::cli_alert_success("Header include present: {ok_header}") else message(sprintf("Header include present: %s", ok_header))
+  } else {
+    penalize(12, "Missing vignettes/albers-header.html; html_vignette will ignore custom head hooks")
+  }
 
   src_css_local <- file.path("inst", "rmarkdown", "templates", "albers_vignette", "skeleton", "albers.css")
   src_css <- if (file.exists(src_css_local)) src_css_local else system.file("rmarkdown/templates/albers_vignette/skeleton/albers.css", package = "albersdown")
   src_js_local <- file.path("inst", "pkgdown", "assets", "albers.js")
   src_js <- if (file.exists(src_js_local)) src_js_local else system.file("pkgdown/assets/albers.js", package = "albersdown")
+  src_header_local <- file.path("inst", "rmarkdown", "templates", "albers_vignette", "skeleton", "albers-header.html")
+  src_header <- if (file.exists(src_header_local)) src_header_local else system.file("rmarkdown/templates/albers_vignette/skeleton/albers-header.html", package = "albersdown")
   if (ok_css && nzchar(src_css) && file.exists(src_css)) {
     if (!identical(.md5(src_css), .md5("vignettes/albers.css"))) {
       penalize(8, "vignettes/albers.css is not the packaged version (drift detected)")
@@ -344,6 +411,11 @@ use_albersdown <- function(
   if (ok_js && nzchar(src_js) && file.exists(src_js)) {
     if (!identical(.md5(src_js), .md5("vignettes/albers.js"))) {
       penalize(5, "vignettes/albers.js is not the packaged version (drift detected)")
+    }
+  }
+  if (ok_header && nzchar(src_header) && file.exists(src_header)) {
+    if (!identical(.md5(src_header), .md5("vignettes/albers-header.html"))) {
+      penalize(5, "vignettes/albers-header.html is not the packaged version (drift detected)")
     }
   }
 
@@ -365,10 +437,10 @@ use_albersdown <- function(
       ))
     }
 
-    missing_js <- v[!vapply(v, function(path) any(grepl("albers\\.js", readLines(path, warn = FALSE))), logical(1))]
+    missing_js <- v[!vapply(v, function(path) any(grepl("albers\\.js|albers-header\\.html", readLines(path, warn = FALSE))), logical(1))]
     if (length(missing_js)) {
       penalize(min(15, 5 * length(missing_js)), sprintf(
-        "These vignettes do not reference albers.js: %s",
+        "These vignettes do not reference albers.js or albers-header.html: %s",
         paste(basename(missing_js), collapse = ", ")
       ))
     }
@@ -626,18 +698,39 @@ use_albersdown <- function(
   lines
 }
 
-.upsert_in_header_block <- function(value, family, preset = "homage", force_replace = TRUE) {
-  lines <- if (is.null(value) || !nzchar(value)) character() else strsplit(as.character(value), "\\n", fixed = FALSE)[[1]]
-  if (force_replace) {
-    lines <- .strip_albers_lines(lines)
-    lines <- c(lines, .albers_js_tag(), .palette_script(family, preset))
-  } else {
-    if (!any(grepl("albers\\.js", lines))) lines <- c(lines, .albers_js_tag())
-    if (!any(grepl("palette-", lines))) lines <- c(lines, .palette_script(family, preset))
+.drop_named_chunks <- function(lines, labels) {
+  if (!length(labels)) return(lines)
+
+  keep <- rep(TRUE, length(lines))
+  pattern <- paste0("^```\\{r[^}]*\\b(", paste(labels, collapse = "|"), ")\\b")
+
+  i <- 1L
+  while (i <= length(lines)) {
+    if (grepl(pattern, lines[[i]], perl = TRUE)) {
+      keep[[i]] <- FALSE
+      i <- i + 1L
+      while (i <= length(lines)) {
+        keep[[i]] <- FALSE
+        if (grepl("^```\\s*$", lines[[i]], perl = TRUE)) {
+          i <- i + 1L
+          break
+        }
+        i <- i + 1L
+      }
+      next
+    }
+    i <- i + 1L
   }
-  lines <- unique(lines)
+
+  lines[keep]
+}
+
+.upsert_in_header_path <- function(value, force_replace = TRUE, target = "albers-header.html") {
+  lines <- .as_char_vec(value)
   lines <- lines[nzchar(trimws(lines))]
-  paste(lines, collapse = "\n")
+  if (!force_replace && any(grepl("albers-header\\.html", lines))) return(unique(lines))
+  lines <- lines[!grepl("albers-header\\.html", lines)]
+  unique(c(lines, target))
 }
 
 .upsert_header_includes <- function(values, family, preset = "homage", force_replace = TRUE) {

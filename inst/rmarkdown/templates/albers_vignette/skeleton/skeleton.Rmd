@@ -6,6 +6,9 @@ output:
   rmarkdown::html_vignette:
     toc: true
     toc_depth: 2
+    css: albers.css
+    includes:
+      in_header: albers-header.html
 params:
   family: "red"   # choices: red, lapis, ochre, teal, green, violet
   preset: "study" # choices: study, structural, adobe, midnight
@@ -16,10 +19,10 @@ vignette: >
   %\VignetteIndexEntry{Getting started}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
-css: albers.css
-includes:
-  in_header: |
-    <script src="albers.js"></script>
+resource_files:
+  - albers.css
+  - albers.js
+  - albers-header.html
 ---
 
 ```{r setup, include=FALSE}

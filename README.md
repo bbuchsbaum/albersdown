@@ -46,8 +46,11 @@ Config/Needs/website: bbuchsbaum/albersdown
 Create a new vignette using the "Albers Vignette" template (or run `albersdown::use_albers_vignettes()`). The skeleton includes:
 
 ```yaml
-output: rmarkdown::html_vignette
-css: albers.css
+output:
+  rmarkdown::html_vignette:
+    css: albers.css
+    includes:
+      in_header: albers-header.html
 ```
 
 In the setup chunk:
@@ -97,9 +100,10 @@ Helpers
 Design tooling
 --------------
 
-- Vignettes: `getting-started`, `design-notes`, `theme-lab`, `theme-showcase`.
+- Vignettes: `getting-started`, `design-notes`, `theme-lab`, `theme-showcase`, `proof-teal-study`, `proof-ochre-structural`.
 - Theme Lab article: interactive family/preset/style/content-width preview.
 - Theme Showcase article: dark preset + non-red accent family gallery.
+- Proof articles: full-page fixed combinations for `teal + study` and `ochre + structural`.
 - Token source of truth: `inst/tokens/albers-tokens.yml`.
 - Token sync script: `Rscript tools/sync_albers_assets.R`.
 - Homepage blueprint: `inst/pkgdown/templates/homepage-blueprint.md`.
@@ -122,8 +126,9 @@ Choosing a palette family per page
   `ggplot2::theme_set(albersdown::theme_albers(family = params$family, preset = params$preset))`
 - If plot text feels small, increase `base_size` (e.g., 13–14):
   `ggplot2::theme_set(albersdown::theme_albers(family = params$family, preset = params$preset, base_size = 14))`
+- Add `albers-header.html` alongside `albers.css` and `albers.js`, then point `includes: in_header` at it.
 - Add body class so CSS tokens switch by family:
-  cat(sprintf('<script>document.addEventListener("DOMContentLoaded",function(){document.body.classList.add("palette-%s");});</script>', params$family))
+  `cat(sprintf('<script>document.addEventListener("DOMContentLoaded",function(){document.body.classList.add("palette-%s");});</script>', params$family))`
 - Add body class so CSS preset styles switch by preset:
   `cat(sprintf('<script>document.addEventListener("DOMContentLoaded",function(){document.body.classList.add("preset-%s");});</script>', params$preset))`
 

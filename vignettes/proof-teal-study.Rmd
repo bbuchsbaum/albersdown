@@ -1,0 +1,128 @@
+---
+title: 'Theme Proof: Teal + Study'
+name: proof-teal-study
+description: Full-page proof vignette for the teal family on the study preset.
+output:
+  rmarkdown::html_vignette:
+    toc: yes
+    toc_depth: 2
+    css: albers.css
+    includes:
+      in_header: albers-header.html
+params:
+  family: teal
+  preset: study
+  base_size: 13
+  content_width: 78
+  style: assertive
+vignette: |
+  %\VignetteIndexEntry{Theme Proof: Teal + Study}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+resource_files:
+- albers.css
+- albers.js
+- albers-header.html
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE, comment = "#>", fig.align = "center", fig.retina = 2,
+  out.width = "100%", fig.width = 7, fig.asp = 0.618, message = FALSE, warning = FALSE
+)
+set.seed(7)
+oldopt <- options(pillar.sigfig = 7, width = 80)
+`%||%` <- function(a, b) if (is.null(a)) b else a
+library(ggplot2)
+if (requireNamespace("ggplot2", quietly = TRUE) && requireNamespace("albersdown", quietly = TRUE)) {
+  oldtheme <- ggplot2::theme_set(albersdown::theme_albers(
+    family = params$family,
+    preset = params$preset,
+    base_size = params$base_size
+  ))
+}
+```
+
+```{r albers-family, echo=FALSE, results='asis'}
+cat(sprintf('<script>document.addEventListener("DOMContentLoaded",function(){document.body.classList.add("palette-%s");});</script>', params$family))
+```
+
+```{r albers-preset, echo=FALSE, results='asis'}
+cat(sprintf('<script>document.addEventListener("DOMContentLoaded",function(){document.body.classList.add("preset-%s");});</script>', params$preset))
+```
+
+```{r albers-style, echo=FALSE, results='asis'}
+style_class <- switch(
+  tolower(params$style %||% "balanced"),
+  minimal = "style-minimal",
+  assertive = "style-assertive",
+  balanced = ""
+)
+if (nzchar(style_class)) {
+  cat(sprintf('<script>document.addEventListener("DOMContentLoaded",function(){document.body.classList.remove("style-minimal","style-assertive");document.body.classList.add("%s");});</script>', style_class))
+}
+```
+
+```{r content-width, echo=FALSE, results='asis'}
+cat(sprintf('<style>:root{--content:%sch}</style>', params$content_width))
+```
+
+<div class="albers-plate" aria-hidden="true">
+  <div class="albers-plate__outer"></div>
+  <div class="albers-plate__inner"></div>
+  <div class="albers-plate__core"></div>
+</div>
+
+## Why This Page Exists
+
+This page is a direct proof vignette: it fixes the family at `teal` and the preset at `study`
+so readers can inspect a full article instead of a matrix or control panel.
+
+The accent should read as teal in links, rules, callouts, and plotted highlights.
+For a quick contrast check, compare this page against [pkgdown](https://pkgdown.r-lib.org/).
+
+> The point is not variety inside one page. The point is one stable combination rendered end to end.
+
+## Palette Evidence
+
+```{r}
+albersdown::albers_swatch(families = params$family, show_presets = TRUE) +
+  ggplot2::labs(
+    title = "Teal palette tones with preset row",
+    subtitle = "The page family is fixed to teal so CSS and ggplot accents should agree"
+  ) +
+  ggplot2::theme(legend.position = "none")
+```
+
+## Plot Evidence
+
+```{r}
+mtcars |>
+  transform(cyl = factor(cyl)) |>
+  ggplot(aes(wt, mpg, color = cyl)) +
+  geom_point(size = 2.6, alpha = 0.9) +
+  geom_smooth(se = FALSE, linewidth = 0.8) +
+  albersdown::scale_color_albers(family = params$family) +
+  labs(
+    title = "Fuel efficiency vs. weight",
+    subtitle = "Legend accents and annotation ink should stay in the teal family",
+    x = "Weight (1000 lbs)",
+    y = "Miles per gallon",
+    color = "Cylinders"
+  )
+```
+
+## Table Evidence
+
+```{r}
+knitr::kable(
+  head(mtcars[, c("mpg", "wt", "hp", "qsec")], 6),
+  digits = 1,
+  caption = "A simple table to inspect rules, spacing, and code-adjacent typography."
+)
+```
+
+```{r cleanup, include=FALSE}
+options(oldopt)
+if (exists("oldtheme")) ggplot2::theme_set(oldtheme)
+```

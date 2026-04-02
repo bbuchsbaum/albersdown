@@ -6,6 +6,9 @@ output:
   rmarkdown::html_vignette:
     toc: true
     toc_depth: 2
+    css: albers.css
+    includes:
+      in_header: albers-header.html
 params:
   family: "violet"
   base_size: 14
@@ -14,7 +17,10 @@ vignette: >
   %\VignetteIndexEntry{Albers components}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
-css: albers.css
+resource_files:
+  - albers.css
+  - albers.js
+  - albers-header.html
 ---
 
 ```{r setup, include=FALSE}
