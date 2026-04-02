@@ -47,13 +47,14 @@ use_albersdown(
 
 - fallback_extra:
 
-  Controls copying site-wide fallbacks into `pkgdown/`:
+  Controls writing site-wide fallbacks into `pkgdown/`:
 
-  - "auto": copy `pkgdown/extra.css` and `pkgdown/extra.js` only when
-    the consuming package does not use
-    `template: { package: albersdown }` in `_pkgdown.yml`.
+  - "auto": write `pkgdown/extra.css` and `pkgdown/extra.js` whenever
+    site-wide defaults are needed, including the standard
+    `template: { package: albersdown }` setup where pkgdown template
+    assets are copied but not linked automatically.
 
-  - "always": always copy to `pkgdown/` (useful as a safety net or for
+  - "always": always write to `pkgdown/` (useful as a safety net or for
     custom setups).
 
   - "never": never copy site-wide fallbacks.

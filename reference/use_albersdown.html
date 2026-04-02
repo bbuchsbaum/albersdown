@@ -82,9 +82,11 @@ location.</p></dd>
 
 
 <dt id="arg-fallback-extra">fallback_extra<a class="anchor" aria-label="anchor" href="#arg-fallback-extra"></a></dt>
-<dd><p>Controls copying site-wide fallbacks into <code>pkgdown/</code>:</p><ul><li><p>"auto": copy <code>pkgdown/extra.css</code> and <code>pkgdown/extra.js</code> only when the consuming
-package does not use <code>template: { package: albersdown }</code> in <code>_pkgdown.yml</code>.</p></li>
-<li><p>"always": always copy to <code>pkgdown/</code> (useful as a safety net or for custom setups).</p></li>
+<dd><p>Controls writing site-wide fallbacks into <code>pkgdown/</code>:</p><ul><li><p>"auto": write <code>pkgdown/extra.css</code> and <code>pkgdown/extra.js</code> whenever
+site-wide defaults are needed, including the standard
+<code>template: { package: albersdown }</code> setup where pkgdown template
+assets are copied but not linked automatically.</p></li>
+<li><p>"always": always write to <code>pkgdown/</code> (useful as a safety net or for custom setups).</p></li>
 <li><p>"never": never copy site-wide fallbacks.</p></li>
 </ul></dd>
 
