@@ -16,49 +16,17 @@ content width. That order gives the fastest path to a coherent page.
 3.  Toggle style intensity to set structural emphasis.
 4.  Adjust content width to match prose density.
 
-    <div class="theme-lab__controls">
-      <div>
-        <label for="albers-family">Family</label>
-        <select id="albers-family" data-albers-control="family">
-          <option value="red">red</option>
-          <option value="lapis">lapis</option>
-          <option value="ochre">ochre</option>
-          <option value="teal">teal</option>
-          <option value="green">green</option>
-          <option value="violet">violet</option>
-        </select>
-      </div>
-      <div>
-        <label for="albers-preset">Preset</label>
-        <select id="albers-preset" data-albers-control="preset">
-          <option value="study">study</option>
-          <option value="structural">structural</option>
-          <option value="adobe">adobe</option>
-          <option value="midnight">midnight</option>
-        </select>
-      </div>
-      <div>
-        <label for="albers-style">Style</label>
-        <select id="albers-style" data-albers-control="style">
-          <option value="minimal">minimal</option>
-          <option value="balanced">balanced</option>
-          <option value="assertive">assertive</option>
-        </select>
-      </div>
-      <div>
-        <label for="albers-width">Content width (ch)</label>
-        <input id="albers-width" data-albers-control="width" type="number" min="60" max="100" value="80" />
-      </div>
-    </div>
+Family red lapis ochre teal green violet
 
-    <div class="theme-lab__chips">
-      <span class="albers-chip">A900</span>
-      <span class="albers-chip">A700</span>
-      <span class="albers-chip">A500</span>
-      <span class="albers-chip">A300</span>
-    </div>
-    <p data-albers-lab-summary>family=red | preset=study | style=minimal | width=80ch</p>
-    <div class="albers-composition albers-composition--dense" data-seed="theme-lab" data-density="8" aria-hidden="true"></div>
+Preset study structural adobe midnight
+
+Style minimal balanced assertive
+
+Content width (ch)
+
+A900 A700 A500 A300
+
+family=red \| preset=study \| style=minimal \| width=80ch
 
 ## What Does Each Control Change?
 

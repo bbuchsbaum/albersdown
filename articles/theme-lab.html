@@ -61,7 +61,7 @@
 
     
     
-<script>document.addEventListener("DOMContentLoaded",function(){document.body.classList.add("palette-red");});</script><script>document.addEventListener("DOMContentLoaded",function(){document.body.classList.add("preset-study");});</script><script>document.addEventListener("DOMContentLoaded",function(){document.body.classList.remove("style-minimal","style-assertive");if("minimal"!=="balanced") document.body.classList.add("style-minimal");});</script><style>:root{--content:80ch}</style>
+<script>document.addEventListener("DOMContentLoaded",function(){var families=["palette-red","palette-lapis","palette-ochre","palette-teal","palette-green","palette-violet"];if(!families.some(function(cls){return document.body.classList.contains(cls);})){document.body.classList.add("palette-red");}});</script><script>document.addEventListener("DOMContentLoaded",function(){var presets=["preset-study","preset-structural","preset-adobe","preset-midnight"];if(!presets.some(function(cls){return document.body.classList.contains(cls);})){document.body.classList.add("preset-study");}});</script><script>document.addEventListener("DOMContentLoaded",function(){if(!document.body.classList.contains("style-minimal") && !document.body.classList.contains("style-assertive") && "minimal"!=="balanced") document.body.classList.add("style-minimal");});</script><style>:root{--content:80ch}</style>
 <div class="section level2">
 <h2 id="what-is-this-page-for">What Is This Page For?<a class="anchor" aria-label="anchor" href="#what-is-this-page-for"></a>
 </h2>
@@ -85,50 +85,46 @@ the fastest path to a coherent page.</p>
 </ol>
 <div class="theme-lab" data-albers-lab="">
 <div class="theme-lab__panel">
-<pre><code>&lt;div class="theme-lab__controls"&gt;
-  &lt;div&gt;
-    &lt;label for="albers-family"&gt;Family&lt;/label&gt;
-    &lt;select id="albers-family" data-albers-control="family"&gt;
-      &lt;option value="red"&gt;red&lt;/option&gt;
-      &lt;option value="lapis"&gt;lapis&lt;/option&gt;
-      &lt;option value="ochre"&gt;ochre&lt;/option&gt;
-      &lt;option value="teal"&gt;teal&lt;/option&gt;
-      &lt;option value="green"&gt;green&lt;/option&gt;
-      &lt;option value="violet"&gt;violet&lt;/option&gt;
-    &lt;/select&gt;
-  &lt;/div&gt;
-  &lt;div&gt;
-    &lt;label for="albers-preset"&gt;Preset&lt;/label&gt;
-    &lt;select id="albers-preset" data-albers-control="preset"&gt;
-      &lt;option value="study"&gt;study&lt;/option&gt;
-      &lt;option value="structural"&gt;structural&lt;/option&gt;
-      &lt;option value="adobe"&gt;adobe&lt;/option&gt;
-      &lt;option value="midnight"&gt;midnight&lt;/option&gt;
-    &lt;/select&gt;
-  &lt;/div&gt;
-  &lt;div&gt;
-    &lt;label for="albers-style"&gt;Style&lt;/label&gt;
-    &lt;select id="albers-style" data-albers-control="style"&gt;
-      &lt;option value="minimal"&gt;minimal&lt;/option&gt;
-      &lt;option value="balanced"&gt;balanced&lt;/option&gt;
-      &lt;option value="assertive"&gt;assertive&lt;/option&gt;
-    &lt;/select&gt;
-  &lt;/div&gt;
-  &lt;div&gt;
-    &lt;label for="albers-width"&gt;Content width (ch)&lt;/label&gt;
-    &lt;input id="albers-width" data-albers-control="width" type="number" min="60" max="100" value="80" /&gt;
-  &lt;/div&gt;
-&lt;/div&gt;</code></pre>
+<div class="theme-lab__controls">
+<div>
+<label for="albers-family">Family</label>
+<select id="albers-family" data-albers-control="family"><option value="red">red</option>
+<option value="lapis">lapis</option>
+<option value="ochre">ochre</option>
+<option value="teal">teal</option>
+<option value="green">green</option>
+<option value="violet">violet</option></select>
+</div>
+<div>
+<label for="albers-preset">Preset</label>
+<select id="albers-preset" data-albers-control="preset"><option value="study">study</option>
+<option value="structural">structural</option>
+<option value="adobe">adobe</option>
+<option value="midnight">midnight</option></select>
+</div>
+<div>
+<label for="albers-style">Style</label>
+<select id="albers-style" data-albers-control="style"><option value="minimal">minimal</option>
+<option value="balanced">balanced</option>
+<option value="assertive">assertive</option></select>
+</div>
+<div>
+<label for="albers-width">Content width (ch)</label>
+<input id="albers-width" data-albers-control="width" type="number" min="60" max="100" value="80">
+</div>
+</div>
 </div>
 <div class="theme-lab__preview">
-<pre><code>&lt;div class="theme-lab__chips"&gt;
-  &lt;span class="albers-chip"&gt;A900&lt;/span&gt;
-  &lt;span class="albers-chip"&gt;A700&lt;/span&gt;
-  &lt;span class="albers-chip"&gt;A500&lt;/span&gt;
-  &lt;span class="albers-chip"&gt;A300&lt;/span&gt;
-&lt;/div&gt;
-&lt;p data-albers-lab-summary&gt;family=red | preset=study | style=minimal | width=80ch&lt;/p&gt;
-&lt;div class="albers-composition albers-composition--dense" data-seed="theme-lab" data-density="8" aria-hidden="true"&gt;&lt;/div&gt;</code></pre>
+<div class="theme-lab__chips">
+<span class="albers-chip">A900</span> <span class="albers-chip">A700</span> <span class="albers-chip">A500</span>
+<span class="albers-chip">A300</span>
+</div>
+<p data-albers-lab-summary>
+family=red | preset=study | style=minimal | width=80ch
+</p>
+<div class="albers-composition albers-composition--dense" data-seed="theme-lab" data-density="8" aria-hidden="true">
+
+</div>
 </div>
 </div>
 </div>
@@ -153,7 +149,7 @@ units.</li>
 <div class="section level2">
 <h2 id="can-you-validate-the-palette-quickly">Can You Validate The Palette Quickly?<a class="anchor" aria-label="anchor" href="#can-you-validate-the-palette-quickly"></a>
 </h2>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">pal</span> <span class="op">&lt;-</span> <span class="fu">albersdown</span><span class="fu">::</span><span class="fu"><a href="../reference/albers_palette.html">albers_palette</a></span><span class="op">(</span><span class="va">params</span><span class="op">$</span><span class="va">family</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/stopifnot.html" class="external-link">stopifnot</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/identical.html" class="external-link">identical</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">pal</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A900"</span>, <span class="st">"A700"</span>, <span class="st">"A500"</span>, <span class="st">"A300"</span><span class="op">)</span><span class="op">)</span>,</span>
@@ -208,17 +204,17 @@ A300
 <div class="section level2">
 <h2 id="copy-into-yaml">Copy Into YAML<a class="anchor" aria-label="anchor" href="#copy-into-yaml"></a>
 </h2>
-<div class="sourceCode" id="cb4"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">params</span><span class="kw">:</span></span>
-<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="at">  </span><span class="fu">family</span><span class="kw">:</span><span class="at"> red</span></span>
-<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="at">  </span><span class="fu">preset</span><span class="kw">:</span><span class="at"> study</span></span>
-<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a><span class="at">  </span><span class="fu">base_size</span><span class="kw">:</span><span class="at"> </span><span class="dv">13</span></span>
-<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a><span class="at">  </span><span class="fu">content_width</span><span class="kw">:</span><span class="at"> </span><span class="dv">80</span></span>
-<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a><span class="at">  </span><span class="fu">style</span><span class="kw">:</span><span class="at"> minimal</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">params</span><span class="kw">:</span></span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="at">  </span><span class="fu">family</span><span class="kw">:</span><span class="at"> red</span></span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="at">  </span><span class="fu">preset</span><span class="kw">:</span><span class="at"> study</span></span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a><span class="at">  </span><span class="fu">base_size</span><span class="kw">:</span><span class="at"> </span><span class="dv">13</span></span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a><span class="at">  </span><span class="fu">content_width</span><span class="kw">:</span><span class="at"> </span><span class="dv">80</span></span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a><span class="at">  </span><span class="fu">style</span><span class="kw">:</span><span class="at"> minimal</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="example-plot">Example Plot<a class="anchor" aria-label="anchor" href="#example-plot"></a>
 </h2>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mtcars</span><span class="op">$</span><span class="va">grp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">$</span><span class="va">cyl</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/stopifnot.html" class="external-link">stopifnot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/levels.html" class="external-link">levels</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">$</span><span class="va">grp</span><span class="op">)</span><span class="op">)</span> <span class="op">&gt;=</span> <span class="fl">3</span><span class="op">)</span></span>
 <span></span>
