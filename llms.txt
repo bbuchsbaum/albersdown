@@ -41,8 +41,11 @@ Create a new vignette using the “Albers Vignette” template (or run
 The skeleton includes:
 
 ``` yaml
-output: rmarkdown::html_vignette
-css: albers.css
+output:
+  rmarkdown::html_vignette:
+    css: albers.css
+    includes:
+      in_header: albers-header.html
 ```
 
 In the setup chunk:
@@ -93,10 +96,12 @@ albersdown::migrate_albersdown(family = "teal", preset = "midnight")
 ## Design tooling
 
 - Vignettes: `getting-started`, `design-notes`, `theme-lab`,
-  `theme-showcase`.
+  `theme-showcase`, `proof-teal-study`, `proof-ochre-structural`.
 - Theme Lab article: interactive family/preset/style/content-width
   preview.
 - Theme Showcase article: dark preset + non-red accent family gallery.
+- Proof articles: full-page fixed combinations for `teal + study` and
+  `ochre + structural`.
 - Token source of truth: `inst/tokens/albers-tokens.yml`.
 - Token sync script: `Rscript tools/sync_albers_assets.R`.
 - Homepage blueprint: `inst/pkgdown/templates/homepage-blueprint.md`.
@@ -118,8 +123,10 @@ albersdown::migrate_albersdown(family = "teal", preset = "midnight")
   `ggplot2::theme_set(albersdown::theme_albers(family = params$family, preset = params$preset))`
 - If plot text feels small, increase `base_size` (e.g., 13–14):
   `ggplot2::theme_set(albersdown::theme_albers(family = params$family, preset = params$preset, base_size = 14))`
-- Add body class so CSS tokens switch by family: cat(sprintf(’
-  ’, params\$family))
+- Add `albers-header.html` alongside `albers.css` and `albers.js`, then
+  point `includes: in_header` at it.
+- Add body class so CSS tokens switch by family:
+  `cat(sprintf('<script>document.addEventListener("DOMContentLoaded",function(){document.body.classList.add("palette-%s");});</script>', params$family))`
 - Add body class so CSS preset styles switch by preset:
   `cat(sprintf('<script>document.addEventListener("DOMContentLoaded",function(){document.body.classList.add("preset-%s");});</script>', params$preset))`
 
@@ -222,3 +229,14 @@ The pkgdown site uses `template: { package: albersdown }`.
   Families](https://bbuchsbaum.github.io/albersdown/articles/theme-showcase.md):
 
   A focused gallery for midnight preset and non-red accent families.
+
+- [Theme Proof: Teal +
+  Study](https://bbuchsbaum.github.io/albersdown/articles/proof-teal-study.md):
+
+  Full-page proof vignette for the teal family on the study preset.
+
+- [Theme Proof: Ochre +
+  Structural](https://bbuchsbaum.github.io/albersdown/articles/proof-ochre-structural.md):
+
+  Full-page proof vignette for the ochre family on the structural
+  preset.

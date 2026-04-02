@@ -4,9 +4,11 @@ pkgdown_sha: ~
 articles:
   design-notes: design-notes.html
   getting-started: getting-started.html
+  proof-ochre-structural: proof-ochre-structural.html
+  proof-teal-study: proof-teal-study.html
   theme-lab: theme-lab.html
   theme-showcase: theme-showcase.html
-last_built: 2026-03-29T13:58Z
+last_built: 2026-04-02T13:53Z
 urls:
   reference: https://bbuchsbaum.github.io/albersdown/reference
   article: https://bbuchsbaum.github.io/albersdown/articles

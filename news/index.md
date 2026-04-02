@@ -2,6 +2,8 @@
 
 ## albersdown 1.0.0
 
+CRAN release: 2026-04-01
+
 - Initial CRAN release.
 - [`theme_albers()`](https://bbuchsbaum.github.io/albersdown/reference/theme_albers.md)
   and

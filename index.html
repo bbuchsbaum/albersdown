@@ -80,8 +80,11 @@
 <li>Vignettes (offline &amp; styled)</li>
 </ol>
 <p>Create a new vignette using the “Albers Vignette” template (or run <code><a href="reference/use_albers_vignettes.html">albersdown::use_albers_vignettes()</a></code>). The skeleton includes:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">output</span><span class="kw">:</span><span class="at"> rmarkdown::html_vignette</span></span>
-<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="fu">css</span><span class="kw">:</span><span class="at"> albers.css</span></span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">output</span><span class="kw">:</span></span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="at">  rmarkdown:</span><span class="fu">:html_vignette</span><span class="kw">:</span></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="at">    </span><span class="fu">css</span><span class="kw">:</span><span class="at"> albers.css</span></span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a><span class="at">    </span><span class="fu">includes</span><span class="kw">:</span></span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a><span class="at">      </span><span class="fu">in_header</span><span class="kw">:</span><span class="at"> albers-header.html</span></span></code></pre></div>
 <p>In the setup chunk:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
@@ -123,9 +126,10 @@
 <h2 id="design-tooling">Design tooling<a class="anchor" aria-label="anchor" href="#design-tooling"></a>
 </h2>
 <ul>
-<li>Vignettes: <code>getting-started</code>, <code>design-notes</code>, <code>theme-lab</code>, <code>theme-showcase</code>.</li>
+<li>Vignettes: <code>getting-started</code>, <code>design-notes</code>, <code>theme-lab</code>, <code>theme-showcase</code>, <code>proof-teal-study</code>, <code>proof-ochre-structural</code>.</li>
 <li>Theme Lab article: interactive family/preset/style/content-width preview.</li>
 <li>Theme Showcase article: dark preset + non-red accent family gallery.</li>
+<li>Proof articles: full-page fixed combinations for <code>teal + study</code> and <code>ochre + structural</code>.</li>
 <li>Token source of truth: <code>inst/tokens/albers-tokens.yml</code>.</li>
 <li>Token sync script: <code>Rscript tools/sync_albers_assets.R</code>.</li>
 <li>Homepage blueprint: <code>inst/pkgdown/templates/homepage-blueprint.md</code>.</li>
@@ -152,9 +156,9 @@
 </li>
 <li>If plot text feels small, increase <code>base_size</code> (e.g., 13–14): <code>ggplot2::theme_set(albersdown::theme_albers(family = params$family, preset = params$preset, base_size = 14))</code>
 </li>
-<li>Add body class so CSS tokens switch by family: cat(sprintf(’
-<script>document.addEventListener("DOMContentLoaded",function(){document.body.classList.add("palette-%s");});</script>
-’, params$family))</li>
+<li>Add <code>albers-header.html</code> alongside <code>albers.css</code> and <code>albers.js</code>, then point <code>includes: in_header</code> at it.</li>
+<li>Add body class so CSS tokens switch by family: <code>cat(sprintf('&lt;script&gt;document.addEventListener("DOMContentLoaded",function(){document.body.classList.add("palette-%s");});&lt;/script&gt;', params$family))</code>
+</li>
 <li>Add body class so CSS preset styles switch by preset: <code>cat(sprintf('&lt;script&gt;document.addEventListener("DOMContentLoaded",function(){document.body.classList.add("preset-%s");});&lt;/script&gt;', params$preset))</code>
 </li>
 </ul>
@@ -169,6 +173,7 @@
   </main><aside class="col-md-3"><div class="links">
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
+<li><a href="https://cloud.r-project.org/package=albersdown" class="external-link">View on CRAN</a></li>
 <li><a href="https://github.com/bbuchsbaum/albersdown/" class="external-link">Browse source code</a></li>
 <li><a href="https://github.com/bbuchsbaum/albersdown/issues" class="external-link">Report a bug</a></li>
 </ul>

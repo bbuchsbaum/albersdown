@@ -22,3 +22,14 @@
   Families](https://bbuchsbaum.github.io/albersdown/articles/theme-showcase.md):
 
   A focused gallery for midnight preset and non-red accent families.
+
+- [Theme Proof: Teal +
+  Study](https://bbuchsbaum.github.io/albersdown/articles/proof-teal-study.md):
+
+  Full-page proof vignette for the teal family on the study preset.
+
+- [Theme Proof: Ochre +
+  Structural](https://bbuchsbaum.github.io/albersdown/articles/proof-ochre-structural.md):
+
+  Full-page proof vignette for the ochre family on the structural
+  preset.
