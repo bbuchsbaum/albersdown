@@ -27,11 +27,13 @@ location.}
 
 \item{dry_run}{if TRUE, show changes without writing}
 
-\item{fallback_extra}{Controls copying site-wide fallbacks into \verb{pkgdown/}:
+\item{fallback_extra}{Controls writing site-wide fallbacks into \verb{pkgdown/}:
 \itemize{
-\item "auto": copy \code{pkgdown/extra.css} and \code{pkgdown/extra.js} only when the consuming
-package does not use \code{template: { package: albersdown }} in \verb{_pkgdown.yml}.
-\item "always": always copy to \verb{pkgdown/} (useful as a safety net or for custom setups).
+\item "auto": write \code{pkgdown/extra.css} and \code{pkgdown/extra.js} whenever
+site-wide defaults are needed, including the standard
+\code{template: { package: albersdown }} setup where pkgdown template
+assets are copied but not linked automatically.
+\item "always": always write to \verb{pkgdown/} (useful as a safety net or for custom setups).
 \item "never": never copy site-wide fallbacks.
 }}
 

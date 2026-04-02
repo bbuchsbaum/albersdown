@@ -11,10 +11,12 @@
 #' @param preset Visual preset (default \code{"homage"}). See [albers_presets()].
 #' @param apply_to "all" to patch every *.Rmd/*.qmd in vignettes/, or "new" to only add the template and assets
 #' @param dry_run if TRUE, show changes without writing
-#' @param fallback_extra Controls copying site-wide fallbacks into `pkgdown/`:
-#'   - "auto": copy `pkgdown/extra.css` and `pkgdown/extra.js` only when the consuming
-#'     package does not use `template: { package: albersdown }` in `_pkgdown.yml`.
-#'   - "always": always copy to `pkgdown/` (useful as a safety net or for custom setups).
+#' @param fallback_extra Controls writing site-wide fallbacks into `pkgdown/`:
+#'   - "auto": write `pkgdown/extra.css` and `pkgdown/extra.js` whenever
+#'     site-wide defaults are needed, including the standard
+#'     `template: { package: albersdown }` setup where pkgdown template
+#'     assets are copied but not linked automatically.
+#'   - "always": always write to `pkgdown/` (useful as a safety net or for custom setups).
 #'   - "never": never copy site-wide fallbacks.
 #' @param force_replace if TRUE (default), overwrite existing albersdown assets and
 #'   replace existing vignette CSS/header hooks so albersdown becomes the active theme.
@@ -43,7 +45,13 @@ use_albersdown <- function(
   if (requireNamespace("cli", quietly = TRUE)) cli::cli_h1("albersdown setup") else message("albersdown setup")
   .ensure_pkgdown_template(dry_run = dry_run)
   .add_website_dep(dry_run = dry_run)
-  .copy_resources(dry_run = dry_run, fallback_extra = fallback_extra, force_replace = force_replace)
+  .copy_resources(
+    family = family,
+    preset = preset,
+    dry_run = dry_run,
+    fallback_extra = fallback_extra,
+    force_replace = force_replace
+  )
   if (apply_to == "all") .patch_all_rmds(family = family, preset = preset, dry_run = dry_run, force_replace = force_replace)
   .write_readme_snippet(family = family, preset = preset, dry_run = dry_run)
   .doctor(family = family)
@@ -71,7 +79,13 @@ use_albersdown <- function(
   invisible(TRUE)
 }
 
-.copy_resources <- function(dry_run = FALSE, fallback_extra = c("auto", "always", "never"), force_replace = TRUE) {
+.copy_resources <- function(
+  family = "red",
+  preset = "homage",
+  dry_run = FALSE,
+  fallback_extra = c("auto", "always", "never"),
+  force_replace = TRUE
+) {
   fallback_extra <- match.arg(fallback_extra)
   dir.create("vignettes", showWarnings = FALSE)
 
@@ -120,21 +134,13 @@ use_albersdown <- function(
     if (requireNamespace("cli", quietly = TRUE)) cli::cli_alert_warning(msg) else message(msg)
   }
 
-  if (identical(fallback_extra, "always") || (identical(fallback_extra, "auto") && !.uses_albers_template())) {
+  if (identical(fallback_extra, "always") || identical(fallback_extra, "auto")) {
     dir.create("pkgdown", showWarnings = FALSE)
-    .copy_with_policy(
-      src = src_css_site,
-      dst = file.path("pkgdown", "extra.css"),
+    .write_pkgdown_extra(
+      family = family,
+      preset = preset,
       dry_run = dry_run,
-      force_replace = force_replace,
-      context = "pkgdown fallback"
-    )
-    .copy_with_policy(
-      src = src_js,
-      dst = file.path("pkgdown", "extra.js"),
-      dry_run = dry_run,
-      force_replace = force_replace,
-      context = "pkgdown fallback"
+      force_replace = force_replace
     )
   }
 
@@ -229,7 +235,7 @@ use_albersdown <- function(
     y$resource_files <- unique(c(resources, "albers.css", "albers.js", "albers-header.html"))
   }
 
-  new_head <- yaml::as.yaml(y)
+  new_head <- .yaml_with_literal_vignette(y)
   out <- c("---", new_head, "---", body)
   if (!dry_run) {
     dir.create(".albersdown.bak", showWarnings = FALSE)
@@ -339,7 +345,7 @@ use_albersdown <- function(
       family,
       "', preset = '",
       preset,
-      "'). The pkgdown site uses `template: { package: albersdown }`."
+      "'). The pkgdown site uses `template: { package: albersdown }` together with generated `pkgdown/extra.css` and `pkgdown/extra.js` so the theme is linked and activated on site pages."
     ),
     end_tag
   )
@@ -501,6 +507,108 @@ use_albersdown <- function(
   if (is.null(val)) return(x)
   for (name in names(val)) x[[name]] <- val[[name]]
   x
+}
+
+.yaml_with_literal_vignette <- function(x) {
+  vignette_value <- x$vignette
+  x$vignette <- NULL
+
+  yml <- yaml::as.yaml(x)
+  if (is.null(vignette_value)) {
+    return(yml)
+  }
+
+  vignette_lines <- trimws(strsplit(as.character(vignette_value), "\n", fixed = TRUE)[[1]])
+  vignette_lines <- vignette_lines[nzchar(vignette_lines)]
+
+  c(yml, "vignette: |", paste0("  ", vignette_lines))
+}
+
+.render_pkgdown_extra_css <- function() {
+  c(
+    "@import url(\"albers.css\");",
+    ""
+  )
+}
+
+.render_pkgdown_extra_js <- function(family = "red", preset = "homage") {
+  c(
+    "(function () {",
+    "  var FAMILY_CLASSES = [\"red\", \"lapis\", \"ochre\", \"teal\", \"green\", \"violet\"];",
+    "  var PRESET_CLASSES = [\"homage\", \"study\", \"structural\", \"adobe\", \"midnight\"];",
+    "  var STYLE_CLASSES = [\"minimal\", \"assertive\"];",
+    "",
+    "  function removeClasses(values, prefix) {",
+    "    values.forEach(function (value) {",
+    "      document.body.classList.remove(prefix + value);",
+    "    });",
+    "  }",
+    "",
+    "  function applyDefaults() {",
+    "    if (!document.body) return;",
+    "",
+    "    removeClasses(FAMILY_CLASSES, \"palette-\");",
+    "    removeClasses(PRESET_CLASSES, \"preset-\");",
+    "    removeClasses(STYLE_CLASSES, \"style-\");",
+    "",
+    sprintf("    document.body.classList.add(\"palette-%s\", \"preset-%s\", \"style-minimal\");", family, preset),
+    "",
+    "    var theme = document.body.classList.contains(\"preset-midnight\") ? \"dark\" : \"light\";",
+    "    document.documentElement.setAttribute(\"data-bs-theme\", theme);",
+    "    document.body.setAttribute(\"data-bs-theme\", theme);",
+    "",
+    "    var nav = document.querySelector(\"nav.navbar\");",
+    "    if (nav) nav.setAttribute(\"data-bs-theme\", theme);",
+    "  }",
+    "",
+    "  if (document.readyState === \"loading\") {",
+    "    document.addEventListener(\"DOMContentLoaded\", applyDefaults);",
+    "  } else {",
+    "    applyDefaults();",
+    "  }",
+    "})();",
+    ""
+  )
+}
+
+.write_pkgdown_extra <- function(
+  family = "red",
+  preset = "homage",
+  dry_run = FALSE,
+  force_replace = TRUE
+) {
+  targets <- list(
+    list(
+      path = file.path("pkgdown", "extra.css"),
+      lines = .render_pkgdown_extra_css()
+    ),
+    list(
+      path = file.path("pkgdown", "extra.js"),
+      lines = .render_pkgdown_extra_js(family = family, preset = preset)
+    )
+  )
+
+  for (target in targets) {
+    exists <- file.exists(target$path)
+    if (dry_run) {
+      if (requireNamespace("cli", quietly = TRUE)) {
+        cli::cli_alert_info("Would write/update {.file {target$path}}")
+      } else {
+        message(sprintf("Would write/update %s", target$path))
+      }
+      next
+    }
+
+    if (exists && !force_replace) next
+    writeLines(target$lines, target$path, useBytes = TRUE)
+    if (requireNamespace("cli", quietly = TRUE)) {
+      cli::cli_alert_success("Wrote {.file {target$path}}")
+    } else {
+      message(sprintf("Wrote %s", target$path))
+    }
+  }
+
+  invisible(TRUE)
 }
 
 .md5 <- function(path) {

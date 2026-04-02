@@ -3,6 +3,16 @@
 * `migrate_albersdown()` now exposes the full Albers family/preset choices and
   migrated vignettes now apply both `params$family` and `params$preset` in the
   injected `theme_albers()` call.
+* `use_albersdown()` and `migrate_albersdown()` now write `html_vignette`
+  metadata in the form that `rmarkdown` actually honors: vignette CSS is placed
+  under `output: rmarkdown::html_vignette`, `includes: in_header` points at a
+  real `albers-header.html` file, and migrated vignettes get a single
+  idempotent runtime class hook for `palette-*` and `preset-*`.
+* Re-running `migrate_albersdown()` no longer duplicates the marked Albers note
+  in `README.md` or the vignette class-injection block.
+* Added two proof vignettes, `proof-teal-study` and
+  `proof-ochre-structural`, so users can inspect full-page non-red family /
+  preset combinations directly.
 
 # albersdown 1.0.0
 
