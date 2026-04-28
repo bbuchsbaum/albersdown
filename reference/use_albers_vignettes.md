@@ -6,8 +6,20 @@ This wrapper preserves the old name and forwards to
 ## Usage
 
 ``` r
-use_albers_vignettes()
+use_albers_vignettes(path = ".", ...)
 ```
+
+## Arguments
+
+- path:
+
+  Path to the package directory. Defaults to the current working
+  directory to preserve the original wrapper behavior.
+
+- ...:
+
+  Additional arguments passed to
+  [`use_albersdown()`](https://bbuchsbaum.github.io/albersdown/reference/use_albersdown.md).
 
 ## Value
 

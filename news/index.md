@@ -1,5 +1,37 @@
 # Changelog
 
+## albersdown 1.0.1
+
+- [`migrate_albersdown()`](https://bbuchsbaum.github.io/albersdown/reference/migrate_albersdown.md)
+  now exposes the full Albers family/preset choices and migrated
+  vignettes now apply both `params$family` and `params$preset` in the
+  injected
+  [`theme_albers()`](https://bbuchsbaum.github.io/albersdown/reference/theme_albers.md)
+  call.
+- [`use_albersdown()`](https://bbuchsbaum.github.io/albersdown/reference/use_albersdown.md)
+  and
+  [`migrate_albersdown()`](https://bbuchsbaum.github.io/albersdown/reference/migrate_albersdown.md)
+  now write `html_vignette` metadata in the form that `rmarkdown`
+  actually honors: vignette CSS is placed under
+  `output: rmarkdown::html_vignette`, `includes: in_header` points at a
+  real `albers-header.html` file, and migrated vignettes get a single
+  idempotent runtime class hook for `palette-*` and `preset-*`.
+- Re-running
+  [`migrate_albersdown()`](https://bbuchsbaum.github.io/albersdown/reference/migrate_albersdown.md)
+  no longer duplicates the marked Albers note in `README.md` or the
+  vignette class-injection block.
+- [`use_albers_vignettes()`](https://bbuchsbaum.github.io/albersdown/reference/use_albers_vignettes.md)
+  once again works as a current-directory wrapper and forwards
+  additional setup arguments to
+  [`use_albersdown()`](https://bbuchsbaum.github.io/albersdown/reference/use_albersdown.md).
+- The setup doctor now warns about legacy top-level vignette CSS/header
+  hooks that
+  [`rmarkdown::html_vignette()`](https://pkgs.rstudio.com/rmarkdown/reference/html_vignette.html)
+  can ignore during CRAN builds.
+- Added two proof vignettes, `proof-teal-study` and
+  `proof-ochre-structural`, so users can inspect full-page non-red
+  family / preset combinations directly.
+
 ## albersdown 1.0.0
 
 CRAN release: 2026-04-01

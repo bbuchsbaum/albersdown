@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">albersdown</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -32,6 +32,18 @@
     </div>
 
     <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.0.1" id="albersdown-101">albersdown 1.0.1<a class="anchor" aria-label="anchor" href="#albersdown-101"></a></h2>
+<ul><li>
+<code><a href="../reference/migrate_albersdown.html">migrate_albersdown()</a></code> now exposes the full Albers family/preset choices and migrated vignettes now apply both <code>params$family</code> and <code>params$preset</code> in the injected <code><a href="../reference/theme_albers.html">theme_albers()</a></code> call.</li>
+<li>
+<code><a href="../reference/use_albersdown.html">use_albersdown()</a></code> and <code><a href="../reference/migrate_albersdown.html">migrate_albersdown()</a></code> now write <code>html_vignette</code> metadata in the form that <code>rmarkdown</code> actually honors: vignette CSS is placed under <code>output: rmarkdown::html_vignette</code>, <code>includes: in_header</code> points at a real <code>albers-header.html</code> file, and migrated vignettes get a single idempotent runtime class hook for <code>palette-*</code> and <code>preset-*</code>.</li>
+<li>Re-running <code><a href="../reference/migrate_albersdown.html">migrate_albersdown()</a></code> no longer duplicates the marked Albers note in <code>README.md</code> or the vignette class-injection block.</li>
+<li>
+<code><a href="../reference/use_albers_vignettes.html">use_albers_vignettes()</a></code> once again works as a current-directory wrapper and forwards additional setup arguments to <code><a href="../reference/use_albersdown.html">use_albersdown()</a></code>.</li>
+<li>The setup doctor now warns about legacy top-level vignette CSS/header hooks that <code><a href="https://pkgs.rstudio.com/rmarkdown/reference/html_vignette.html" class="external-link">rmarkdown::html_vignette()</a></code> can ignore during CRAN builds.</li>
+<li>Added two proof vignettes, <code>proof-teal-study</code> and <code>proof-ochre-structural</code>, so users can inspect full-page non-red family / preset combinations directly.</li>
+</ul></div>
+    <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.0.0" id="albersdown-100">albersdown 1.0.0<a class="anchor" aria-label="anchor" href="#albersdown-100"></a></h2><p class="text-muted">CRAN release: 2026-04-01</p>
 <ul><li>Initial CRAN release.</li>
 <li>
@@ -49,7 +61,8 @@
 <code><a href="../reference/migrate_albersdown.html">migrate_albersdown()</a></code>: migrate assets from an older albersdown layout.</li>
 <li>Two vignettes: “Getting Started” and “Design Notes”.</li>
 </ul></div>
-  </main></div>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
+    </nav></aside></div>
 
 
     <footer><div class="pkgdown-footer-left">
