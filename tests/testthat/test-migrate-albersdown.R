@@ -55,6 +55,91 @@ test_that("migrate_albersdown updates vignette params and theme call", {
   )))
   expect_equal(sum(grepl("^```\\{r albers-classes, echo=FALSE, results='asis'\\}\\s*$", migrated)), 1)
   expect_false(any(grepl("^\\s*base_size\\s*=\\s*13\\s*$", migrated)))
+  expect_equal(tools::vignetteInfo(file.path(pkg, "vignettes", "demo.Rmd"))$engine, "knitr::rmarkdown")
+})
+
+test_that("migrate_albersdown patches all adjoin-shaped vignettes", {
+  skip_if_not_installed("yaml")
+
+  pkg <- file.path(tempdir(), paste0("albersdown-adjoin-shaped-", Sys.getpid()))
+  dir.create(pkg, recursive = TRUE, showWarnings = FALSE)
+
+  writeLines(c(
+    "Package: demo",
+    "Version: 0.0.0.9000",
+    "Title: Demo",
+    "Authors@R: person(\"Demo\", \"User\", email = \"demo@example.com\", role = c(\"aut\", \"cre\"))",
+    "Description: Demo package.",
+    "License: MIT"
+  ), file.path(pkg, "DESCRIPTION"))
+
+  writeLines("# Demo", file.path(pkg, "README.md"))
+  dir.create(file.path(pkg, "vignettes"), showWarnings = FALSE)
+  writeLines("/* css */", file.path(pkg, "vignettes", "albers.css"))
+  writeLines("// js", file.path(pkg, "vignettes", "albers.js"))
+  writeLines("<script src=\"albers.js\"></script>", file.path(pkg, "vignettes", "albers-header.html"))
+
+  writeLines(c(
+    "---",
+    "title: Getting Started with demo",
+    "output:",
+    "  rmarkdown::html_vignette:",
+    "    toc: yes",
+    "    toc_depth: 2",
+    "    css: albers.css",
+    "    includes:",
+    "      in_header: albers-header.html",
+    "params:",
+    "  family: teal",
+    "  preset: homage",
+    "resource_files:",
+    "- albers.css",
+    "- albers.js",
+    "- albers-header.html",
+    "vignette: >",
+    "  %\\VignetteIndexEntry{Getting Started with demo}",
+    "  %\\VignetteEngine{knitr::rmarkdown}",
+    "  %\\VignetteEncoding{UTF-8}",
+    "---",
+    "",
+    "```{r setup, include=FALSE}",
+    "knitr::opts_chunk$set(collapse = TRUE)",
+    "```",
+    "",
+    "Demo text."
+  ), file.path(pkg, "vignettes", "demo.Rmd"))
+
+  writeLines(c(
+    "---",
+    "title: \"Spatial Neighbor Graphs\"",
+    "output: rmarkdown::html_vignette",
+    "vignette: >",
+    "  %\\VignetteIndexEntry{Spatial Neighbor Graphs}",
+    "  %\\VignetteEngine{knitr::rmarkdown}",
+    "  %\\VignetteEncoding{UTF-8}",
+    "---",
+    "",
+    "```{r setup, include=FALSE}",
+    "knitr::opts_chunk$set(collapse = TRUE)",
+    "```",
+    "",
+    "Spatial text."
+  ), file.path(pkg, "vignettes", "spatial-neighbors.Rmd"))
+
+  migrate_albersdown(path = pkg, family = "teal", preset = "homage", dry_run = FALSE)
+
+  second <- file.path(pkg, "vignettes", "spatial-neighbors.Rmd")
+  second_yaml <- .inspect_vignette_theme_yaml(second)
+  expect_true(second_yaml$nested_css)
+  expect_true(second_yaml$nested_header)
+  expect_true(second_yaml$resources)
+  expect_false(second_yaml$legacy_css)
+  expect_false(second_yaml$legacy_header)
+
+  second_lines <- readLines(second, warn = FALSE)
+  expect_equal(tools::vignetteInfo(second)$engine, "knitr::rmarkdown")
+  expect_equal(sum(grepl("^\\s*%\\\\Vignette", second_lines)), 3)
+  expect_equal(sum(grepl("^```\\{r albers-classes, echo=FALSE, results='asis'\\}\\s*$", second_lines)), 1)
 })
 
 test_that("use_albersdown writes renderable html_vignette hooks for non-red families", {

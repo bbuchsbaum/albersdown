@@ -555,7 +555,10 @@ use_albersdown <- function(
     return(yml)
   }
 
-  vignette_lines <- trimws(strsplit(as.character(vignette_value), "\n", fixed = TRUE)[[1]])
+  vignette_text <- paste(as.character(vignette_value), collapse = "\n")
+  vignette_text <- gsub("\r\n?", "\n", vignette_text)
+  vignette_text <- gsub("\\s+(%\\\\Vignette[A-Za-z]+\\{)", "\n\\1", vignette_text, perl = TRUE)
+  vignette_lines <- trimws(strsplit(vignette_text, "\n", fixed = TRUE)[[1]])
   vignette_lines <- vignette_lines[nzchar(vignette_lines)]
 
   c(yml, "vignette: |", paste0("  ", vignette_lines))
