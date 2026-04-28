@@ -4,7 +4,13 @@
 \alias{use_albers_vignettes}
 \title{Configure current package to use albersdown (back-compat wrapper)}
 \usage{
-use_albers_vignettes()
+use_albers_vignettes(path = ".", ...)
+}
+\arguments{
+\item{path}{Path to the package directory. Defaults to the current working
+directory to preserve the original wrapper behavior.}
+
+\item{...}{Additional arguments passed to \code{\link[=use_albersdown]{use_albersdown()}}.}
 }
 \value{
 \code{TRUE} invisibly.

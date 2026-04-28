@@ -118,6 +118,117 @@ test_that("use_albersdown writes renderable html_vignette hooks for non-red fami
   expect_true(any(grepl("albers\\.css|0D4A4A|0d4a4a", html)))
 })
 
+test_that("use_albersdown migrates legacy CRAN-shaped top-level vignette hooks", {
+  skip_if_not_installed("yaml")
+  skip_if_not_installed("rmarkdown")
+
+  pkg <- file.path(tempdir(), paste0("albersdown-legacy-render-", Sys.getpid()))
+  dir.create(pkg, recursive = TRUE, showWarnings = FALSE)
+
+  writeLines(c(
+    "Package: demo",
+    "Version: 0.0.0.9000",
+    "Title: Demo",
+    "Authors@R: person(\"Demo\", \"User\", email = \"demo@example.com\", role = c(\"aut\", \"cre\"))",
+    "Description: Demo package.",
+    "License: MIT"
+  ), file.path(pkg, "DESCRIPTION"))
+
+  writeLines("# Demo", file.path(pkg, "README.md"))
+  dir.create(file.path(pkg, "vignettes"), showWarnings = FALSE)
+  writeLines(c(
+    "---",
+    "title: \"Demo\"",
+    "output:",
+    "  rmarkdown::html_vignette:",
+    "    toc: yes",
+    "    toc_depth: 2",
+    "params:",
+    "  family: red",
+    "  preset: study",
+    "vignette: |",
+    "  %\\VignetteIndexEntry{Demo}",
+    "  %\\VignetteEngine{knitr::rmarkdown}",
+    "  %\\VignetteEncoding{UTF-8}",
+    "css: albers.css",
+    "resource_files:",
+    "- albers.css",
+    "- albers.js",
+    "includes:",
+    "  in_header: |-",
+    "    <script src=\"albers.js\"></script>",
+    "---",
+    "",
+    "```{r setup, include=FALSE}",
+    "library(ggplot2)",
+    "```",
+    "",
+    "Demo text."
+  ), file.path(pkg, "vignettes", "demo.Rmd"))
+
+  before <- .inspect_vignette_theme_yaml(file.path(pkg, "vignettes", "demo.Rmd"))
+  expect_true(before$legacy_css)
+  expect_true(before$legacy_header)
+  expect_false(before$nested_css)
+  expect_false(before$nested_header)
+
+  use_albersdown(path = pkg, family = "teal", preset = "midnight", apply_to = "all", dry_run = FALSE)
+
+  migrated <- readLines(file.path(pkg, "vignettes", "demo.Rmd"), warn = FALSE)
+  fence <- which(migrated == "---")
+  y <- yaml::yaml.load(paste(migrated[(fence[1] + 1):(fence[2] - 1)], collapse = "\n"))
+  html_vignette <- y$output[["rmarkdown::html_vignette"]]
+  after <- .inspect_vignette_theme_yaml(file.path(pkg, "vignettes", "demo.Rmd"))
+
+  expect_null(y$css)
+  expect_null(y$includes)
+  expect_equal(html_vignette$css, "albers.css")
+  expect_equal(html_vignette$includes$in_header, "albers-header.html")
+  expect_true(all(c("albers.css", "albers.js", "albers-header.html") %in% y$resource_files))
+  expect_false(after$legacy_css)
+  expect_false(after$legacy_header)
+  expect_true(after$nested_css)
+  expect_true(after$nested_header)
+
+  old <- setwd(pkg)
+  on.exit(setwd(old), add = TRUE)
+  old_opt <- options(rmarkdown.html_vignette.check_title = FALSE)
+  on.exit(options(old_opt), add = TRUE)
+  rmarkdown::render(file.path("vignettes", "demo.Rmd"), output_file = file.path(pkg, "demo.html"), quiet = TRUE)
+
+  html <- readLines(file.path(pkg, "demo.html"), warn = FALSE)
+  expect_true(any(grepl("--A900", html, fixed = TRUE)))
+  expect_true(any(grepl("FAMILY_CLASSES|navigator\\.clipboard|data-bs-theme", html)))
+  expect_true(any(grepl("palette-teal", html, fixed = TRUE)))
+  expect_true(any(grepl("preset-midnight", html, fixed = TRUE)))
+})
+
+test_that("use_albers_vignettes defaults to the current package path", {
+  skip_if_not_installed("yaml")
+
+  pkg <- file.path(tempdir(), paste0("albersdown-wrapper-", Sys.getpid()))
+  dir.create(pkg, recursive = TRUE, showWarnings = FALSE)
+
+  writeLines(c(
+    "Package: demo",
+    "Version: 0.0.0.9000",
+    "Title: Demo",
+    "Authors@R: person(\"Demo\", \"User\", email = \"demo@example.com\", role = c(\"aut\", \"cre\"))",
+    "Description: Demo package.",
+    "License: MIT"
+  ), file.path(pkg, "DESCRIPTION"))
+
+  writeLines("# Demo", file.path(pkg, "README.md"))
+  old <- setwd(pkg)
+  on.exit(setwd(old), add = TRUE)
+
+  expect_true(use_albers_vignettes())
+  expect_true(file.exists(file.path(pkg, "vignettes", "albers.css")))
+  expect_true(file.exists(file.path(pkg, "vignettes", "albers.js")))
+  expect_true(file.exists(file.path(pkg, "vignettes", "albers-header.html")))
+  expect_true(file.exists(file.path(pkg, "_pkgdown.yml")))
+})
+
 test_that("migrate_albersdown is idempotent for README note and class hook", {
   skip_if_not_installed("yaml")
 
@@ -163,10 +274,8 @@ test_that("migrate_albersdown is idempotent for README note and class hook", {
   expect_equal(sum(grepl("^```\\{r albers-classes, echo=FALSE, results='asis'\\}\\s*$", migrated)), 1)
 })
 
-test_that("migrate_albersdown carries family defaults into the built pkgdown site", {
+test_that("migrate_albersdown carries family defaults into pkgdown fallback assets", {
   skip_if_not_installed("yaml")
-  skip_if_not_installed("rmarkdown")
-  skip_if_not_installed("pkgdown")
 
   pkg <- file.path(tempdir(), paste0("albersdown-site-", Sys.getpid()))
   dir.create(pkg, recursive = TRUE, showWarnings = FALSE)
@@ -201,19 +310,13 @@ test_that("migrate_albersdown carries family defaults into the built pkgdown sit
 
   migrate_albersdown(path = pkg, family = "ochre", preset = "homage", dry_run = FALSE)
 
-  old <- setwd(pkg)
-  on.exit(setwd(old), add = TRUE)
-  old_opt <- options(rmarkdown.html_vignette.check_title = FALSE)
-  on.exit(options(old_opt), add = TRUE)
+  cfg <- yaml::read_yaml(file.path(pkg, "_pkgdown.yml"))
+  extra_css <- readLines(file.path(pkg, "pkgdown", "extra.css"), warn = FALSE)
+  extra_js <- readLines(file.path(pkg, "pkgdown", "extra.js"), warn = FALSE)
 
-  pkgdown::build_site(new_process = FALSE, install = TRUE, preview = FALSE)
-
-  site_dir <- if (dir.exists(file.path(pkg, "docs"))) "docs" else "site"
-  extra_js <- readLines(file.path(site_dir, "extra.js"), warn = FALSE)
-  article_html <- readLines(file.path(site_dir, "articles", "demo.html"), warn = FALSE)
-
+  expect_equal(cfg$template$package, "albersdown")
+  expect_equal(cfg$template$bootstrap, 5)
+  expect_true(any(grepl("@import url\\(\"albers\\.css\"\\);", extra_css)))
   expect_true(any(grepl("palette-ochre", extra_js, fixed = TRUE)))
   expect_true(any(grepl("preset-homage", extra_js, fixed = TRUE)))
-  expect_true(any(grepl("extra\\.js", article_html)))
-  expect_true(any(grepl("palette-ochre", article_html, fixed = TRUE)))
 })

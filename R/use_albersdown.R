@@ -451,6 +451,43 @@ use_albersdown <- function(
       ))
     }
 
+    yaml_status <- lapply(v, .inspect_vignette_theme_yaml)
+    names(yaml_status) <- basename(v)
+    yaml_status <- yaml_status[!vapply(yaml_status, is.null, logical(1))]
+    if (length(yaml_status)) {
+      legacy_hooks <- names(yaml_status)[vapply(yaml_status, function(x) isTRUE(x$legacy_css) || isTRUE(x$legacy_header), logical(1))]
+      if (length(legacy_hooks)) {
+        penalize(min(18, 6 * length(legacy_hooks)), sprintf(
+          "These vignettes still use legacy top-level css/includes hooks that html_vignette may ignore on CRAN: %s",
+          paste(legacy_hooks, collapse = ", ")
+        ))
+      }
+
+      missing_nested_css <- names(yaml_status)[!vapply(yaml_status, function(x) isTRUE(x$nested_css), logical(1))]
+      if (length(missing_nested_css)) {
+        penalize(min(18, 6 * length(missing_nested_css)), sprintf(
+          "These vignettes do not configure albers.css inside their HTML output format: %s",
+          paste(missing_nested_css, collapse = ", ")
+        ))
+      }
+
+      missing_nested_header <- names(yaml_status)[!vapply(yaml_status, function(x) isTRUE(x$nested_header), logical(1))]
+      if (length(missing_nested_header)) {
+        penalize(min(15, 5 * length(missing_nested_header)), sprintf(
+          "These vignettes do not configure albers-header.html/albers.js inside their HTML output format: %s",
+          paste(missing_nested_header, collapse = ", ")
+        ))
+      }
+
+      missing_resources <- names(yaml_status)[!vapply(yaml_status, function(x) isTRUE(x$resources), logical(1))]
+      if (length(missing_resources)) {
+        penalize(min(12, 4 * length(missing_resources)), sprintf(
+          "These vignettes do not list all local Albers resources for package builds: %s",
+          paste(missing_resources, collapse = ", ")
+        ))
+      }
+    }
+
     family_ok <- vapply(v, function(path) any(grepl("palette-", readLines(path, warn = FALSE))), logical(1))
     if (!all(family_ok)) {
       penalize(8, "Some vignettes omit any palette script; they may fall back to default tokens", level = "info")
@@ -703,6 +740,52 @@ use_albersdown <- function(
   )
 }
 
+.inspect_vignette_theme_yaml <- function(path) {
+  if (!requireNamespace("yaml", quietly = TRUE)) return(NULL)
+
+  raw <- readLines(path, warn = FALSE)
+  if (length(raw) < 3 || raw[[1]] != "---") return(NULL)
+  fence <- which(raw == "---")
+  if (length(fence) < 2) return(NULL)
+
+  head <- raw[(fence[[1]] + 1):(fence[[2]] - 1)]
+  y <- tryCatch(yaml::yaml.load(paste(head, collapse = "\n")), error = function(e) NULL)
+  if (!is.list(y)) return(NULL)
+
+  is_qmd <- grepl("\\.qmd$", basename(path), ignore.case = TRUE)
+  if (is_qmd) {
+    html <- list()
+    if (is.list(y$format) && is.list(y$format$html)) html <- y$format$html
+    resources <- .as_char_vec(y$resources)
+    return(list(
+      nested_css = any(grepl("albers\\.css", .as_char_vec(html$css))),
+      nested_header = any(grepl("albers\\.js", .as_char_vec(y[["header-includes"]]))),
+      legacy_css = FALSE,
+      legacy_header = FALSE,
+      resources = all(c("albers.css", "albers.js") %in% resources)
+    ))
+  }
+
+  output_cur <- y$output
+  html_vignette <- if (is.character(output_cur) && length(output_cur) == 1L && identical(output_cur, "rmarkdown::html_vignette")) {
+    list()
+  } else if (is.list(output_cur)) {
+    output_cur[["rmarkdown::html_vignette"]] %||% list()
+  } else {
+    list()
+  }
+  includes <- if (is.list(html_vignette$includes)) html_vignette$includes else list()
+  resources <- .as_char_vec(y$resource_files)
+
+  list(
+    nested_css = any(grepl("albers\\.css", .as_char_vec(html_vignette$css))),
+    nested_header = any(grepl("albers-header\\.html|albers\\.js", .as_char_vec(includes$in_header))),
+    legacy_css = any(grepl("albers\\.css", .as_char_vec(y$css))),
+    legacy_header = any(grepl("albers-header\\.html|albers\\.js", .as_char_vec(y$includes))),
+    resources = all(c("albers.css", "albers.js", "albers-header.html") %in% resources)
+  )
+}
+
 .uses_albers_template <- function() {
   yml <- "_pkgdown.yml"
   if (!file.exists(yml) || !requireNamespace("yaml", quietly = TRUE)) return(FALSE)
@@ -801,6 +884,7 @@ use_albersdown <- function(
 
 .strip_albers_lines <- function(lines) {
   lines <- lines[!grepl("albers\\.js", lines)]
+  lines <- lines[!grepl("albers-header\\.html", lines)]
   lines <- lines[!grepl("palette-", lines)]
   lines <- lines[!grepl("preset-", lines)]
   lines
@@ -836,8 +920,8 @@ use_albersdown <- function(
 .upsert_in_header_path <- function(value, force_replace = TRUE, target = "albers-header.html") {
   lines <- .as_char_vec(value)
   lines <- lines[nzchar(trimws(lines))]
-  if (!force_replace && any(grepl("albers-header\\.html", lines))) return(unique(lines))
-  lines <- lines[!grepl("albers-header\\.html", lines)]
+  if (force_replace) lines <- .strip_albers_lines(lines)
+  if (any(grepl("albers-header\\.html", lines))) return(unique(lines))
   unique(c(lines, target))
 }
 

@@ -1,20 +1,25 @@
 ## R CMD check results
 
-0 errors | 0 warnings | 0 notes
+0 errors | 0 warnings | 2 notes
+
+The two local notes are environment-related:
+
+* `unable to verify current time` from the local `--as-cran` check.
+* HTML validation skipped because the local `tidy` binary is not recent enough.
 
 ## Resubmission
 
-This is a resubmission. In this version I have:
+This is a patch release after 1.0.0. In this version I have:
 
-* Added a reference to the Description field in DESCRIPTION:
-  Albers (1963, ISBN:978-0-300-17935-4) "Interaction of Color"
-
-* `use_albersdown()` and `migrate_albersdown()` now require an explicit
-  `path` argument so that they never write to an unexpected location.
-  The working directory is restored via `on.exit()`.
-
-* Vignettes (`getting-started.Rmd`, `design-notes.Rmd`) now save and
-  restore `options()` and the ggplot2 theme via cleanup chunks.
+* Fixed CRAN vignette rendering by ensuring `albers.css` and
+  `albers-header.html` are configured inside
+  `output: rmarkdown::html_vignette`, where `rmarkdown` actually honors them.
+* Updated `use_albersdown()` and `migrate_albersdown()` to migrate legacy
+  top-level vignette `css`/`includes` hooks to the CRAN-safe form.
+* Restored `use_albers_vignettes()` as a current-directory wrapper around
+  `use_albersdown()`.
+* Added regression tests that render a legacy CRAN-shaped vignette and verify
+  that the Albers CSS and JavaScript hooks are embedded in the HTML.
 
 ## Test environments
 
@@ -28,4 +33,4 @@ Online documentation is available at: https://bbuchsbaum.github.io/albersdown/
 
 ## Downstream dependencies
 
-This is a new submission; there are no reverse dependencies.
+There are no known reverse dependency breakages from this vignette/setup patch.
