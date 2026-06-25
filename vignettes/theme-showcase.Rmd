@@ -1,7 +1,7 @@
 ---
-title: 'Theme Showcase: Dark + Accent Families'
+title: 'Theme Showcase: Directions and Families'
 name: theme-showcase
-description: A focused gallery for midnight preset and non-red accent families.
+description: The two albersdown directions and the six colour families, side by side.
 output:
   rmarkdown::html_vignette:
     toc: yes
@@ -21,7 +21,7 @@ resource_files:
 - albers-header.html
 
 vignette: |
-  %\VignetteIndexEntry{Theme Showcase: Dark + Accent Families}
+  %\VignetteIndexEntry{Theme Showcase: Directions and Families}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -29,12 +29,13 @@ vignette: |
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE, comment = "#>", fig.align = "center", fig.retina = 2,
-  out.width = "100%", fig.width = 7, fig.asp = 0.618, message = FALSE, warning = FALSE
+  out.width = "100%", fig.width = 7, fig.asp = 0.6, message = FALSE, warning = FALSE
 )
-`%||%` <- function(a, b) if (is.null(a)) b else a
 library(ggplot2)
+if (requireNamespace("ragg", quietly = TRUE)) knitr::opts_chunk$set(dev = "ragg_png")
+if (requireNamespace("systemfonts", quietly = TRUE)) albersdown::albers_register_fonts()
 if (requireNamespace("ggplot2", quietly = TRUE) && requireNamespace("albersdown", quietly = TRUE)) {
-  if (requireNamespace("ggplot2", quietly = TRUE) && requireNamespace("albersdown", quietly = TRUE)) ggplot2::theme_set(albersdown::theme_albers(family = params$family, preset = params$preset))
+  ggplot2::theme_set(albersdown::theme_albers(family = params$family, preset = params$preset))
 }
 ```
 
@@ -42,7 +43,7 @@ if (requireNamespace("ggplot2", quietly = TRUE) && requireNamespace("albersdown"
 cat(sprintf(
   paste0(
     '<script>document.addEventListener("DOMContentLoaded",function(){',
-    'document.body.classList.remove("palette-red","palette-lapis","palette-ochre","palette-teal","palette-green","palette-violet","preset-homage","preset-study","preset-structural","preset-adobe","preset-midnight");',
+    'document.body.classList.remove("palette-red","palette-lapis","palette-ochre","palette-teal","palette-green","palette-violet","preset-homage","preset-interaction","preset-study","preset-structural","preset-adobe","preset-midnight");',
     'document.body.classList.add("palette-%s","preset-%s");',
     '});</script>'
   ),
@@ -51,89 +52,88 @@ cat(sprintf(
 ))
 ```
 
+## The albersdown system
 
+albersdown has two orthogonal axes:
 
-```{r albers-style, echo=FALSE, results='asis'}
-style_class <- switch(
-  tolower(params$style %||% "balanced"),
-  minimal = "style-minimal",
-  assertive = "style-assertive",
-  balanced = ""
-)
-if (nzchar(style_class)) {
-  cat(sprintf('<script>document.addEventListener("DOMContentLoaded",function(){document.body.classList.remove("style-minimal","style-assertive");document.body.classList.add("%s");});</script>', style_class))
-}
-cat(sprintf('<style>:root{--content:%sch}</style>', params$content_width))
+- A **direction** sets the page mood: **homage** (warm cream ground, Newsreader
+  serif body, light code blocks) or **interaction** (cool grey ground, all-grotesk
+  type, dark code blocks).
+- A **family** sets the accent hue used for links, the nested-square marker, and
+  plot palettes: `red`, `lapis`, `ochre`, `teal`, `green`, or `violet`.
+
+Any family pairs with either direction. This page is rendered in **homage + red**;
+`vignette("getting-started")` shows homage and `vignette("interaction")` shows the
+cool direction in full.
+
+## The six families
+
+Each family is a four-tone ramp (A900 → A300). The marker, links, and plot scales
+all draw from the active family.
+
+```{r families-swatch, fig.height=2.4}
+albersdown::albers_swatch(c("red", "lapis", "ochre", "teal", "green", "violet"))
 ```
 
-## Why this vignette?
-
-This page is a dedicated showcase for combinations that intentionally depart
-from the default light red look:
-
-- dark ground (`preset: midnight`)
-- alternate accent families (`lapis`, `ochre`, `teal`, `green`, `violet`)
-
-<div class="albers-plate" aria-hidden="true">
-  <div class="albers-plate__outer"></div>
-  <div class="albers-plate__inner"></div>
-  <div class="albers-plate__core"></div>
-</div>
-
-## Midnight page, production-style plot
-
-```{r dark-preview}
-ggplot(mtcars, aes(wt, mpg, colour = factor(cyl))) +
-  geom_point(size = 2.2) +
-  albersdown::scale_color_albers_distinct() +
-  labs(
-    title = "Midnight preset on a vignette page",
-    subtitle = "Dark ground with high-contrast family accents",
-    colour = "cyl"
-  )
-```
-
-## Accent family comparison
-
-```{r accent-families, fig.height=5.6}
+```{r accent-families, fig.height=5.4}
 families <- c("red", "lapis", "ochre", "teal", "green", "violet")
 accent_a700 <- vapply(families, function(f) albersdown::albers_palette(f)[["A700"]], character(1))
 
 plot_df <- do.call(rbind, lapply(seq_along(families), function(i) {
   d <- mtcars
   d$family <- families[[i]]
-  d$mpg_offset <- d$mpg + (i - (length(families) + 1) / 2) * 0.25
   d
 }))
+plot_df$family <- factor(plot_df$family, levels = families)
 
-ggplot(plot_df, aes(wt, mpg_offset, colour = family)) +
+ggplot(plot_df, aes(wt, mpg, colour = family)) +
   geom_point(alpha = 0.85, size = 1.7) +
   facet_wrap(~family, ncol = 3) +
   scale_color_manual(values = accent_a700) +
   labs(
-    title = "A700 accents across all families",
-    subtitle = "Same geometry, different accent family",
-    x = "wt",
-    y = "mpg (offset)"
+    title = "The same data in each family's A700 accent",
+    subtitle = "Geometry held constant, only the accent family changes",
+    x = "weight", y = "mpg"
   ) +
   theme(legend.position = "none")
 ```
 
-## Copy-ready presets
+## The two directions, in plots
+
+`theme_albers()` grounds a plot in the direction you pass, so a figure always sits
+on the same surface as its page — warm cream for homage, cool grey for interaction.
+
+```{r homage-plot}
+ggplot(mtcars, aes(wt, mpg, colour = factor(cyl))) +
+  geom_point(size = 2.2) +
+  albersdown::scale_color_albers(family = "red") +
+  labs(title = "Homage direction", subtitle = "Warm cream ground, red family", colour = "cyl") +
+  albersdown::theme_albers(family = "red", preset = "homage")
+```
+
+```{r interaction-plot}
+ggplot(mtcars, aes(wt, mpg, colour = factor(cyl))) +
+  geom_point(size = 2.2) +
+  albersdown::scale_color_albers(family = "lapis") +
+  labs(title = "Interaction direction", subtitle = "Cool grey ground, lapis family", colour = "cyl") +
+  albersdown::theme_albers(family = "lapis", preset = "interaction")
+```
+
+## Picking a combination
 
 ```{r recipes-table}
 recipes <- data.frame(
-  profile = c("dark-violet-minimal", "dark-lapis-minimal", "dark-teal-assertive"),
-  family = c("violet", "lapis", "teal"),
-  preset = c("midnight", "midnight", "midnight"),
-  style = c("minimal", "minimal", "assertive"),
+  profile = c("homage-red", "homage-teal", "interaction-lapis", "interaction-ochre"),
+  family = c("red", "teal", "lapis", "ochre"),
+  direction = c("homage", "homage", "interaction", "interaction"),
+  mood = c("warm, classic", "warm, calm", "cool, technical", "cool, earthy"),
   stringsAsFactors = FALSE
 )
-knitr::kable(recipes, format = "html")
+knitr::kable(recipes, format = "html", caption = "A few coherent direction + family pairings.")
 ```
 
 ## Next step
 
-- Use `vignette("theme-lab")` for interactive tuning.
-- Keep `vignette("getting-started")` and `vignette("design-notes")` on the
-  default light red presentation for baseline docs clarity.
+- Use `vignette("theme-lab")` to tune family, direction, style, and width interactively.
+- See `vignette("getting-started")` (homage) and `vignette("interaction")` (interaction)
+  for full-page examples of each direction.

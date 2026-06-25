@@ -31,16 +31,23 @@ albers_palette <- function(family = c("red","lapis","ochre","teal","green","viol
 #'   \item{midnight}{Deep indigo-black for dark-theme contexts.}
 #' }
 #'
-#' @param preset One of \code{"homage"}, \code{"study"}, \code{"structural"},
-#'   \code{"adobe"}, \code{"midnight"}.
+#' @param preset One of the two 2.0 directions \code{"homage"} (warm cream,
+#'   serif body) or \code{"interaction"} (cool grey, grotesk), or a legacy
+#'   preset (\code{"study"}, \code{"structural"}, \code{"adobe"},
+#'   \code{"midnight"}) retained for backward compatibility.
 #' @return Named list with bg, fg, surface, muted, grid, border, code_bg.
 #' @keywords internal
 .preset_colors <- function(preset = "homage") {
   switch(preset,
     homage = list(
-      bg = "#f3f5f7", fg = "#17181a", surface = "#ffffff",
-      muted = "#636b76", grid = "#dde2e8",
-      border = "#d5dae1", code_bg = "#ecf0f4"
+      bg = "#efe7d6", fg = "#1f1b16", surface = "#fbf7ee",
+      muted = "#7a7264", grid = "#e0d6c0",
+      border = "#d8cbae", code_bg = "#fbf7ee"
+    ),
+    interaction = list(
+      bg = "#f1f2f4", fg = "#15181e", surface = "#ffffff",
+      muted = "#7b8494", grid = "#e3e6eb",
+      border = "#d6dbe3", code_bg = "#eef0f3"
     ),
     study = list(
       bg = "#f7f9fb", fg = "#17181a", surface = "#ffffff",
@@ -65,27 +72,34 @@ albers_palette <- function(family = c("red","lapis","ochre","teal","green","viol
   )
 }
 
-#' List available Albers presets
+#' List available Albers directions
 #'
-#' Returns the names of the five built-in presets, each inspired by a
-#' different period or series in Josef Albers' work.
+#' Returns the two 2.0 directions: \code{"homage"} (warm cream ground, serif
+#' body, light code) and \code{"interaction"} (cool grey ground, grotesk, dark
+#' code). The legacy presets \code{"study"}, \code{"structural"},
+#' \code{"adobe"}, and \code{"midnight"} are still accepted by
+#' \code{\link{theme_albers}()} for backward compatibility but are no longer
+#' featured.
 #'
-#' @return Character vector of preset names.
+#' @return Character vector of direction names.
 #' @export
 #' @examples
 #' albers_presets()
 albers_presets <- function() {
-  c("homage", "study", "structural", "adobe", "midnight")
+  c("homage", "interaction")
 }
 
 #' Minimal, legible plot theme inspired by Josef Albers
 #'
 #' @param family Palette family used by companion scales.
-#' @param preset Visual preset: \code{"homage"} (gallery white), \code{"study"}
-#'   (analytical white), \code{"structural"} (concrete), \code{"adobe"}
-#'   (warm architectural grey), \code{"midnight"} (dark).
+#' @param preset Visual direction: \code{"homage"} (warm cream ground) or
+#'   \code{"interaction"} (cool grey ground). Legacy presets \code{"study"},
+#'   \code{"structural"}, \code{"adobe"}, and \code{"midnight"} are still
+#'   accepted for backward compatibility.
 #' @param base_size Base font size.
-#' @param base_family Base font family.
+#' @param base_family Base font family. Plots fall back to the system "sans"
+#'   stack; install the matching typefaces (Familjen Grotesk / Space Grotesk,
+#'   etc.) and pass e.g. \code{base_family = "Familjen Grotesk"} for full fidelity.
 #' @param bg Override background color (default derived from preset).
 #' @param fg Override foreground/text color (default derived from preset).
 #' @param grid_color Override grid line color (default derived from preset).
@@ -100,14 +114,17 @@ albers_presets <- function() {
 #' }
 theme_albers <- function(
   family = "red",
-  preset = c("homage", "study", "structural", "adobe", "midnight"),
+  preset = c("homage", "interaction", "study", "structural", "adobe", "midnight"),
   base_size = 13,
-  base_family = "sans",
+  base_family = NULL,
   bg = NULL,
   fg = NULL,
   grid_color = NULL
 ) {
   preset <- match.arg(preset)
+  # When base_family is unset, use the direction's display font if it has been
+  # registered via albers_register_fonts(); otherwise fall back to "sans".
+  base_family <- base_family %||% .albers_direction_font(preset)
   pal <- albers_palette(family)
   colors <- .preset_colors(preset)
 
@@ -463,9 +480,9 @@ scale_fill_albers_distinct <- function(n = NULL, tone = c("A700", "A900", "A500"
 #' @export
 theme_albers_void <- function(
   family = "red",
-  preset = c("homage", "study", "structural", "adobe", "midnight"),
+  preset = c("homage", "interaction", "study", "structural", "adobe", "midnight"),
   base_size = 13,
-  base_family = "sans",
+  base_family = NULL,
   bg = NULL,
   fg = NULL
 ) {

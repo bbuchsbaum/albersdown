@@ -1,0 +1,108 @@
+---
+title: "Interaction: the cool direction"
+name: interaction
+description: The cool, grotesk, dark-code direction of the albersdown 2.0 theme.
+output:
+  rmarkdown::html_vignette:
+    toc: yes
+    toc_depth: 2
+    css: albers.css
+    includes:
+      in_header: albers-header.html
+params:
+  family: lapis
+  preset: interaction
+resource_files:
+- albers.css
+- albers.js
+- albers-header.html
+
+vignette: |
+  %\VignetteIndexEntry{Interaction: the cool direction}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE, comment = "#>", fig.align = "center", fig.retina = 2,
+  out.width = "100%", fig.width = 7, fig.asp = 0.6, message = FALSE, warning = FALSE
+)
+set.seed(123)
+oldopt <- options(pillar.sigfig = 7, width = 80)
+library(ggplot2)
+if (requireNamespace("ragg", quietly = TRUE)) knitr::opts_chunk$set(dev = "ragg_png")
+if (requireNamespace("systemfonts", quietly = TRUE)) albersdown::albers_register_fonts()
+if (requireNamespace("ggplot2", quietly = TRUE) && requireNamespace("albersdown", quietly = TRUE)) {
+  ggplot2::theme_set(albersdown::theme_albers(family = params$family, preset = params$preset))
+}
+```
+
+```{r albers-classes, echo=FALSE, results='asis'}
+cat(sprintf(
+  paste0(
+    '<script>document.addEventListener("DOMContentLoaded",function(){',
+    'document.body.classList.remove("palette-red","palette-lapis","palette-ochre","palette-teal","palette-green","palette-violet","preset-homage","preset-interaction","preset-study","preset-structural","preset-adobe","preset-midnight");',
+    'document.body.classList.add("palette-%s","preset-%s");',
+    '});</script>'
+  ),
+  params$family,
+  params$preset
+))
+```
+
+## Overview
+
+This vignette is rendered in the **Interaction** direction: a cool grey ground,
+all-grotesk type (Space Grotesk for display, Hanken Grotesk for body), and dark
+code blocks. It is the counterpart to the warm, serif **Homage** direction shown
+in `vignette("getting-started")`. Switching is a one-line change --
+`preset: interaction` in the vignette YAML, or `theme_albers(preset =
+"interaction")` for plots.
+
+### How the two directions relate
+
+A *direction* sets the ground, the type pairing, the code theme, and the
+nested-square marker's outer ring. The *family* (here `lapis`) still drives the
+accent: links, the marker's inner squares, and the plot palette all follow it.
+
+## Dark code blocks
+
+Code is rendered on a dark panel with light syntax tokens, while inline code
+like `neighbor_graph()` stays a light chip so it reads inside body text.
+
+```{r}
+m <- matrix(rnorm(40), 8, 5)
+round(cor(m), 2)
+```
+
+> TIP: The dark code block is part of the Interaction direction. In Homage the
+> same block is a light cream panel -- the syntax colours adapt to stay legible
+> on either ground.
+
+## Tables
+
+```{r}
+knitr::kable(head(mtcars[, c("mpg", "wt", "hp", "cyl")]), caption = "A small table on the cool ground.")
+```
+
+## A plot on the matching ground
+
+The plot's background is the same cool grey as the page, so the figure sits
+seamlessly in the article rather than floating on a mismatched panel.
+
+```{r}
+mtcars |>
+  ggplot(aes(wt, mpg, color = factor(cyl))) +
+  geom_point(size = 2.4) +
+  albersdown::scale_color_albers(family = params$family) +
+  labs(
+    title = "Fuel efficiency vs. weight",
+    subtitle = "Interaction direction (cool) with the lapis family",
+    x = "Weight (1000 lbs)", y = "MPG", color = "Cylinders"
+  )
+```
+
+```{r cleanup, include=FALSE}
+options(oldopt)
+```

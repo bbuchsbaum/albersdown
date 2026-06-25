@@ -121,6 +121,37 @@ use_albersdown <- function(
     context = "vignette"
   )
 
+  # Web fonts (woff2) for the page @font-face. Copied next to albers.css so the
+  # relative url(fonts/...) resolves and self-contained html_vignette embeds
+  # them -- otherwise the typography falls back to system fonts on CRAN.
+  src_fonts_local <- file.path("inst", "fonts")
+  src_fonts <- if (dir.exists(src_fonts_local)) src_fonts_local else system.file("fonts", package = "albersdown")
+  woff2 <- if (nzchar(src_fonts) && dir.exists(src_fonts)) {
+    list.files(src_fonts, pattern = "\\.woff2$", full.names = TRUE)
+  } else {
+    character(0)
+  }
+  if (length(woff2) > 0L) {
+    if (!dry_run) {
+      dir.create(file.path("vignettes", "fonts"), showWarnings = FALSE, recursive = TRUE)
+      copied <- 0L
+      for (f in woff2) {
+        dst <- file.path("vignettes", "fonts", basename(f))
+        if (force_replace || !file.exists(dst)) {
+          file.copy(f, dst, overwrite = TRUE)
+          copied <- copied + 1L
+        }
+      }
+      if (copied > 0L) {
+        msg <- sprintf("Copied %d web font(s) to 'vignettes/fonts/'", copied)
+        if (requireNamespace("cli", quietly = TRUE)) cli::cli_alert_success(msg) else message(msg)
+      }
+    }
+  } else {
+    msg <- "Packaged web fonts (woff2) not found; vignette @font-face will fall back to system fonts"
+    if (requireNamespace("cli", quietly = TRUE)) cli::cli_alert_warning(msg) else message(msg)
+  }
+
   if ((!nzchar(src_css_v) || !file.exists(src_css_v)) && !file.exists(file.path("vignettes", "albers.css"))) {
     msg <- "Packaged vignette CSS not found and vignettes/albers.css is missing; vignette styling will be absent"
     if (requireNamespace("cli", quietly = TRUE)) cli::cli_alert_warning(msg) else message(msg)
@@ -194,7 +225,7 @@ use_albersdown <- function(
     y$format$html$css <- if (force_replace) "albers.css" else unique(c(css_cur, "albers.css"))
 
     resources <- .as_char_vec(y$resources)
-    y$resources <- unique(c(resources, "albers.css", "albers.js"))
+    y$resources <- unique(c(resources, "albers.css", "albers.js", "fonts"))
 
     y[["header-includes"]] <- .upsert_header_includes(
       values = y[["header-includes"]],
@@ -232,7 +263,7 @@ use_albersdown <- function(
     y$includes <- NULL
 
     resources <- .as_char_vec(y$resource_files)
-    y$resource_files <- unique(c(resources, "albers.css", "albers.js", "albers-header.html"))
+    y$resource_files <- unique(c(resources, "albers.css", "albers.js", "albers-header.html", "fonts"))
   }
 
   new_head <- .yaml_with_literal_vignette(y)
@@ -323,9 +354,22 @@ use_albersdown <- function(
     append(lines, c("", inject), after = setup_end[1])
   }
 
+  ensure_fonts <- function(lines) {
+    # Idempotent: skip if the registration call is already present.
+    if (any(grepl("albers_register_fonts", lines, fixed = TRUE))) return(lines)
+    setup_chunk <- grep("^```\\{r[^}]*setup", lines)
+    if (!length(setup_chunk)) return(lines)
+    inject <- c(
+      "if (requireNamespace(\"ragg\", quietly = TRUE)) knitr::opts_chunk$set(dev = \"ragg_png\")",
+      "if (requireNamespace(\"systemfonts\", quietly = TRUE)) albersdown::albers_register_fonts()"
+    )
+    append(lines, inject, after = setup_chunk[1])
+  }
+
   if (!dry_run) {
     patched <- readLines(path, warn = FALSE)
     patched <- ensure_theme(patched)
+    patched <- ensure_fonts(patched)
     if (!is_qmd) patched <- ensure_runtime_classes(patched)
     writeLines(patched, path, useBytes = TRUE)
   }
@@ -572,31 +616,28 @@ use_albersdown <- function(
 }
 
 .render_pkgdown_extra_js <- function(family = "red", preset = "homage") {
-  c(
+  # Site default classes. Uses "add only if none present" so per-article
+  # direction (set by each vignette's inline hook) is never clobbered, while
+  # bare site pages (home, reference) still pick up the configured direction.
+  defaults <- c(
     "(function () {",
     "  var FAMILY_CLASSES = [\"red\", \"lapis\", \"ochre\", \"teal\", \"green\", \"violet\"];",
-    "  var PRESET_CLASSES = [\"homage\", \"study\", \"structural\", \"adobe\", \"midnight\"];",
+    "  var PRESET_CLASSES = [\"homage\", \"interaction\", \"study\", \"structural\", \"adobe\", \"midnight\"];",
     "  var STYLE_CLASSES = [\"minimal\", \"assertive\"];",
     "",
-    "  function removeClasses(values, prefix) {",
-    "    values.forEach(function (value) {",
-    "      document.body.classList.remove(prefix + value);",
-    "    });",
+    "  function hasAny(prefix, values) {",
+    "    return values.some(function (v) { return document.body.classList.contains(prefix + v); });",
     "  }",
     "",
     "  function applyDefaults() {",
     "    if (!document.body) return;",
-    "",
-    "    removeClasses(FAMILY_CLASSES, \"palette-\");",
-    "    removeClasses(PRESET_CLASSES, \"preset-\");",
-    "    removeClasses(STYLE_CLASSES, \"style-\");",
-    "",
-    sprintf("    document.body.classList.add(\"palette-%s\", \"preset-%s\", \"style-minimal\");", family, preset),
+    sprintf("    if (!hasAny(\"palette-\", FAMILY_CLASSES)) document.body.classList.add(\"palette-%s\");", family),
+    sprintf("    if (!hasAny(\"preset-\", PRESET_CLASSES)) document.body.classList.add(\"preset-%s\");", preset),
+    "    if (!hasAny(\"style-\", STYLE_CLASSES)) document.body.classList.add(\"style-minimal\");",
     "",
     "    var theme = document.body.classList.contains(\"preset-midnight\") ? \"dark\" : \"light\";",
     "    document.documentElement.setAttribute(\"data-bs-theme\", theme);",
     "    document.body.setAttribute(\"data-bs-theme\", theme);",
-    "",
     "    var nav = document.querySelector(\"nav.navbar\");",
     "    if (nav) nav.setAttribute(\"data-bs-theme\", theme);",
     "  }",
@@ -608,6 +649,29 @@ use_albersdown <- function(
     "  }",
     "})();",
     ""
+  )
+
+  # pkgdown auto-loads pkgdown/extra.js but strips a vignette's in_header
+  # <script src="albers.js">, so the site never gets the full behaviour
+  # (Theme Lab, compositions, anchors). Inline the packaged albers.js here so
+  # site pages and articles get the complete script.
+  src_js_local <- file.path("inst", "pkgdown", "assets", "albers.js")
+  src_js <- if (file.exists(src_js_local)) {
+    src_js_local
+  } else {
+    system.file("pkgdown/assets/albers.js", package = "albersdown")
+  }
+  full <- if (nzchar(src_js) && file.exists(src_js)) {
+    readLines(src_js, warn = FALSE)
+  } else {
+    character(0)
+  }
+
+  c(
+    "/* albersdown pkgdown/extra.js: site default classes + full albers.js. */",
+    defaults,
+    "/* ----------------------- full albers.js ----------------------- */",
+    full
   )
 }
 

@@ -6,7 +6,7 @@
 \usage{
 albers_bs_theme(
   family = "red",
-  preset = c("homage", "study", "structural", "adobe", "midnight"),
+  preset = c("homage", "interaction", "study", "structural", "adobe", "midnight"),
   accent = NULL,
   bg = NULL,
   fg = NULL

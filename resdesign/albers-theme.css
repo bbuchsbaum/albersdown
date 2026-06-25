@@ -1,0 +1,504 @@
+/* ============================================================================
+   albersdown — refreshed theme
+   Two Albers-homage directions as a token-driven system.
+
+     Direction A  ·  "Homage"        warm ground, golden→terracotta nest
+                                     Familjen Grotesk + Newsreader
+     Direction B  ·  "Interaction"   cool ground, lapis + vibrating orange
+                                     Space Grotesk + Hanken Grotesk
+
+   HOW TO USE
+   ----------
+   pkgdown site : drop this in  pkgdown/extra.css
+   vignettes    : drop this in  albers.css  (referenced from albers-header.html)
+
+   Pick a look with ONE class on <body>:
+       <body class="theme-homage">        ← Direction A  (also the default)
+       <body class="theme-interaction">   ← Direction B
+
+   It ALSO hooks into albersdown's existing body classes, so your current
+   wiring keeps working:
+       .palette-red  / .preset-homage   → Homage tokens
+       .palette-lapis / .preset-study   → Interaction tokens
+
+   FONTS
+   -----
+   The @import below pulls the families from Google Fonts. For CRAN-safe,
+   offline vignettes, instead download the .woff2 files, ship them next to
+   this CSS, and replace the @import with local @font-face rules.
+   ============================================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;700&family=Hanken+Grotesk:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Spline+Sans+Mono:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap');
+
+/* ----------------------------------------------------------------------------
+   1. TOKENS
+   Direction A (Homage) is the default at :root. Direction B overrides below.
+   ---------------------------------------------------------------------------- */
+:root,
+.theme-homage,
+.palette-red,
+.preset-homage {
+  /* type */
+  --ad-font-display: 'Familjen Grotesk', system-ui, sans-serif;
+  --ad-font-body:    'Newsreader', Georgia, 'Times New Roman', serif;
+  --ad-font-ui:      'Space Grotesk', system-ui, sans-serif;   /* labels, buttons, table heads */
+  --ad-font-mono:    'Spline Sans Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+
+  /* ground & surface */
+  --ad-ground:       #EFE7D6;
+  --ad-surface:      #FBF7EE;
+  --ad-surface-2:    #F4EEDF;
+  --ad-border:       #E0D6C0;
+  --ad-border-soft:  #EAE0CB;
+  --ad-rule-strong:  #1F1B16;
+
+  /* ink */
+  --ad-ink:          #1F1B16;
+  --ad-ink-2:        #332F28;
+  --ad-muted:        #7A7264;
+  --ad-faint:        #9A9078;
+
+  /* accents */
+  --ad-accent:       #C24A2E;   /* links, active, dashes */
+  --ad-accent-deep:  #8E2D1C;
+  --ad-accent-gold:  #E0A100;
+  --ad-accent-cool:  #1F6F6B;   /* secondary / function tokens */
+
+  /* nested-square marker (core → middle → outer ring) */
+  --ad-sq-core:      #8E2D1C;
+  --ad-sq-mid:       #C24A2E;
+  --ad-sq-outer:     #E0A100;
+
+  /* code block */
+  --ad-code-bg:      #FBF7EE;
+  --ad-code-fg:      #332F28;
+  --ad-code-border:  #E0D6C0;
+  --ad-tok-fun:      #1F6F6B;
+  --ad-tok-str:      #8E2D1C;
+  --ad-tok-num:      #D98324;
+  --ad-tok-com:      #9A9078;
+  --ad-tok-kw:       #C24A2E;
+
+  /* metrics */
+  --ad-radius:       8px;
+  --ad-radius-sm:    5px;
+  --ad-content-w:    44rem;   /* prose measure */
+}
+
+.theme-interaction,
+.palette-lapis,
+.preset-study {
+  --ad-font-display: 'Space Grotesk', system-ui, sans-serif;
+  --ad-font-body:    'Hanken Grotesk', system-ui, sans-serif;
+  --ad-font-ui:      'Hanken Grotesk', system-ui, sans-serif;
+  --ad-font-mono:    'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+
+  --ad-ground:       #F1F2F4;
+  --ad-surface:      #FFFFFF;
+  --ad-surface-2:    #F7F8FA;
+  --ad-border:       #E3E6EB;
+  --ad-border-soft:  #EDEFF3;
+  --ad-rule-strong:  #15181E;
+
+  --ad-ink:          #15181E;
+  --ad-ink-2:        #2E3540;
+  --ad-muted:        #7B8494;
+  --ad-faint:        #9AA2B0;
+
+  --ad-accent:       #28489A;
+  --ad-accent-deep:  #1E3270;
+  --ad-accent-gold:  #F4B43C;
+  --ad-accent-cool:  #E9531C;   /* the vibrating hot counterpoint */
+
+  --ad-sq-core:      #E9531C;
+  --ad-sq-mid:       #5E7FC6;
+  --ad-sq-outer:     #28489A;
+
+  --ad-code-bg:      #15181E;
+  --ad-code-fg:      #C9D0DC;
+  --ad-code-border:  #15181E;
+  --ad-tok-fun:      #7FA6F0;
+  --ad-tok-str:      #E9904F;
+  --ad-tok-num:      #9AD0A0;
+  --ad-tok-com:      #6B7484;
+  --ad-tok-kw:       #F4B43C;
+}
+
+/* ----------------------------------------------------------------------------
+   2. BASE
+   ---------------------------------------------------------------------------- */
+body {
+  background: var(--ad-ground);
+  color: var(--ad-ink-2);
+  font-family: var(--ad-font-body);
+  font-size: 18px;
+  line-height: 1.62;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+main, .contents, .template-article .contents {
+  max-width: none;
+}
+
+p { text-wrap: pretty; }
+
+a, a:visited { color: var(--ad-accent); text-decoration: none; }
+a:hover { color: var(--ad-accent-deep); text-decoration: underline; text-underline-offset: 2px; }
+
+strong, b { color: var(--ad-ink); font-weight: 600; }
+
+hr { border: 0; border-top: 1px solid var(--ad-border); margin: 2.5rem 0; }
+
+::selection { background: var(--ad-accent-gold); color: var(--ad-ink); }
+
+/* ----------------------------------------------------------------------------
+   3. HEADINGS  + nested-square section marker
+   The marker is a single ::before square with two box-shadow rings,
+   giving three concentric "Homage to the Square" fields.
+   ---------------------------------------------------------------------------- */
+h1, h2, h3, h4, h5, h6,
+.page-header h1 {
+  font-family: var(--ad-font-display);
+  color: var(--ad-ink);
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  line-height: 1.05;
+}
+
+/* page / article title */
+h1, .page-header h1 {
+  font-size: clamp(2.4rem, 5vw, 3.4rem);
+  letter-spacing: -0.025em;
+  margin: 0 0 1.4rem;
+}
+.page-header { border-bottom: 0; padding-bottom: 0; }
+
+/* major sections — carry the nested-square marker */
+h2 {
+  font-size: 1.9rem;
+  margin: 2.8rem 0 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+h2::before {
+  content: "";
+  flex: none;
+  width: 11px; height: 11px;
+  margin-left: 8px;                 /* clear the outer ring's left overflow */
+  background: var(--ad-sq-core);
+  box-shadow: 0 0 0 4px var(--ad-sq-mid),
+              0 0 0 8px var(--ad-sq-outer);
+}
+
+/* sub-sections — compact uppercase label with a smaller marker */
+h3 {
+  font-family: var(--ad-font-ui);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--ad-ink);
+  margin: 2.2rem 0 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+h3::before {
+  content: "";
+  flex: none;
+  width: 8px; height: 8px;
+  margin-left: 6px;
+  background: var(--ad-sq-core);
+  box-shadow: 0 0 0 3px var(--ad-sq-mid),
+              0 0 0 6px var(--ad-sq-outer);
+}
+
+h4 { font-size: 1.15rem; margin: 1.8rem 0 0.6rem; }
+
+/* keep pkgdown anchor links unobtrusive */
+.contents h1 .anchor, .contents h2 .anchor,
+.contents h3 .anchor, .contents h4 .anchor { color: var(--ad-faint); }
+
+/* eyebrow / source line above the title (pkgdown `.page-header` source) */
+.page-header .source, .template-article .source {
+  font-family: var(--ad-font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  color: var(--ad-muted);
+}
+
+/* ----------------------------------------------------------------------------
+   4. NAVBAR
+   ---------------------------------------------------------------------------- */
+.navbar {
+  background: var(--ad-ground) !important;
+  border-bottom: 2px solid var(--ad-rule-strong);
+  padding: 0.5rem 0;
+}
+.navbar .navbar-brand {
+  font-family: var(--ad-font-display);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--ad-ink) !important;
+  font-size: 1.35rem;
+}
+.navbar .navbar-brand .version,
+.navbar small {
+  font-family: var(--ad-font-mono);
+  font-weight: 400;
+  font-size: 0.75rem;
+  color: var(--ad-accent);
+  margin-left: 0.4rem;
+}
+.navbar .nav-link {
+  font-family: var(--ad-font-ui);
+  font-weight: 500;
+  font-size: 0.92rem;
+  letter-spacing: 0.02em;
+  color: var(--ad-muted) !important;
+}
+.navbar .nav-link:hover { color: var(--ad-ink) !important; }
+.navbar .nav-item.active > .nav-link,
+.navbar .nav-link.active {
+  color: var(--ad-ink) !important;
+  font-weight: 700;
+  box-shadow: inset 0 -2px 0 var(--ad-accent);
+}
+
+/* search */
+.navbar form input, #search-input, .form-control {
+  font-family: var(--ad-font-mono);
+  font-size: 0.8rem;
+  background: var(--ad-surface);
+  border: 1px solid var(--ad-border);
+  border-radius: var(--ad-radius-sm);
+  color: var(--ad-ink);
+}
+
+/* ----------------------------------------------------------------------------
+   5. "ON THIS PAGE" TOC (pkgdown #toc / sidebar)
+   ---------------------------------------------------------------------------- */
+#toc .nav, .page-toc, nav[aria-label="On this page"] { font-family: var(--ad-font-body); }
+#toc .nav, #toc ul { list-style: none; padding-left: 0; margin: 0.6rem 0 0; }
+#toc .nav li { list-style: none; }
+
+#pkgdown-sidebar .h2, #toc h2, .toc-title {
+  font-family: var(--ad-font-ui) !important;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ad-ink);
+  display: flex; align-items: center; gap: 0.7rem;
+}
+#toc h2::before, .toc-title::before {
+  content: ""; flex: none; width: 7px; height: 7px; margin-left: 5px;
+  background: var(--ad-sq-core);
+  box-shadow: 0 0 0 2.5px var(--ad-sq-mid), 0 0 0 5px var(--ad-sq-outer);
+}
+#toc .nav a, #pkgdown-sidebar a.nav-link {
+  color: var(--ad-muted);
+  border-left: 2px solid transparent;
+  padding: 0.15rem 0 0.15rem 0.8rem;
+  font-size: 0.95rem;
+}
+#toc .nav a:hover { color: var(--ad-ink); }
+#toc .nav > .active > a, #toc .nav a.active {
+  color: var(--ad-accent);
+  border-left-color: var(--ad-accent);
+  font-weight: 500;
+}
+
+/* ----------------------------------------------------------------------------
+   6. CALLOUTS  (blockquote + rmarkdown/pkgdown alert boxes)
+   ---------------------------------------------------------------------------- */
+blockquote, .alert, .callout {
+  position: relative;
+  background: var(--ad-surface-2);
+  border: 0;
+  border-left: 4px solid var(--ad-accent);
+  border-radius: 0 var(--ad-radius) var(--ad-radius) 0;
+  padding: 1.3rem 1.5rem;
+  margin: 1.6rem 0 2.2rem;
+  color: var(--ad-ink-2);
+  font-size: 1.05rem;
+  line-height: 1.55;
+}
+/* nested-square corner accent */
+blockquote::after, .alert::after {
+  content: ""; position: absolute; top: 1.1rem; right: 1.1rem;
+  width: 12px; height: 12px;
+  background: var(--ad-sq-mid);
+  box-shadow: 0 0 0 4px var(--ad-sq-outer);
+}
+blockquote p:last-child, .alert p:last-child { margin-bottom: 0; }
+
+/* ----------------------------------------------------------------------------
+   7. CODE  (inline + blocks; downlit/pandoc token classes)
+   ---------------------------------------------------------------------------- */
+code, kbd, pre, samp { font-family: var(--ad-font-mono); }
+
+/* inline code */
+:not(pre) > code {
+  font-size: 0.86em;
+  background: var(--ad-surface-2);
+  color: var(--ad-accent-deep);
+  padding: 0.12em 0.4em;
+  border-radius: 4px;
+}
+
+/* code blocks */
+div.sourceCode, pre {
+  position: relative;
+  background: var(--ad-code-bg);
+  color: var(--ad-code-fg);
+  border: 1px solid var(--ad-code-border);
+  border-radius: var(--ad-radius);
+  border-left: 4px solid var(--ad-accent);
+}
+pre {
+  padding: 1.15rem 1.35rem;
+  font-size: 0.86rem;
+  line-height: 1.7;
+  overflow: auto;
+}
+pre code { background: none; color: inherit; padding: 0; font-size: inherit; }
+
+/* downlit / pandoc syntax tokens */
+.sourceCode .fu, .sourceCode .va a, pre .fu { color: var(--ad-tok-fun); }   /* functions */
+.sourceCode .st, .sourceCode .ss, pre .st { color: var(--ad-tok-str); }     /* strings */
+.sourceCode .dv, .sourceCode .fl,
+.sourceCode .bn, pre .dv { color: var(--ad-tok-num); }                       /* numbers */
+.sourceCode .co, pre .co { color: var(--ad-tok-com); font-style: italic; }  /* comments */
+.sourceCode .kw, .sourceCode .cf, pre .kw { color: var(--ad-tok-kw); }      /* keywords */
+.sourceCode .op, .sourceCode .sc { color: var(--ad-code-fg); }              /* operators */
+.sourceCode .cn { color: var(--ad-tok-num); }                               /* constants */
+/* downlit links inside code keep the function color, underlined on hover */
+pre code a, div.sourceCode a { color: var(--ad-tok-fun); text-decoration: none; }
+pre code a:hover, div.sourceCode a:hover { text-decoration: underline; }
+
+/* console / output (#> lines) sits quieter */
+pre.r-output, pre code .ot { color: var(--ad-muted); }
+
+/* COPY button (pkgdown clipboard button) */
+.btn-copy-ex, div.sourceCode .btn,
+button[data-clipboard-text], .hasCopyButton .btn {
+  font-family: var(--ad-font-ui) !important;
+  font-size: 0.65rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ad-accent) !important;
+  background: transparent !important;
+  border: 1.5px solid var(--ad-accent) !important;
+  border-radius: var(--ad-radius-sm) !important;
+  padding: 0.25rem 0.6rem !important;
+}
+/* on the dark (Interaction) code block, recolor the button so it stays legible */
+.theme-interaction .btn-copy-ex,
+.theme-interaction div.sourceCode .btn,
+.palette-lapis .btn-copy-ex {
+  color: var(--ad-accent-gold) !important;
+  border-color: var(--ad-accent-gold) !important;
+}
+
+/* ----------------------------------------------------------------------------
+   8. TABLES  (knitr::kable output, pkgdown .table)
+   ---------------------------------------------------------------------------- */
+table, .table {
+  width: auto;
+  background: var(--ad-surface);
+  border: 1px solid var(--ad-border);
+  border-collapse: collapse;
+  margin: 0 0 0.75rem;
+  font-size: 0.95rem;
+}
+table thead th, .table thead th {
+  font-family: var(--ad-font-ui);
+  font-weight: 700;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  color: var(--ad-ink);
+  text-transform: uppercase;
+  text-align: right;
+  padding: 0.7rem 1.25rem;
+  border-bottom: 2px solid var(--ad-accent);
+}
+table thead th:first-child, .table thead th:first-child { text-align: left; }
+table tbody td, .table tbody td {
+  font-family: var(--ad-font-mono);
+  font-size: 0.9rem;
+  color: var(--ad-ink-2);
+  text-align: right;
+  padding: 0.65rem 1.25rem;
+  border-bottom: 1px solid var(--ad-border-soft);
+}
+table tbody tr:last-child td { border-bottom: 0; }
+caption, .table caption, table + p em:only-child {
+  font-family: var(--ad-font-body);
+  font-style: italic;
+  font-size: 0.85rem;
+  color: var(--ad-muted);
+  text-align: left;
+  caption-side: bottom;
+  padding-top: 0.6rem;
+}
+
+/* ----------------------------------------------------------------------------
+   9. FIGURES / PLOTS  (ggplot output wrapped by knitr/pkgdown)
+   The plot itself is themed in R via theme_albers(); here we frame it.
+   ---------------------------------------------------------------------------- */
+.figure, figure, .template-article img[src$=".png"] { margin: 1.5rem 0 2rem; }
+.figure img, figure img,
+p > img:only-child {
+  display: block;
+  background: var(--ad-surface);
+  border: 1px solid var(--ad-border);
+  border-radius: var(--ad-radius);
+  padding: 1.25rem;
+  max-width: 100%;
+  height: auto;
+}
+.figure .caption, figcaption {
+  font-family: var(--ad-font-body);
+  font-style: italic;
+  font-size: 0.85rem;
+  color: var(--ad-muted);
+  margin-top: 0.5rem;
+}
+
+/* ----------------------------------------------------------------------------
+   10. FOOTER
+   ---------------------------------------------------------------------------- */
+footer, .pkgdown-footer, .template-footer {
+  border-top: 1px solid var(--ad-border);
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  font-family: var(--ad-font-ui);
+  font-size: 0.85rem;
+  color: var(--ad-muted);
+}
+footer a { color: var(--ad-accent); }
+
+/* ----------------------------------------------------------------------------
+   11. BUTTONS / pills (get-started, reference, etc.)
+   ---------------------------------------------------------------------------- */
+.btn-primary, a.btn-primary {
+  font-family: var(--ad-font-ui);
+  font-weight: 700;
+  background: var(--ad-accent);
+  border-color: var(--ad-accent);
+  color: #fff;
+  border-radius: var(--ad-radius-sm);
+}
+.btn-primary:hover { background: var(--ad-accent-deep); border-color: var(--ad-accent-deep); }
+.btn-outline-primary, a.btn-default {
+  font-family: var(--ad-font-ui);
+  font-weight: 700;
+  color: var(--ad-ink);
+  border: 2px solid var(--ad-rule-strong);
+  background: transparent;
+  border-radius: var(--ad-radius-sm);
+}

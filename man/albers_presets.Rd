@@ -2,16 +2,20 @@
 % Please edit documentation in R/theme_albers.R
 \name{albers_presets}
 \alias{albers_presets}
-\title{List available Albers presets}
+\title{List available Albers directions}
 \usage{
 albers_presets()
 }
 \value{
-Character vector of preset names.
+Character vector of direction names.
 }
 \description{
-Returns the names of the five built-in presets, each inspired by a
-different period or series in Josef Albers' work.
+Returns the two 2.0 directions: \code{"homage"} (warm cream ground, serif
+body, light code) and \code{"interaction"} (cool grey ground, grotesk, dark
+code). The legacy presets \code{"study"}, \code{"structural"},
+\code{"adobe"}, and \code{"midnight"} are still accepted by
+\code{\link{theme_albers}()} for backward compatibility but are no longer
+featured.
 }
 \examples{
 albers_presets()

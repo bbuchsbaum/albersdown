@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>albers-theme.css test</title>
+<link rel="stylesheet" href="./albers-theme.css">
+</head>
+<body class="theme-homage">
+  <nav class="navbar">
+    <div style="display:flex;align-items:center;gap:24px;max-width:1100px;margin:0 auto;padding:0 20px;width:100%;">
+      <a class="navbar-brand" href="#">albersdown <small class="version">1.0.1</small></a>
+      <span class="nav-link">Reference</span>
+      <span class="nav-link active">Articles</span>
+      <div style="flex:1"></div>
+      <input class="form-control" placeholder="Search ⌘K">
+    </div>
+  </nav>
+
+  <div style="display:flex;gap:48px;max-width:1100px;margin:32px auto;padding:0 20px;">
+    <main class="template-article" style="flex:1;min-width:0;">
+      <div class="contents">
+        <div class="page-header">
+          <span class="source">Source: vignettes/theme-lab.Rmd</span>
+          <h1>Theme Lab: Family, Preset &amp; Rhythm</h1>
+        </div>
+
+        <h2>What is this page for?</h2>
+        <p>Use this page to choose a visual direction before you retrofit or create vignettes. Tune one parameter at a time and immediately see the effect on hierarchy, contrast, and page rhythm.</p>
+
+        <blockquote><p>Start with <strong>family</strong> and <strong>preset</strong>, then tune <strong>style</strong>, then adjust content width. That order gives the fastest path to a coherent page.</p></blockquote>
+
+        <h3>Plot evidence</h3>
+        <div class="sourceCode"><pre><code><span class="fu">ggplot</span>(counts, <span class="fu">aes</span>(cyl, n, fill = cyl)) +
+  <span class="fu">geom_col</span>(width = <span class="fl">0.72</span>, color = <span class="st">"white"</span>) +
+  albersdown::<span class="fu">scale_fill_albers</span>(family = <span class="st">"red"</span>) +
+  <span class="fu">labs</span>(title = <span class="st">"Cylinder counts"</span>, x = <span class="st">"Cylinders"</span>, y = <span class="st">"Count"</span>)</code></pre></div>
+
+        <h3>Table evidence</h3>
+        <div class="sourceCode"><pre><code>knitr::<span class="fu">kable</span>(
+  <span class="fu">aggregate</span>(<span class="fu">cbind</span>(mpg, wt, hp) ~ cyl, data = mtcars, FUN = mean),
+  digits = <span class="dv">1</span>
+)</code></pre></div>
+
+        <table>
+          <caption>Grouped summary to inspect borders, spacing, and the overall preset mood.</caption>
+          <thead><tr><th>CYL</th><th>MPG</th><th>WT</th><th>HP</th></tr></thead>
+          <tbody>
+            <tr><td>4</td><td>26.7</td><td>2.3</td><td>82.6</td></tr>
+            <tr><td>6</td><td>19.7</td><td>3.1</td><td>122.3</td></tr>
+            <tr><td>8</td><td>15.1</td><td>4.0</td><td>209.2</td></tr>
+          </tbody>
+        </table>
+
+        <p>Inline tokens like <code>theme_albers()</code> stay legible against the ground.</p>
+      </div>
+    </main>
+
+    <aside style="flex:none;width:200px;">
+      <nav id="toc"><h2>On this page</h2>
+        <ul class="nav">
+          <li class="active"><a class="active" href="#">What is this page for?</a></li>
+          <li><a href="#">Plot evidence</a></li>
+          <li><a href="#">Table evidence</a></li>
+        </ul>
+      </nav>
+    </aside>
+  </div>
+</body>
+</html>

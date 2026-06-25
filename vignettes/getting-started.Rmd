@@ -31,6 +31,8 @@ knitr::opts_chunk$set(
 set.seed(123)
 oldopt <- options(pillar.sigfig = 7, width = 80)
 library(ggplot2)
+if (requireNamespace("ragg", quietly = TRUE)) knitr::opts_chunk$set(dev = "ragg_png")
+if (requireNamespace("systemfonts", quietly = TRUE)) albersdown::albers_register_fonts()
 if (requireNamespace("albersdown", quietly = TRUE)) {
   if (requireNamespace("ggplot2", quietly = TRUE) && requireNamespace("albersdown", quietly = TRUE)) ggplot2::theme_set(albersdown::theme_albers(family = params$family, preset = params$preset))
 }

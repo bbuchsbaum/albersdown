@@ -7,7 +7,7 @@
 gt_albers(
   x,
   family = "red",
-  preset = c("homage", "study", "structural", "adobe", "midnight"),
+  preset = c("homage", "interaction", "study", "structural", "adobe", "midnight"),
   base_size = 14,
   width = 720,
   bg = NULL,

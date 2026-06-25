@@ -6,9 +6,9 @@
 \usage{
 theme_albers_void(
   family = "red",
-  preset = c("homage", "study", "structural", "adobe", "midnight"),
+  preset = c("homage", "interaction", "study", "structural", "adobe", "midnight"),
   base_size = 13,
-  base_family = "sans",
+  base_family = NULL,
   bg = NULL,
   fg = NULL
 )
@@ -16,13 +16,16 @@ theme_albers_void(
 \arguments{
 \item{family}{Palette family used by companion scales.}
 
-\item{preset}{Visual preset: \code{"homage"} (gallery white), \code{"study"}
-(analytical white), \code{"structural"} (concrete), \code{"adobe"}
-(warm architectural grey), \code{"midnight"} (dark).}
+\item{preset}{Visual direction: \code{"homage"} (warm cream ground) or
+\code{"interaction"} (cool grey ground). Legacy presets \code{"study"},
+\code{"structural"}, \code{"adobe"}, and \code{"midnight"} are still
+accepted for backward compatibility.}
 
 \item{base_size}{Base font size.}
 
-\item{base_family}{Base font family.}
+\item{base_family}{Base font family. Plots fall back to the system "sans"
+stack; install the matching typefaces (Familjen Grotesk / Space Grotesk,
+etc.) and pass e.g. \code{base_family = "Familjen Grotesk"} for full fidelity.}
 
 \item{bg}{Override background color (default derived from preset).}
 

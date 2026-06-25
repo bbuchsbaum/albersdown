@@ -1,7 +1,7 @@
 ---
-title: 'Theme Proof: Ochre + Structural'
+title: 'Theme Proof: Interaction + Ochre'
 name: proof-ochre-structural
-description: Full-page proof vignette for the ochre family on the structural preset.
+description: A full page in the cool Interaction direction with the ochre family.
 output:
   rmarkdown::html_vignette:
     toc: yes
@@ -10,10 +10,10 @@ output:
     includes:
       in_header: albers-header.html
 params:
-  family: red
-  preset: homage
+  family: ochre
+  preset: interaction
   base_size: 13
-  content_width: 74
+  content_width: 78
   style: minimal
 resource_files:
 - albers.css
@@ -21,7 +21,7 @@ resource_files:
 - albers-header.html
 
 vignette: |
-  %\VignetteIndexEntry{Theme Proof: Ochre + Structural}
+  %\VignetteIndexEntry{Theme Proof: Interaction + Ochre}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -29,14 +29,14 @@ vignette: |
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE, comment = "#>", fig.align = "center", fig.retina = 2,
-  out.width = "100%", fig.width = 7, fig.asp = 0.618, message = FALSE, warning = FALSE
+  out.width = "100%", fig.width = 7, fig.asp = 0.6, message = FALSE, warning = FALSE
 )
-set.seed(11)
-oldopt <- options(pillar.sigfig = 7, width = 80)
-`%||%` <- function(a, b) if (is.null(a)) b else a
+set.seed(123)
 library(ggplot2)
+if (requireNamespace("ragg", quietly = TRUE)) knitr::opts_chunk$set(dev = "ragg_png")
+if (requireNamespace("systemfonts", quietly = TRUE)) albersdown::albers_register_fonts()
 if (requireNamespace("ggplot2", quietly = TRUE) && requireNamespace("albersdown", quietly = TRUE)) {
-  if (requireNamespace("ggplot2", quietly = TRUE) && requireNamespace("albersdown", quietly = TRUE)) ggplot2::theme_set(albersdown::theme_albers(family = params$family, preset = params$preset))
+  ggplot2::theme_set(albersdown::theme_albers(family = params$family, preset = params$preset))
 }
 ```
 
@@ -44,7 +44,7 @@ if (requireNamespace("ggplot2", quietly = TRUE) && requireNamespace("albersdown"
 cat(sprintf(
   paste0(
     '<script>document.addEventListener("DOMContentLoaded",function(){',
-    'document.body.classList.remove("palette-red","palette-lapis","palette-ochre","palette-teal","palette-green","palette-violet","preset-homage","preset-study","preset-structural","preset-adobe","preset-midnight");',
+    'document.body.classList.remove("palette-red","palette-lapis","palette-ochre","palette-teal","palette-green","palette-violet","preset-homage","preset-interaction","preset-study","preset-structural","preset-adobe","preset-midnight");',
     'document.body.classList.add("palette-%s","preset-%s");',
     '});</script>'
   ),
@@ -53,75 +53,44 @@ cat(sprintf(
 ))
 ```
 
+## What this page proves
 
+This is a full page in the **Interaction** direction (cool grey ground, grotesk
+type, dark code blocks) with the **ochre** family. The same dark code panel and
+cool ground as `vignette("interaction")`, but the accents — links, the
+nested-square marker, the syntax-accent rule, and the plot palette — are ochre
+rather than lapis. Direction sets the mood; family sets the hue.
 
-```{r albers-style, echo=FALSE, results='asis'}
-style_class <- switch(
-  tolower(params$style %||% "balanced"),
-  minimal = "style-minimal",
-  assertive = "style-assertive",
-  balanced = ""
-)
-if (nzchar(style_class)) {
-  cat(sprintf('<script>document.addEventListener("DOMContentLoaded",function(){document.body.classList.remove("style-minimal","style-assertive");document.body.classList.add("%s");});</script>', style_class))
-}
-```
+> TIP: On the dark code ground, the syntax token colours adapt automatically so
+> code stays legible regardless of the family.
 
-```{r content-width, echo=FALSE, results='asis'}
-cat(sprintf('<style>:root{--content:%sch}</style>', params$content_width))
-```
-
-<div class="homage-hero" aria-hidden="true"></div>
-<div class="hr-notch" role="presentation"></div>
-
-## What To Look For
-
-This proof page fixes the article to `ochre` plus `structural`.
-The family should show up in links, section dividers, plot highlights, and emphasis bands.
-
-The preset should feel more architectural than `study`: harder surfaces, flatter shadows,
-and a drier ground color behind the same typography and layout system.
-
-## Palette Evidence
+## Code on a dark ground
 
 ```{r}
-albersdown::albers_swatch(families = params$family, show_presets = TRUE) +
-  ggplot2::labs(
-    title = "Ochre palette tones with preset row",
-    subtitle = "A second full-page combination so users can compare fixed articles directly"
-  ) +
-  ggplot2::theme(legend.position = "none")
+albersdown::albers_palette("ochre")
 ```
 
-## Plot Evidence
+Inline code such as `theme_albers(preset = "interaction")` stays a light chip so
+it reads inside the body text.
 
-```{r}
-counts <- as.data.frame(table(mtcars$cyl))
-names(counts) <- c("cyl", "n")
-
-ggplot(counts, aes(cyl, n, fill = cyl)) +
-  geom_col(width = 0.72, color = "white") +
-  albersdown::scale_fill_albers(family = params$family) +
-  labs(
-    title = "Cylinder counts",
-    subtitle = "Fill accents should move to ochre while layout keeps the structural preset",
-    x = "Cylinders",
-    y = "Count",
-    fill = "Cylinders"
-  )
-```
-
-## Table Evidence
+## A table
 
 ```{r}
 knitr::kable(
-  aggregate(cbind(mpg, wt, hp) ~ cyl, data = mtcars, FUN = mean),
-  digits = 1,
-  caption = "Grouped summary to inspect borders, spacing, and the overall preset mood."
+  head(mtcars[, c("mpg", "wt", "hp", "cyl")]),
+  caption = "Ochre accents on the table header rule, cool ground."
 )
 ```
 
-```{r cleanup, include=FALSE}
-options(oldopt)
-if (exists("oldtheme")) ggplot2::theme_set(oldtheme)
+## A plot on the matching ground
+
+```{r}
+ggplot(mtcars, aes(wt, mpg, colour = factor(cyl))) +
+  geom_point(size = 2.3) +
+  albersdown::scale_color_albers(family = params$family) +
+  labs(
+    title = "Fuel efficiency vs. weight",
+    subtitle = "Interaction ground with ochre accents",
+    x = "Weight (1000 lbs)", y = "MPG", colour = "Cylinders"
+  )
 ```

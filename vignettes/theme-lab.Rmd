@@ -33,6 +33,8 @@ knitr::opts_chunk$set(
   out.width = "100%", fig.width = 7, fig.asp = 0.618, message = FALSE, warning = FALSE
 )
 library(ggplot2)
+if (requireNamespace("ragg", quietly = TRUE)) knitr::opts_chunk$set(dev = "ragg_png")
+if (requireNamespace("systemfonts", quietly = TRUE)) albersdown::albers_register_fonts()
 if (requireNamespace("ggplot2", quietly = TRUE) && requireNamespace("albersdown", quietly = TRUE)) {
   if (requireNamespace("ggplot2", quietly = TRUE) && requireNamespace("albersdown", quietly = TRUE)) ggplot2::theme_set(albersdown::theme_albers(family = params$family, preset = params$preset))
 }
@@ -79,9 +81,9 @@ That order gives the fastest path to a coherent page.
 
 ## How Do You Use It?
 
-1. Pick a family for color character.
-2. Pick a preset for ground/surface mood.
-3. Toggle style intensity to set structural emphasis.
+1. Pick a family for color character (the four chips show its tones).
+2. Pick a direction: warm **homage** or cool **interaction**.
+3. Toggle style intensity to set structural emphasis (marker + rule weight).
 4. Adjust content width to match prose density.
 
 <div class="theme-lab" data-albers-lab>
@@ -99,12 +101,10 @@ That order gives the fastest path to a coherent page.
   </select>
   </div>
   <div>
-  <label for="albers-preset">Preset</label>
+  <label for="albers-preset">Direction</label>
   <select id="albers-preset" data-albers-control="preset">
-  <option value="study">study</option>
-  <option value="structural">structural</option>
-  <option value="adobe">adobe</option>
-  <option value="midnight">midnight</option>
+  <option value="homage">homage (warm)</option>
+  <option value="interaction">interaction (cool)</option>
   </select>
   </div>
   <div>
@@ -129,15 +129,17 @@ That order gives the fastest path to a coherent page.
   <span class="albers-chip">A500</span>
   <span class="albers-chip">A300</span>
   </div>
-  <p data-albers-lab-summary>family=red | preset=study | style=minimal | width=80ch</p>
+  <p data-albers-lab-summary>family=red | preset=homage | style=minimal | width=80ch</p>
   <div class="albers-composition albers-composition--dense" data-seed="theme-lab" data-density="8" aria-hidden="true"></div>
 </div>
 </div>
 
 ## What Does Each Control Change?
 
-- `family`: accent hue and contrast character for links, rules, and highlights.
-- `preset`: background/surface/ink system (light analytical to dark editorial).
+- `family`: accent hue and contrast character for links, rules, the nested-square
+  marker, and plot palettes (the four chips above show the active family's tones).
+- `preset` (direction): warm **homage** (cream ground, serif body, light code) vs
+  cool **interaction** (grey ground, grotesk, dark code).
 - `style`: structural weight (`minimal`, `balanced`, `assertive`).
 - `content_width`: reading measure in `ch` units.
 
@@ -157,7 +159,7 @@ knitr::kable(data.frame(tone = names(pal), hex = unname(pal)), format = "html")
 ```yaml
 params:
   family: red
-  preset: study
+  preset: homage
   base_size: 13
   content_width: 80
   style: minimal

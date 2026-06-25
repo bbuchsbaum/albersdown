@@ -1,6 +1,7 @@
 export(albers_bs_theme)
 export(albers_palette)
 export(albers_presets)
+export(albers_register_fonts)
 export(gt_albers)
 export(scale_color_albers)
 export(scale_color_albers_distinct)

@@ -19,7 +19,7 @@
 gt_albers <- function(
   x,
   family = "red",
-  preset = c("homage", "study", "structural", "adobe", "midnight"),
+  preset = c("homage", "interaction", "study", "structural", "adobe", "midnight"),
   base_size = 14,
   width = 720,
   bg = NULL,
@@ -43,7 +43,7 @@ gt_albers <- function(
     gt::opt_row_striping() |>
     gt::tab_options(
       table.width = tbl_width,
-      table.font.names = "system-ui",
+      table.font.names = c("Space Grotesk", "Familjen Grotesk", "system-ui", "sans-serif"),
       table.font.size = gt::px(base_size),
       data_row.padding = gt::px(6),
       table.border.top.color = "transparent",

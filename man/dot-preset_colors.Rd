@@ -7,8 +7,10 @@
 .preset_colors(preset = "homage")
 }
 \arguments{
-\item{preset}{One of \code{"homage"}, \code{"study"}, \code{"structural"},
-\code{"adobe"}, \code{"midnight"}.}
+\item{preset}{One of the two 2.0 directions \code{"homage"} (warm cream,
+serif body) or \code{"interaction"} (cool grey, grotesk), or a legacy
+preset (\code{"study"}, \code{"structural"}, \code{"adobe"},
+\code{"midnight"}) retained for backward compatibility.}
 }
 \value{
 Named list with bg, fg, surface, muted, grid, border, code_bg.

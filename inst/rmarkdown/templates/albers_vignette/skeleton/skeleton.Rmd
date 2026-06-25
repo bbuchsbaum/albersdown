@@ -10,8 +10,8 @@ output:
     includes:
       in_header: albers-header.html
 params:
-  family: "red"   # choices: red, lapis, ochre, teal, green, violet
-  preset: "study" # choices: study, structural, adobe, midnight
+  family: "red"     # choices: red, lapis, ochre, teal, green, violet
+  preset: "homage"  # direction: homage (warm) or interaction (cool)
   base_size: 13
   content_width: 80   # in ch units
   style: "minimal"    # choices: minimal (default), balanced, assertive
@@ -23,6 +23,7 @@ resource_files:
   - albers.css
   - albers.js
   - albers-header.html
+  - fonts
 ---
 
 ```{r setup, include=FALSE}
@@ -33,6 +34,10 @@ knitr::opts_chunk$set(
 set.seed(123); options(pillar.sigfig = 7, width = 80)
 `%||%` <- function(a, b) if (is.null(a)) b else a
 library(ggplot2)
+# Render plots with a font-aware device and the bundled display fonts so plot
+# text matches the page typography (falls back to system "sans" if unavailable).
+if (requireNamespace("ragg", quietly = TRUE)) knitr::opts_chunk$set(dev = "ragg_png")
+if (requireNamespace("systemfonts", quietly = TRUE)) albersdown::albers_register_fonts()
 if (requireNamespace("ggplot2", quietly = TRUE) && requireNamespace("albersdown", quietly = TRUE)) {
   ggplot2::theme_set(albersdown::theme_albers(
     family = params$family,

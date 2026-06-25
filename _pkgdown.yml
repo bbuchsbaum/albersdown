@@ -12,6 +12,7 @@ articles:
 - title: Vignettes
   contents:
   - getting-started
+  - interaction
   - design-notes
   - theme-lab
   - theme-showcase
