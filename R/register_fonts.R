@@ -17,10 +17,12 @@
 #'   missing).
 #' @export
 #' @examples
-#' \donttest{
-#' if (requireNamespace("systemfonts", quietly = TRUE)) {
-#'   albers_register_fonts()
-#' }
+#' # Registers the bundled display fonts for the current session. Plot with a
+#' # font-aware device (e.g. ragg); the default pdf/postscript device cannot
+#' # render registered fonts. Wrapped in \dontrun because it mutates the
+#' # session-wide font registry.
+#' \dontrun{
+#' albers_register_fonts()
 #' }
 albers_register_fonts <- function() {
   if (!requireNamespace("systemfonts", quietly = TRUE)) {
