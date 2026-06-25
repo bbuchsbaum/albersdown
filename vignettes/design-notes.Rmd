@@ -12,19 +12,19 @@ output:
       in_header: albers-header.html
 params:
   family: red
-  preset: study
+  preset: homage
   base_size: 13
   content_width: 80
   style: minimal
-vignette: |
-  %\VignetteIndexEntry{Design notes: Homage system}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
 resource_files:
 - albers.css
 - albers.js
 - albers-header.html
 
+vignette: |
+  %\VignetteIndexEntry{Design notes: Homage system}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, include=FALSE}
@@ -37,21 +37,24 @@ oldopt <- options(pillar.sigfig = 7, width = 80)
 `%||%` <- function(a, b) if (is.null(a)) b else a
 library(ggplot2)
 if (requireNamespace("ggplot2", quietly = TRUE) && requireNamespace("albersdown", quietly = TRUE)) {
-  oldtheme <- ggplot2::theme_set(albersdown::theme_albers(
-    family = params$family,
-    preset = params$preset,
-    base_size = params$base_size
-  ))
+  if (requireNamespace("ggplot2", quietly = TRUE) && requireNamespace("albersdown", quietly = TRUE)) ggplot2::theme_set(albersdown::theme_albers(family = params$family, preset = params$preset))
 }
 ```
 
-```{r albers-family, echo=FALSE, results='asis'}
-cat(sprintf('<script>document.addEventListener("DOMContentLoaded",function(){document.body.classList.add("palette-%s");});</script>', params$family))
+```{r albers-classes, echo=FALSE, results='asis'}
+cat(sprintf(
+  paste0(
+    '<script>document.addEventListener("DOMContentLoaded",function(){',
+    'document.body.classList.remove("palette-red","palette-lapis","palette-ochre","palette-teal","palette-green","palette-violet","preset-homage","preset-study","preset-structural","preset-adobe","preset-midnight");',
+    'document.body.classList.add("palette-%s","preset-%s");',
+    '});</script>'
+  ),
+  params$family,
+  params$preset
+))
 ```
 
-```{r albers-preset, echo=FALSE, results='asis'}
-cat(sprintf('<script>document.addEventListener("DOMContentLoaded",function(){document.body.classList.add("preset-%s");});</script>', params$preset))
-```
+
 
 ```{r albers-style, echo=FALSE, results='asis'}
 style_class <- switch(

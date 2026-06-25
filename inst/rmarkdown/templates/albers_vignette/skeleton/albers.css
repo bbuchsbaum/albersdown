@@ -11,6 +11,12 @@
   --shadow-card: 0 1px 5px rgba(9, 11, 15, 0.055);
   --content: 78ch;
   --anchor-offset: 76px;
+
+  /* html_vignette (CRAN) page + sidebar geometry */
+  --vig-toc-width: 15rem;
+  --vig-gap: clamp(1.5rem, 2.4vw, 2.6rem);
+  --vig-pad-block: clamp(1.75rem, 3vw, 3rem);
+  --vig-pad-inline: clamp(1.2rem, 3vw, 2.6rem);
   --font-body: "Avenir Next", "Gill Sans", "Trebuchet MS", system-ui, -apple-system, sans-serif;
   --font-display: "Avenir Next", "Gill Sans", "Century Gothic", "Trebuchet MS", system-ui, sans-serif;
   --font-mono: "Iosevka Term", "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, "Liberation Mono", monospace;
@@ -390,6 +396,157 @@ main,
   max-width: var(--content);
   margin-inline: auto;
   padding-inline: clamp(16px, 2.4vw, 34px);
+}
+
+/* -- html_vignette (CRAN) layout ----------------------------------------- *
+ * rmarkdown::html_vignette renders content directly inside <body>, with a
+ * top-level <div id="TOC"> and no .contents / .page-content / .main-container
+ * wrapper. pkgdown wraps article content in .contents and uses a lowercase
+ * #toc, so the rules above never matched the vignette DOM -- on CRAN the text
+ * ran full-bleed and the TOC was an unstyled list at the top. The rules below
+ * are scoped to the vignette DOM only: a <body> that has a direct-child #TOC
+ * (or the optional .albers-vignette marker class). They are inert on the
+ * pkgdown site, whose <body> has no direct #TOC child.
+ * --------------------------------------------------------------------------- */
+body.albers-vignette,
+body:has(> #TOC) {
+  box-sizing: border-box;
+  max-width: calc(var(--content) + 2 * var(--vig-pad-inline));
+  margin-inline: auto;
+  padding: var(--vig-pad-block) var(--vig-pad-inline);
+  background: var(--surface);
+  border: var(--rule-thin) solid var(--border);
+  box-shadow: var(--shadow-soft);
+  position: relative;
+}
+
+/* Albers ribbon down the inner edge, echoing .page-content */
+body.albers-vignette::before,
+body:has(> #TOC)::before {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  width: var(--rule-strong);
+  background: var(--A500);
+  opacity: var(--ribbon-opacity);
+  pointer-events: none;
+}
+
+body.albers-vignette > h1.title,
+body:has(> #TOC) > h1.title {
+  margin-top: 0;
+}
+
+/* TOC as an Albers surface card (used in both 1- and 2-column modes) */
+body.albers-vignette > #TOC,
+body:has(> #TOC) > #TOC {
+  background: var(--surface-strong);
+  border: var(--rule-thin) solid var(--border);
+  border-left: var(--rule-strong) solid var(--A500);
+  padding: var(--space-4) var(--space-4) var(--space-4) var(--space-5);
+  margin-block: var(--space-5) var(--space-6);
+  font-size: 0.92em;
+  line-height: 1.4;
+}
+
+body.albers-vignette > #TOC ul,
+body:has(> #TOC) > #TOC ul {
+  list-style: none;
+  margin: 0;
+  padding-left: 0;
+}
+
+body.albers-vignette > #TOC ul ul,
+body:has(> #TOC) > #TOC ul ul {
+  padding-left: 0.95em;
+  margin-top: 0.18rem;
+}
+
+body.albers-vignette > #TOC li,
+body:has(> #TOC) > #TOC li {
+  position: relative;
+  margin: 0.2rem 0;
+  padding-left: 0.95em;
+}
+
+body.albers-vignette > #TOC li::before,
+body:has(> #TOC) > #TOC li::before {
+  content: "–";
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--A500);
+  opacity: var(--subdash-opacity);
+}
+
+body.albers-vignette > #TOC a,
+body:has(> #TOC) > #TOC a {
+  color: var(--muted) !important;
+  text-decoration: none !important;
+  border-bottom: none !important;
+}
+
+body.albers-vignette > #TOC a:hover,
+body.albers-vignette > #TOC a:focus-visible,
+body:has(> #TOC) > #TOC a:hover,
+body:has(> #TOC) > #TOC a:focus-visible {
+  color: var(--accent-ink) !important;
+}
+
+/* Two-column layout with a sticky sidebar on wide viewports. The flat
+ * html_vignette DOM (title, #TOC, and section divs are all siblings of
+ * <body>) is laid out as a grid: the title spans both columns, the TOC
+ * occupies the left column and spans the section rows so it can stick. */
+@media (min-width: 1080px) {
+  body.albers-vignette,
+  body:has(> #TOC) {
+    max-width: calc(
+      var(--content) + var(--vig-toc-width) + var(--vig-gap) +
+        2 * var(--vig-pad-inline)
+    );
+    display: grid;
+    grid-template-columns: [toc] var(--vig-toc-width) [main] minmax(0, 1fr);
+    column-gap: var(--vig-gap);
+    align-items: start;
+  }
+
+  body.albers-vignette > *,
+  body:has(> #TOC) > * {
+    grid-column: main;
+    min-width: 0;
+  }
+
+  body.albers-vignette > h1.title,
+  body:has(> #TOC) > h1.title {
+    grid-column: toc / -1;
+  }
+
+  body.albers-vignette > #TOC,
+  body:has(> #TOC) > #TOC {
+    grid-column: toc;
+    grid-row: 2 / span 200;
+    align-self: start;
+    position: sticky;
+    top: var(--vig-pad-block);
+    max-height: calc(100vh - 2 * var(--vig-pad-block));
+    overflow-y: auto;
+    margin-block: 0;
+  }
+}
+
+/* Edge-to-edge on phones: drop the card chrome */
+@media (max-width: 620px) {
+  body.albers-vignette,
+  body:has(> #TOC) {
+    border: none;
+    box-shadow: none;
+    padding-inline: 18px;
+  }
+  body.albers-vignette::before,
+  body:has(> #TOC)::before {
+    display: none;
+  }
 }
 
 /* -- Surfaces ------------------------------------------------------------ */
@@ -1156,9 +1313,21 @@ body.preset-midnight .html-widget {
 @media print {
   body { background: #fff !important; }
 
+  body.albers-vignette,
+  body:has(> #TOC) {
+    display: block;
+    max-width: none;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+  }
+  body.albers-vignette::before,
+  body:has(> #TOC)::before { display: none; }
+
   .navbar,
   .sidebar,
   .toc,
+  #TOC,
   .page-header,
   .homage-hero,
   .hr-notch,

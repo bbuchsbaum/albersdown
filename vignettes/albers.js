@@ -12,6 +12,19 @@
     if (value) el.classList.add(prefix + value);
   }
 
+  function inferBootstrapTheme() {
+    if (!document.body) return "light";
+    return document.body.classList.contains("preset-midnight") ? "dark" : "light";
+  }
+
+  function syncBootstrapTheme() {
+    var theme = inferBootstrapTheme();
+    document.documentElement.setAttribute("data-bs-theme", theme);
+    document.body.setAttribute("data-bs-theme", theme);
+    var nav = document.querySelector("nav.navbar");
+    if (nav) nav.setAttribute("data-bs-theme", theme);
+  }
+
   function hashSeed(seed) {
     var h = 2166136261;
     for (var i = 0; i < seed.length; i++) {
@@ -218,6 +231,8 @@
 
     document.documentElement.style.setProperty("--content", state.width + "ch");
 
+    syncBootstrapTheme();
+
     setSearchParam("family", state.family);
     setSearchParam("preset", state.preset);
     setSearchParam("style", state.style);
@@ -225,6 +240,20 @@
 
     updateLabSummary(root, state);
     renderAllCompositions();
+  }
+
+  function watchThemeClasses() {
+    if (!document.body || typeof MutationObserver === "undefined") return;
+    var observer = new MutationObserver(function (muts) {
+      for (var i = 0; i < muts.length; i++) {
+        if (muts[i].attributeName === "class") {
+          syncBootstrapTheme();
+          renderAllCompositions();
+          break;
+        }
+      }
+    });
+    observer.observe(document.body, { attributes: true, attributeFilter: ["class"] });
   }
 
   function initThemeLab() {
@@ -272,6 +301,8 @@
     initCopyButtons();
     initAnchors();
     initThemeLab();
+    watchThemeClasses();
+    syncBootstrapTheme();
     renderAllCompositions();
   });
 })();

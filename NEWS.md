@@ -1,5 +1,14 @@
 # albersdown 1.0.1
 
+* Vignette stylesheet now lays out `rmarkdown::html_vignette` output correctly
+  on CRAN. The previous layout rules only matched pkgdown's DOM (`.contents`,
+  `#toc`), so CRAN-hosted vignettes — whose content sits directly in `<body>`
+  with a top-level `<div id="TOC">` — rendered full-bleed with an unstyled
+  table of contents stacked on top. New rules scoped to the vignette DOM (a
+  `<body>` with a direct-child `#TOC`) constrain the reading column, draw it as
+  an Albers surface card, and place the table of contents in a sticky left
+  sidebar on wide viewports (collapsing to a styled card above the content on
+  narrow screens). The rules are inert on pkgdown sites.
 * `migrate_albersdown()` now exposes the full Albers family/preset choices and
   migrated vignettes now apply both `params$family` and `params$preset` in the
   injected `theme_albers()` call.
