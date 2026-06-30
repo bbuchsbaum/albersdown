@@ -14,6 +14,7 @@ This package is meant to live on GitHub and be pinned by consumers.
 Install with pak:
 
 ``` r
+
 pak::pak("bbuchsbaum/albersdown")
 ```
 
@@ -51,6 +52,7 @@ output:
 In the setup chunk:
 
 ``` r
+
 library(ggplot2)
 ggplot2::theme_set(albersdown::theme_albers(
   family = params$family,
@@ -62,6 +64,7 @@ ggplot2::theme_set(albersdown::theme_albers(
 3.  Retrofit an existing package (replace prior theming)
 
 ``` r
+
 albersdown::use_albersdown(
   family = "red",
   preset = "homage",
@@ -73,12 +76,14 @@ albersdown::use_albersdown(
 Team one-liner (same defaults as above):
 
 ``` r
+
 albersdown::migrate_albersdown()
 ```
 
 Migration also exposes the Albers theme surface directly:
 
 ``` r
+
 albersdown::migrate_albersdown(family = "teal", preset = "midnight")
 ```
 

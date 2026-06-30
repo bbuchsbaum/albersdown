@@ -8,7 +8,7 @@ this directly if they use `template: { package: albersdown }`.
 ``` r
 albers_bs_theme(
   family = "red",
-  preset = c("homage", "study", "structural", "adobe", "midnight"),
+  preset = c("homage", "interaction", "study", "structural", "adobe", "midnight"),
   accent = NULL,
   bg = NULL,
   fg = NULL
@@ -61,26 +61,26 @@ if (requireNamespace("bslib", quietly = TRUE)) {
 #> $border-radius-lg: 0 !default;
 #> $headings-font-weight: 700 !default;
 #> $font-size-base: 1.05rem !default;
-#> $body-secondary-color: #636b76 !default;
-#> $body-tertiary-bg: #ffffff !default;
-#> $border-color: #d5dae1 !default;
-#> $code-bg: #ecf0f4 !default;
-#> $font-family-base: 'Avenir Next', 'Gill Sans', 'Trebuchet MS', system-ui !default;
-#> $font-family-monospace: 'Iosevka Term', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace !default;
-#> $headings-font-family: 'Avenir Next', 'Gill Sans', 'Century Gothic', 'Trebuchet MS', system-ui !default;
+#> $body-secondary-color: #7a7264 !default;
+#> $body-tertiary-bg: #fbf7ee !default;
+#> $border-color: #d8cbae !default;
+#> $code-bg: #fbf7ee !default;
+#> $font-family-base: Newsreader, Georgia, 'Times New Roman', serif !default;
+#> $font-family-monospace: 'Spline Sans Mono', ui-monospace, SFMono-Regular, Menlo, monospace !default;
+#> $headings-font-family: 'Familjen Grotesk', system-ui, -apple-system, sans-serif !default;
 #> $primary: #DC3925 !default;
-#> $secondary: #636B76 !default;
-#> $white: #F3F5F7 !default;
-#> $gray-100: #DDDFE1 !default;
-#> $gray-200: #C7C9CB !default;
-#> $gray-300: #B1B3B5 !default;
-#> $gray-400: #9B9D9F !default;
-#> $gray-500: #858688 !default;
-#> $gray-600: #6F7072 !default;
-#> $gray-700: #595A5C !default;
-#> $gray-800: #434446 !default;
-#> $gray-900: #2D2E30 !default;
-#> $black: #17181A !default;
+#> $secondary: #7A7264 !default;
+#> $white: #EFE7D6 !default;
+#> $gray-100: #DAD3C3 !default;
+#> $gray-200: #C5BEB0 !default;
+#> $gray-300: #B1AA9C !default;
+#> $gray-400: #9C9589 !default;
+#> $gray-500: #878176 !default;
+#> $gray-600: #726D63 !default;
+#> $gray-700: #5D5850 !default;
+#> $gray-800: #49443C !default;
+#> $gray-900: #342F29 !default;
+#> $black: #1F1B16 !default;
 #> $bslib-preset-type: builtin;
 #> $bslib-preset-name: shiny;
 #> $web-font-path: "font.css" !default;
@@ -150,7 +150,7 @@ if (requireNamespace("bslib", quietly = TRUE)) {
 #>  $ html_deps       :List of 1
 #>   ..$ :List of 10
 #>   .. ..$ name      : chr "bs3compat"
-#>   .. ..$ version   : chr "0.10.0"
+#>   .. ..$ version   : chr "0.11.0"
 #>   .. ..$ src       :List of 1
 #>   .. .. ..$ file: chr "bs3compat/js"
 #>   .. ..$ meta      : NULL

@@ -9,9 +9,11 @@
 - [`albers_palette_img()`](https://bbuchsbaum.github.io/albersdown/reference/albers_palette_img.md)
   : Image-derived Homage palettes (A900 -\> A300)
 - [`albers_presets()`](https://bbuchsbaum.github.io/albersdown/reference/albers_presets.md)
-  : List available Albers presets
+  : List available Albers directions
 - [`albers_ramp()`](https://bbuchsbaum.github.io/albersdown/reference/albers_ramp.md)
   : Interpolate n colors along a palette family gradient
+- [`albers_register_fonts()`](https://bbuchsbaum.github.io/albersdown/reference/albers_register_fonts.md)
+  : Register the bundled Albers display fonts for R graphics
 - [`albers_swatch()`](https://bbuchsbaum.github.io/albersdown/reference/albers_swatch.md)
   : Visual swatch of Albers palette families and presets
 - [`gt_albers()`](https://bbuchsbaum.github.io/albersdown/reference/gt_albers.md)

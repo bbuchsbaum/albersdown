@@ -1,63 +1,63 @@
-# Theme Proof: Ochre + Structural
+# Theme Proof: Interaction + Ochre
 
-## What To Look For
+## What this page proves
 
-This proof page fixes the article to `ochre` plus `structural`. The
-family should show up in links, section dividers, plot highlights, and
-emphasis bands.
+This is a full page in the **Interaction** direction (cool grey ground,
+grotesk type, dark code blocks) with the **ochre** family. The same dark
+code panel and cool ground as
+[`vignette("interaction")`](https://bbuchsbaum.github.io/albersdown/articles/interaction.md),
+but the accents — links, the nested-square marker, the syntax-accent
+rule, and the plot palette — are ochre rather than lapis. Direction sets
+the mood; family sets the hue.
 
-The preset should feel more architectural than `study`: harder surfaces,
-flatter shadows, and a drier ground color behind the same typography and
-layout system.
+> TIP: On the dark code ground, the syntax token colours adapt
+> automatically so code stays legible regardless of the family.
 
-## Palette Evidence
+## Code on a dark ground
 
 ``` r
-albersdown::albers_swatch(families = params$family, show_presets = TRUE) +
-  ggplot2::labs(
-    title = "Ochre palette tones with preset row",
-    subtitle = "A second full-page combination so users can compare fixed articles directly"
-  ) +
-  ggplot2::theme(legend.position = "none")
+
+albersdown::albers_palette("ochre")
+#>      A900      A700      A500      A300 
+#> "#6F5200" "#8B6700" "#B48900" "#D7A700"
 ```
 
-![](proof-ochre-structural_files/figure-html/unnamed-chunk-1-1.png)
+Inline code such as `theme_albers(preset = "interaction")` stays a light
+chip so it reads inside the body text.
 
-## Plot Evidence
-
-``` r
-counts <- as.data.frame(table(mtcars$cyl))
-names(counts) <- c("cyl", "n")
-
-ggplot(counts, aes(cyl, n, fill = cyl)) +
-  geom_col(width = 0.72, color = "white") +
-  albersdown::scale_fill_albers(family = params$family) +
-  labs(
-    title = "Cylinder counts",
-    subtitle = "Fill accents should move to ochre while layout keeps the structural preset",
-    x = "Cylinders",
-    y = "Count",
-    fill = "Cylinders"
-  )
-```
-
-![](proof-ochre-structural_files/figure-html/unnamed-chunk-2-1.png)
-
-## Table Evidence
+## A table
 
 ``` r
+
 knitr::kable(
-  aggregate(cbind(mpg, wt, hp) ~ cyl, data = mtcars, FUN = mean),
-  digits = 1,
-  caption = "Grouped summary to inspect borders, spacing, and the overall preset mood."
+  head(mtcars[, c("mpg", "wt", "hp", "cyl")]),
+  caption = "Ochre accents on the table header rule, cool ground."
 )
 ```
 
-| cyl |  mpg |  wt |    hp |
-|----:|-----:|----:|------:|
-|   4 | 26.7 | 2.3 |  82.6 |
-|   6 | 19.7 | 3.1 | 122.3 |
-|   8 | 15.1 | 4.0 | 209.2 |
+|                   |  mpg |    wt |  hp | cyl |
+|:------------------|-----:|------:|----:|----:|
+| Mazda RX4         | 21.0 | 2.620 | 110 |   6 |
+| Mazda RX4 Wag     | 21.0 | 2.875 | 110 |   6 |
+| Datsun 710        | 22.8 | 2.320 |  93 |   4 |
+| Hornet 4 Drive    | 21.4 | 3.215 | 110 |   6 |
+| Hornet Sportabout | 18.7 | 3.440 | 175 |   8 |
+| Valiant           | 18.1 | 3.460 | 105 |   6 |
 
-Grouped summary to inspect borders, spacing, and the overall preset
-mood.
+Ochre accents on the table header rule, cool ground. {.table}
+
+## A plot on the matching ground
+
+``` r
+
+ggplot(mtcars, aes(wt, mpg, colour = factor(cyl))) +
+  geom_point(size = 2.3) +
+  albersdown::scale_color_albers(family = params$family) +
+  labs(
+    title = "Fuel efficiency vs. weight",
+    subtitle = "Interaction ground with ochre accents",
+    x = "Weight (1000 lbs)", y = "MPG", colour = "Cylinders"
+  )
+```
+
+![](proof-ochre-structural_files/figure-html/unnamed-chunk-3-1.png)

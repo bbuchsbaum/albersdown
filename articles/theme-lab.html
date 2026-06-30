@@ -7,8 +7,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Theme Lab: Tune Family, Preset, and Rhythm • albersdown</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
 <script src="../extra.js"></script><meta property="og:title" content="Theme Lab: Tune Family, Preset, and Rhythm">
@@ -23,7 +23,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">albersdown</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -61,7 +61,7 @@
 
     
     
-<script>document.addEventListener("DOMContentLoaded",function(){var families=["palette-red","palette-lapis","palette-ochre","palette-teal","palette-green","palette-violet"];if(!families.some(function(cls){return document.body.classList.contains(cls);})){document.body.classList.add("palette-red");}});</script><script>document.addEventListener("DOMContentLoaded",function(){var presets=["preset-study","preset-structural","preset-adobe","preset-midnight"];if(!presets.some(function(cls){return document.body.classList.contains(cls);})){document.body.classList.add("preset-study");}});</script><script>document.addEventListener("DOMContentLoaded",function(){if(!document.body.classList.contains("style-minimal") && !document.body.classList.contains("style-assertive") && "minimal"!=="balanced") document.body.classList.add("style-minimal");});</script><style>:root{--content:80ch}</style>
+<script>document.addEventListener("DOMContentLoaded",function(){document.body.classList.remove("palette-red","palette-lapis","palette-ochre","palette-teal","palette-green","palette-violet","preset-homage","preset-study","preset-structural","preset-adobe","preset-midnight");document.body.classList.add("palette-red","preset-homage");});</script><script>document.addEventListener("DOMContentLoaded",function(){if(!document.body.classList.contains("style-minimal") && !document.body.classList.contains("style-assertive") && "minimal"!=="balanced") document.body.classList.add("style-minimal");});</script><style>:root{--content:80ch}</style>
 <div class="section level2">
 <h2 id="what-is-this-page-for">What Is This Page For?<a class="anchor" aria-label="anchor" href="#what-is-this-page-for"></a>
 </h2>
@@ -78,9 +78,12 @@ the fastest path to a coherent page.</p>
 <h2 id="how-do-you-use-it">How Do You Use It?<a class="anchor" aria-label="anchor" href="#how-do-you-use-it"></a>
 </h2>
 <ol style="list-style-type: decimal">
-<li>Pick a family for color character.</li>
-<li>Pick a preset for ground/surface mood.</li>
-<li>Toggle style intensity to set structural emphasis.</li>
+<li>Pick a family for color character (the four chips show its
+tones).</li>
+<li>Pick a direction: warm <strong>homage</strong> or cool
+<strong>interaction</strong>.</li>
+<li>Toggle style intensity to set structural emphasis (marker + rule
+weight).</li>
 <li>Adjust content width to match prose density.</li>
 </ol>
 <div class="theme-lab" data-albers-lab="">
@@ -96,11 +99,9 @@ the fastest path to a coherent page.</p>
 <option value="violet">violet</option></select>
 </div>
 <div>
-<label for="albers-preset">Preset</label>
-<select id="albers-preset" data-albers-control="preset"><option value="study">study</option>
-<option value="structural">structural</option>
-<option value="adobe">adobe</option>
-<option value="midnight">midnight</option></select>
+<label for="albers-preset">Direction</label>
+<select id="albers-preset" data-albers-control="preset"><option value="homage">homage (warm)</option>
+<option value="interaction">interaction (cool)</option></select>
 </div>
 <div>
 <label for="albers-style">Style</label>
@@ -120,7 +121,7 @@ the fastest path to a coherent page.</p>
 <span class="albers-chip">A300</span>
 </div>
 <p data-albers-lab-summary>
-family=red | preset=study | style=minimal | width=80ch
+family=red | preset=homage | style=minimal | width=80ch
 </p>
 <div class="albers-composition albers-composition--dense" data-seed="theme-lab" data-density="8" aria-hidden="true">
 
@@ -134,10 +135,12 @@ family=red | preset=study | style=minimal | width=80ch
 <ul>
 <li>
 <code>family</code>: accent hue and contrast character for links,
-rules, and highlights.</li>
+rules, the nested-square marker, and plot palettes (the four chips above
+show the active family’s tones).</li>
 <li>
-<code>preset</code>: background/surface/ink system (light analytical
-to dark editorial).</li>
+<code>preset</code> (direction): warm <strong>homage</strong> (cream
+ground, serif body, light code) vs cool <strong>interaction</strong>
+(grey ground, grotesk, dark code).</li>
 <li>
 <code>style</code>: structural weight (<code>minimal</code>,
 <code>balanced</code>, <code>assertive</code>).</li>
@@ -206,7 +209,7 @@ A300
 </h2>
 <div class="sourceCode" id="cb2"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">params</span><span class="kw">:</span></span>
 <span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="at">  </span><span class="fu">family</span><span class="kw">:</span><span class="at"> red</span></span>
-<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="at">  </span><span class="fu">preset</span><span class="kw">:</span><span class="at"> study</span></span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="at">  </span><span class="fu">preset</span><span class="kw">:</span><span class="at"> homage</span></span>
 <span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a><span class="at">  </span><span class="fu">base_size</span><span class="kw">:</span><span class="at"> </span><span class="dv">13</span></span>
 <span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a><span class="at">  </span><span class="fu">content_width</span><span class="kw">:</span><span class="at"> </span><span class="dv">80</span></span>
 <span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a><span class="at">  </span><span class="fu">style</span><span class="kw">:</span><span class="at"> minimal</span></span></code></pre></div>

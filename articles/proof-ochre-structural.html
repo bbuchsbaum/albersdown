@@ -5,15 +5,15 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Theme Proof: Ochre + Structural • albersdown</title>
+<title>Theme Proof: Interaction + Ochre • albersdown</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
-<script src="../extra.js"></script><meta property="og:title" content="Theme Proof: Ochre + Structural">
-<meta name="description" content="Full-page proof vignette for the ochre family on the structural preset.">
-<meta property="og:description" content="Full-page proof vignette for the ochre family on the structural preset.">
+<script src="../extra.js"></script><meta property="og:title" content="Theme Proof: Interaction + Ochre">
+<meta name="description" content="A full page in the cool Interaction direction with the ochre family.">
+<meta property="og:description" content="A full page in the cool Interaction direction with the ochre family.">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -23,7 +23,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">albersdown</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -52,7 +52,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
 
-      <h1>Theme Proof: Ochre + Structural</h1>
+      <h1>Theme Proof: Interaction + Ochre</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/bbuchsbaum/albersdown/blob/main/vignettes/proof-ochre-structural.Rmd" class="external-link"><code>vignettes/proof-ochre-structural.Rmd</code></a></small>
@@ -61,93 +61,107 @@
 
     
     
-<script>document.addEventListener("DOMContentLoaded",function(){document.body.classList.add("palette-ochre");});</script><script>document.addEventListener("DOMContentLoaded",function(){document.body.classList.add("preset-structural");});</script><script>document.addEventListener("DOMContentLoaded",function(){document.body.classList.remove("style-minimal","style-assertive");document.body.classList.add("style-minimal");});</script><style>:root{--content:74ch}</style>
-<div class="homage-hero" aria-hidden="true">
-
-</div>
-<div class="hr-notch" role="presentation">
-
-</div>
-<div class="section level2">
-<h2 id="what-to-look-for">What To Look For<a class="anchor" aria-label="anchor" href="#what-to-look-for"></a>
+<script>document.addEventListener("DOMContentLoaded",function(){document.body.classList.remove("palette-red","palette-lapis","palette-ochre","palette-teal","palette-green","palette-violet","preset-homage","preset-interaction","preset-study","preset-structural","preset-adobe","preset-midnight");document.body.classList.add("palette-ochre","preset-interaction");});</script><div class="section level2">
+<h2 id="what-this-page-proves">What this page proves<a class="anchor" aria-label="anchor" href="#what-this-page-proves"></a>
 </h2>
-<p>This proof page fixes the article to <code>ochre</code> plus
-<code>structural</code>. The family should show up in links, section
-dividers, plot highlights, and emphasis bands.</p>
-<p>The preset should feel more architectural than <code>study</code>:
-harder surfaces, flatter shadows, and a drier ground color behind the
-same typography and layout system.</p>
+<p>This is a full page in the <strong>Interaction</strong> direction
+(cool grey ground, grotesk type, dark code blocks) with the
+<strong>ochre</strong> family. The same dark code panel and cool ground
+as <code><a href="../articles/interaction.html">vignette("interaction")</a></code>, but the accents — links, the
+nested-square marker, the syntax-accent rule, and the plot palette — are
+ochre rather than lapis. Direction sets the mood; family sets the
+hue.</p>
+<blockquote>
+<p>TIP: On the dark code ground, the syntax token colours adapt
+automatically so code stays legible regardless of the family.</p>
+</blockquote>
 </div>
 <div class="section level2">
-<h2 id="palette-evidence">Palette Evidence<a class="anchor" aria-label="anchor" href="#palette-evidence"></a>
+<h2 id="code-on-a-dark-ground">Code on a dark ground<a class="anchor" aria-label="anchor" href="#code-on-a-dark-ground"></a>
 </h2>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">albersdown</span><span class="fu">::</span><span class="fu"><a href="../reference/albers_swatch.html">albers_swatch</a></span><span class="op">(</span>families <span class="op">=</span> <span class="va">params</span><span class="op">$</span><span class="va">family</span>, show_presets <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span></span>
-<span>    title <span class="op">=</span> <span class="st">"Ochre palette tones with preset row"</span>,</span>
-<span>    subtitle <span class="op">=</span> <span class="st">"A second full-page combination so users can compare fixed articles directly"</span></span>
-<span>  <span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="proof-ochre-structural_files/figure-html/unnamed-chunk-1-1.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;"></p>
+<code class="sourceCode R"><span><span class="fu">albersdown</span><span class="fu">::</span><span class="fu"><a href="../reference/albers_palette.html">albers_palette</a></span><span class="op">(</span><span class="st">"ochre"</span><span class="op">)</span></span>
+<span><span class="co">#&gt;      A900      A700      A500      A300 </span></span>
+<span><span class="co">#&gt; "#6F5200" "#8B6700" "#B48900" "#D7A700"</span></span></code></pre></div>
+<p>Inline code such as <code>theme_albers(preset = "interaction")</code>
+stays a light chip so it reads inside the body text.</p>
 </div>
 <div class="section level2">
-<h2 id="plot-evidence">Plot Evidence<a class="anchor" aria-label="anchor" href="#plot-evidence"></a>
+<h2 id="a-table">A table<a class="anchor" aria-label="anchor" href="#a-table"></a>
 </h2>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">counts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">$</span><span class="va">cyl</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">counts</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cyl"</span>, <span class="st">"n"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">counts</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">cyl</span>, <span class="va">n</span>, fill <span class="op">=</span> <span class="va">cyl</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html" class="external-link">geom_col</a></span><span class="op">(</span>width <span class="op">=</span> <span class="fl">0.72</span>, color <span class="op">=</span> <span class="st">"white"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">albersdown</span><span class="fu">::</span><span class="fu"><a href="../reference/scale_color_albers.html">scale_fill_albers</a></span><span class="op">(</span>family <span class="op">=</span> <span class="va">params</span><span class="op">$</span><span class="va">family</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span></span>
-<span>    title <span class="op">=</span> <span class="st">"Cylinder counts"</span>,</span>
-<span>    subtitle <span class="op">=</span> <span class="st">"Fill accents should move to ochre while layout keeps the structural preset"</span>,</span>
-<span>    x <span class="op">=</span> <span class="st">"Cylinders"</span>,</span>
-<span>    y <span class="op">=</span> <span class="st">"Count"</span>,</span>
-<span>    fill <span class="op">=</span> <span class="st">"Cylinders"</span></span>
-<span>  <span class="op">)</span></span></code></pre></div>
-<p><img src="proof-ochre-structural_files/figure-html/unnamed-chunk-2-1.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;"></p>
-</div>
-<div class="section level2">
-<h2 id="table-evidence">Table Evidence<a class="anchor" aria-label="anchor" href="#table-evidence"></a>
-</h2>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/stats/aggregate.html" class="external-link">aggregate</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">mpg</span>, <span class="va">wt</span>, <span class="va">hp</span><span class="op">)</span> <span class="op">~</span> <span class="va">cyl</span>, data <span class="op">=</span> <span class="va">mtcars</span>, FUN <span class="op">=</span> <span class="va">mean</span><span class="op">)</span>,</span>
-<span>  digits <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  caption <span class="op">=</span> <span class="st">"Grouped summary to inspect borders, spacing, and the overall preset mood."</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mpg"</span>, <span class="st">"wt"</span>, <span class="st">"hp"</span>, <span class="st">"cyl"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>,</span>
+<span>  caption <span class="op">=</span> <span class="st">"Ochre accents on the table header rule, cool ground."</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <table class="table">
-<caption>Grouped summary to inspect borders, spacing, and the overall
-preset mood.</caption>
+<caption>Ochre accents on the table header rule, cool ground.</caption>
 <thead><tr class="header">
-<th align="right">cyl</th>
+<th align="left"></th>
 <th align="right">mpg</th>
 <th align="right">wt</th>
 <th align="right">hp</th>
+<th align="right">cyl</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td align="right">4</td>
-<td align="right">26.7</td>
-<td align="right">2.3</td>
-<td align="right">82.6</td>
+<td align="left">Mazda RX4</td>
+<td align="right">21.0</td>
+<td align="right">2.620</td>
+<td align="right">110</td>
+<td align="right">6</td>
 </tr>
 <tr class="even">
+<td align="left">Mazda RX4 Wag</td>
+<td align="right">21.0</td>
+<td align="right">2.875</td>
+<td align="right">110</td>
 <td align="right">6</td>
-<td align="right">19.7</td>
-<td align="right">3.1</td>
-<td align="right">122.3</td>
 </tr>
 <tr class="odd">
+<td align="left">Datsun 710</td>
+<td align="right">22.8</td>
+<td align="right">2.320</td>
+<td align="right">93</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="left">Hornet 4 Drive</td>
+<td align="right">21.4</td>
+<td align="right">3.215</td>
+<td align="right">110</td>
+<td align="right">6</td>
+</tr>
+<tr class="odd">
+<td align="left">Hornet Sportabout</td>
+<td align="right">18.7</td>
+<td align="right">3.440</td>
+<td align="right">175</td>
 <td align="right">8</td>
-<td align="right">15.1</td>
-<td align="right">4.0</td>
-<td align="right">209.2</td>
+</tr>
+<tr class="even">
+<td align="left">Valiant</td>
+<td align="right">18.1</td>
+<td align="right">3.460</td>
+<td align="right">105</td>
+<td align="right">6</td>
 </tr>
 </tbody>
 </table>
+</div>
+<div class="section level2">
+<h2 id="a-plot-on-the-matching-ground">A plot on the matching ground<a class="anchor" aria-label="anchor" href="#a-plot-on-the-matching-ground"></a>
+</h2>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">mtcars</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">wt</span>, <span class="va">mpg</span>, colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">cyl</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">2.3</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">albersdown</span><span class="fu">::</span><span class="fu"><a href="../reference/scale_color_albers.html">scale_color_albers</a></span><span class="op">(</span>family <span class="op">=</span> <span class="va">params</span><span class="op">$</span><span class="va">family</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span></span>
+<span>    title <span class="op">=</span> <span class="st">"Fuel efficiency vs. weight"</span>,</span>
+<span>    subtitle <span class="op">=</span> <span class="st">"Interaction ground with ochre accents"</span>,</span>
+<span>    x <span class="op">=</span> <span class="st">"Weight (1000 lbs)"</span>, y <span class="op">=</span> <span class="st">"MPG"</span>, colour <span class="op">=</span> <span class="st">"Cylinders"</span></span>
+<span>  <span class="op">)</span></span></code></pre></div>
+<p><img src="proof-ochre-structural_files/figure-html/unnamed-chunk-3-1.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;"></p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

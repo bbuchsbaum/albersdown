@@ -11,14 +11,15 @@ content width. That order gives the fastest path to a coherent page.
 
 ## How Do You Use It?
 
-1.  Pick a family for color character.
-2.  Pick a preset for ground/surface mood.
-3.  Toggle style intensity to set structural emphasis.
+1.  Pick a family for color character (the four chips show its tones).
+2.  Pick a direction: warm **homage** or cool **interaction**.
+3.  Toggle style intensity to set structural emphasis (marker + rule
+    weight).
 4.  Adjust content width to match prose density.
 
 Family red lapis ochre teal green violet
 
-Preset study structural adobe midnight
+Direction homage (warm) interaction (cool)
 
 Style minimal balanced assertive
 
@@ -26,20 +27,22 @@ Content width (ch)
 
 A900 A700 A500 A300
 
-family=red \| preset=study \| style=minimal \| width=80ch
+family=red \| preset=homage \| style=minimal \| width=80ch
 
 ## What Does Each Control Change?
 
-- `family`: accent hue and contrast character for links, rules, and
-  highlights.
-- `preset`: background/surface/ink system (light analytical to dark
-  editorial).
+- `family`: accent hue and contrast character for links, rules, the
+  nested-square marker, and plot palettes (the four chips above show the
+  active family’s tones).
+- `preset` (direction): warm **homage** (cream ground, serif body, light
+  code) vs cool **interaction** (grey ground, grotesk, dark code).
 - `style`: structural weight (`minimal`, `balanced`, `assertive`).
 - `content_width`: reading measure in `ch` units.
 
 ## Can You Validate The Palette Quickly?
 
 ``` r
+
 pal <- albersdown::albers_palette(params$family)
 stopifnot(
   identical(names(pal), c("A900", "A700", "A500", "A300")),
@@ -60,7 +63,7 @@ knitr::kable(data.frame(tone = names(pal), hex = unname(pal)), format = "html")
 ``` yaml
 params:
   family: red
-  preset: study
+  preset: homage
   base_size: 13
   content_width: 80
   style: minimal
@@ -69,6 +72,7 @@ params:
 ## Example Plot
 
 ``` r
+
 mtcars$grp <- factor(mtcars$cyl)
 stopifnot(length(levels(mtcars$grp)) >= 3)
 

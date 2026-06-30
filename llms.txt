@@ -14,6 +14,7 @@ This package is meant to live on GitHub and be pinned by consumers.
 Install with pak:
 
 ``` r
+
 pak::pak("bbuchsbaum/albersdown")
 ```
 
@@ -51,6 +52,7 @@ output:
 In the setup chunk:
 
 ``` r
+
 library(ggplot2)
 ggplot2::theme_set(albersdown::theme_albers(
   family = params$family,
@@ -62,6 +64,7 @@ ggplot2::theme_set(albersdown::theme_albers(
 3.  Retrofit an existing package (replace prior theming)
 
 ``` r
+
 albersdown::use_albersdown(
   family = "red",
   preset = "homage",
@@ -73,12 +76,14 @@ albersdown::use_albersdown(
 Team one-liner (same defaults as above):
 
 ``` r
+
 albersdown::migrate_albersdown()
 ```
 
 Migration also exposes the Albers theme surface directly:
 
 ``` r
+
 albersdown::migrate_albersdown(family = "teal", preset = "midnight")
 ```
 
@@ -151,9 +156,11 @@ linked and activated on site pages.
 - [`albers_palette_img()`](https://bbuchsbaum.github.io/albersdown/reference/albers_palette_img.md)
   : Image-derived Homage palettes (A900 -\> A300)
 - [`albers_presets()`](https://bbuchsbaum.github.io/albersdown/reference/albers_presets.md)
-  : List available Albers presets
+  : List available Albers directions
 - [`albers_ramp()`](https://bbuchsbaum.github.io/albersdown/reference/albers_ramp.md)
   : Interpolate n colors along a palette family gradient
+- [`albers_register_fonts()`](https://bbuchsbaum.github.io/albersdown/reference/albers_register_fonts.md)
+  : Register the bundled Albers display fonts for R graphics
 - [`albers_swatch()`](https://bbuchsbaum.github.io/albersdown/reference/albers_swatch.md)
   : Visual swatch of Albers palette families and presets
 - [`gt_albers()`](https://bbuchsbaum.github.io/albersdown/reference/gt_albers.md)
@@ -216,6 +223,11 @@ linked and activated on site pages.
 
   Theme + vignette kit demonstration
 
+- [Interaction: the cool
+  direction](https://bbuchsbaum.github.io/albersdown/articles/interaction.md):
+
+  The cool, grotesk, dark-code direction of the albersdown 2.0 theme.
+
 - [Design notes: Homage
   system](https://bbuchsbaum.github.io/albersdown/articles/design-notes.md):
 
@@ -227,18 +239,18 @@ linked and activated on site pages.
   Interactive controls for palette family, preset, style intensity, and
   content width.
 
-- [Theme Showcase: Dark + Accent
+- [Theme Showcase: Directions and
   Families](https://bbuchsbaum.github.io/albersdown/articles/theme-showcase.md):
 
-  A focused gallery for midnight preset and non-red accent families.
+  The two albersdown directions and the six colour families, side by
+  side.
 
-- [Theme Proof: Teal +
-  Study](https://bbuchsbaum.github.io/albersdown/articles/proof-teal-study.md):
+- [Theme Proof: Homage +
+  Teal](https://bbuchsbaum.github.io/albersdown/articles/proof-teal-study.md):
 
-  Full-page proof vignette for the teal family on the study preset.
+  A full page in the warm Homage direction with the teal family.
 
-- [Theme Proof: Ochre +
-  Structural](https://bbuchsbaum.github.io/albersdown/articles/proof-ochre-structural.md):
+- [Theme Proof: Interaction +
+  Ochre](https://bbuchsbaum.github.io/albersdown/articles/proof-ochre-structural.md):
 
-  Full-page proof vignette for the ochre family on the structural
-  preset.
+  A full page in the cool Interaction direction with the ochre family.

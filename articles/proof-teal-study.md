@@ -1,68 +1,66 @@
-# Theme Proof: Teal + Study
+# Theme Proof: Homage + Teal
 
-## Why This Page Exists
+## What this page proves
 
-This page is a direct proof vignette: it fixes the family at `teal` and
-the preset at `study` so readers can inspect a full article instead of a
-matrix or control panel.
+This is a full page in the **Homage** direction (warm cream ground,
+Newsreader serif body, light code) with the **teal** family. The accents
+— links, the nested-square marker, the code rule, and the plot palette —
+all shift to teal while the warm ground and serif type stay put. Compare
+it against
+[`vignette("getting-started")`](https://bbuchsbaum.github.io/albersdown/articles/getting-started.md)
+(homage + red) to see the family swap in isolation.
 
-The accent should read as teal in links, rules, callouts, and plotted
-highlights. For a quick contrast check, compare this page against
-[pkgdown](https://pkgdown.r-lib.org/).
+> TIP: A direction and a family are independent. Keep the direction for
+> mood, change the family for accent character.
 
-> The point is not variety inside one page. The point is one stable
-> combination rendered end to end.
-
-## Palette Evidence
+## Code on a light ground
 
 ``` r
-albersdown::albers_swatch(families = params$family, show_presets = TRUE) +
-  ggplot2::labs(
-    title = "Teal palette tones with preset row",
-    subtitle = "The page family is fixed to teal so CSS and ggplot accents should agree"
-  ) +
-  ggplot2::theme(legend.position = "none")
+
+albersdown::albers_palette("teal")
+#>      A900      A700      A500      A300 
+#> "#0D4A4A" "#0F5E5E" "#127373" "#2F8C8C"
 ```
 
-![](proof-teal-study_files/figure-html/unnamed-chunk-1-1.png)
+Inline tokens like
+[`theme_albers()`](https://bbuchsbaum.github.io/albersdown/reference/theme_albers.md)
+and
+[`scale_color_albers()`](https://bbuchsbaum.github.io/albersdown/reference/scale_color_albers.md)
+stay legible against the warm surface.
 
-## Plot Evidence
-
-``` r
-mtcars |>
-  transform(cyl = factor(cyl)) |>
-  ggplot(aes(wt, mpg, color = cyl)) +
-  geom_point(size = 2.6, alpha = 0.9) +
-  geom_smooth(se = FALSE, linewidth = 0.8) +
-  albersdown::scale_color_albers(family = params$family) +
-  labs(
-    title = "Fuel efficiency vs. weight",
-    subtitle = "Legend accents and annotation ink should stay in the teal family",
-    x = "Weight (1000 lbs)",
-    y = "Miles per gallon",
-    color = "Cylinders"
-  )
-```
-
-![](proof-teal-study_files/figure-html/unnamed-chunk-2-1.png)
-
-## Table Evidence
+## A table
 
 ``` r
+
 knitr::kable(
-  head(mtcars[, c("mpg", "wt", "hp", "qsec")], 6),
-  digits = 1,
-  caption = "A simple table to inspect rules, spacing, and code-adjacent typography."
+  head(mtcars[, c("mpg", "wt", "hp", "cyl")]),
+  caption = "Teal accents on the table header rule."
 )
 ```
 
-|                   |  mpg |  wt |  hp | qsec |
-|:------------------|-----:|----:|----:|-----:|
-| Mazda RX4         | 21.0 | 2.6 | 110 | 16.5 |
-| Mazda RX4 Wag     | 21.0 | 2.9 | 110 | 17.0 |
-| Datsun 710        | 22.8 | 2.3 |  93 | 18.6 |
-| Hornet 4 Drive    | 21.4 | 3.2 | 110 | 19.4 |
-| Hornet Sportabout | 18.7 | 3.4 | 175 | 17.0 |
-| Valiant           | 18.1 | 3.5 | 105 | 20.2 |
+|                   |  mpg |    wt |  hp | cyl |
+|:------------------|-----:|------:|----:|----:|
+| Mazda RX4         | 21.0 | 2.620 | 110 |   6 |
+| Mazda RX4 Wag     | 21.0 | 2.875 | 110 |   6 |
+| Datsun 710        | 22.8 | 2.320 |  93 |   4 |
+| Hornet 4 Drive    | 21.4 | 3.215 | 110 |   6 |
+| Hornet Sportabout | 18.7 | 3.440 | 175 |   8 |
+| Valiant           | 18.1 | 3.460 | 105 |   6 |
 
-A simple table to inspect rules, spacing, and code-adjacent typography.
+Teal accents on the table header rule. {.table}
+
+## A plot on the matching ground
+
+``` r
+
+ggplot(mtcars, aes(wt, mpg, colour = factor(cyl))) +
+  geom_point(size = 2.3) +
+  albersdown::scale_color_albers(family = params$family) +
+  labs(
+    title = "Fuel efficiency vs. weight",
+    subtitle = "Homage ground with teal accents",
+    x = "Weight (1000 lbs)", y = "MPG", colour = "Cylinders"
+  )
+```
+
+![](proof-teal-study_files/figure-html/unnamed-chunk-3-1.png)

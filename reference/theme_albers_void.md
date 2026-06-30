@@ -11,9 +11,9 @@ where coordinate axes are meaningless.
 ``` r
 theme_albers_void(
   family = "red",
-  preset = c("homage", "study", "structural", "adobe", "midnight"),
+  preset = c("homage", "interaction", "study", "structural", "adobe", "midnight"),
   base_size = 13,
-  base_family = "sans",
+  base_family = NULL,
   bg = NULL,
   fg = NULL
 )
@@ -27,9 +27,10 @@ theme_albers_void(
 
 - preset:
 
-  Visual preset: `"homage"` (gallery white), `"study"` (analytical
-  white), `"structural"` (concrete), `"adobe"` (warm architectural
-  grey), `"midnight"` (dark).
+  Visual direction: `"homage"` (warm cream ground) or `"interaction"`
+  (cool grey ground). Legacy presets `"study"`, `"structural"`,
+  `"adobe"`, and `"midnight"` are still accepted for backward
+  compatibility.
 
 - base_size:
 
@@ -37,7 +38,9 @@ theme_albers_void(
 
 - base_family:
 
-  Base font family.
+  Base font family. Plots fall back to the system "sans" stack; install
+  the matching typefaces (Familjen Grotesk / Space Grotesk, etc.) and
+  pass e.g. `base_family = "Familjen Grotesk"` for full fidelity.
 
 - bg:
 

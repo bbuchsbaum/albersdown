@@ -7,6 +7,11 @@
 
   Theme + vignette kit demonstration
 
+- [Interaction: the cool
+  direction](https://bbuchsbaum.github.io/albersdown/articles/interaction.md):
+
+  The cool, grotesk, dark-code direction of the albersdown 2.0 theme.
+
 - [Design notes: Homage
   system](https://bbuchsbaum.github.io/albersdown/articles/design-notes.md):
 
@@ -18,18 +23,18 @@
   Interactive controls for palette family, preset, style intensity, and
   content width.
 
-- [Theme Showcase: Dark + Accent
+- [Theme Showcase: Directions and
   Families](https://bbuchsbaum.github.io/albersdown/articles/theme-showcase.md):
 
-  A focused gallery for midnight preset and non-red accent families.
+  The two albersdown directions and the six colour families, side by
+  side.
 
-- [Theme Proof: Teal +
-  Study](https://bbuchsbaum.github.io/albersdown/articles/proof-teal-study.md):
+- [Theme Proof: Homage +
+  Teal](https://bbuchsbaum.github.io/albersdown/articles/proof-teal-study.md):
 
-  Full-page proof vignette for the teal family on the study preset.
+  A full page in the warm Homage direction with the teal family.
 
-- [Theme Proof: Ochre +
-  Structural](https://bbuchsbaum.github.io/albersdown/articles/proof-ochre-structural.md):
+- [Theme Proof: Interaction +
+  Ochre](https://bbuchsbaum.github.io/albersdown/articles/proof-ochre-structural.md):
 
-  Full-page proof vignette for the ochre family on the structural
-  preset.
+  A full page in the cool Interaction direction with the ochre family.

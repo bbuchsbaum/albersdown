@@ -24,6 +24,7 @@ Use `callout-experiment` for exploratory or provisional guidance.
 ### Typography and syntax tone
 
 ``` r
+
 fit <- lm(mpg ~ wt + hp, data = mtcars)
 coef(summary(fit))
 #>                Estimate Std. Error   t value     Pr(>|t|)
@@ -35,6 +36,7 @@ coef(summary(fit))
 ### Contrast guardrail example
 
 ``` r
+
 contrast_ratio <- function(fg, bg) {
   to_rgb <- function(x) as.numeric(grDevices::col2rgb(x)) / 255
   to_lin <- function(u) ifelse(u <= 0.03928, u / 12.92, ((u + 0.055) / 1.055)^2.4)
@@ -87,6 +89,7 @@ opt-in.
 Sequential (image-based)
 
 ``` r
+
 mtcars |>
   ggplot(aes(wt, mpg, colour = hp)) +
   geom_point(size = 2.2) +
@@ -111,6 +114,7 @@ mtcars |>
 Diverging (image-based)
 
 ``` r
+
 df <- transform(datasets::faithful, centered = waiting - mean(waiting))
 ggplot(df, aes(eruptions, centered, colour = centered)) +
   geom_point(alpha = 0.9) +
@@ -141,6 +145,7 @@ language. - `style: balanced`: the calibrated middle ground. -
 > them short and purposeful.
 
 ``` r
+
 # a small, readable function
 foo <- function(x) if (length(x) == 0) NA_real_ else mean(x)
 foo(c(1, 2, 3))
@@ -154,6 +159,7 @@ a compact copy control.
 Base HTML tables pick up a quiet A300 zebra stripe and thin borders.
 
 ``` r
+
 knitr::kable(head(mtcars[, 1:5]), format = "html")
 ```
 
@@ -169,6 +175,7 @@ knitr::kable(head(mtcars[, 1:5]), format = "html")
 ## Plots: one highlight, others neutral
 
 ``` r
+
 mtcars$grp <- ifelse(mtcars$cyl == 6, "highlight", "other")
 mtcars$grp <- factor(mtcars$grp, levels = c("other", "highlight"))
 ggplot(mtcars, aes(wt, mpg, color = grp)) +

@@ -13,7 +13,10 @@ inspired by Bauhaus, Le Corbusier, and Josef Albers.
 
 - preset:
 
-  One of `"homage"`, `"study"`, `"structural"`, `"adobe"`, `"midnight"`.
+  One of the two 2.0 directions `"homage"` (warm cream, serif body) or
+  `"interaction"` (cool grey, grotesk), or a legacy preset (`"study"`,
+  `"structural"`, `"adobe"`, `"midnight"`) retained for backward
+  compatibility.
 
 ## Value
 

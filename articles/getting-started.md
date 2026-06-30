@@ -22,12 +22,14 @@ stripes use a quiet tint.
 ## Code + output
 
 ``` r
+
 summary(mtcars$mpg)
 #>    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
 #>   10.40   15.43   19.20   20.09   22.80   33.90
 ```
 
 ``` r
+
 mtcars |>
   ggplot(aes(wt, mpg, color = factor(cyl))) +
   geom_point(size = 2.2) +
