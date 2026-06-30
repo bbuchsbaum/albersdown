@@ -34,16 +34,27 @@ albers_register_fonts <- function() {
   )
   registered <- character(0)
   for (fam in names(specs)) {
+    # Skip if the family is already on hand -- either installed as a system
+    # font or registered earlier in this session. `register_font()` errors if a
+    # system font with the requested name already exists, which breaks repeated
+    # calls and CI machines that have the typefaces installed (e.g. pkgdown).
+    if (.albers_font_available(fam)) {
+      registered <- c(registered, fam)
+      next
+    }
     files <- specs[[fam]]
     plain <- .albers_font_path(files[[1]])
     bold <- .albers_font_path(files[[2]])
     if (!nzchar(plain) || !file.exists(plain)) next
-    systemfonts::register_font(
-      name = fam,
-      plain = plain,
-      bold = if (nzchar(bold) && file.exists(bold)) bold else plain
-    )
-    registered <- c(registered, fam)
+    ok <- tryCatch({
+      systemfonts::register_font(
+        name = fam,
+        plain = plain,
+        bold = if (nzchar(bold) && file.exists(bold)) bold else plain
+      )
+      TRUE
+    }, error = function(e) FALSE)
+    if (ok) registered <- c(registered, fam)
   }
   invisible(registered)
 }
