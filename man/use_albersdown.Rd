@@ -7,7 +7,7 @@
 use_albersdown(
   path,
   family = "red",
-  preset = c("homage", "study", "structural", "adobe", "midnight"),
+  preset = c("homage", "interaction", "study", "structural", "adobe", "midnight"),
   apply_to = c("all", "new"),
   dry_run = FALSE,
   fallback_extra = c("auto", "always", "never"),

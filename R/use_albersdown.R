@@ -31,7 +31,7 @@
 use_albersdown <- function(
   path,
   family = "red",
-  preset = c("homage", "study", "structural", "adobe", "midnight"),
+  preset = c("homage", "interaction", "study", "structural", "adobe", "midnight"),
   apply_to = c("all", "new"),
   dry_run = FALSE,
   fallback_extra = c("auto", "always", "never"),
@@ -341,7 +341,7 @@ use_albersdown <- function(
       "cat(sprintf(",
       "  paste0(",
       "    '<script>document.addEventListener(\"DOMContentLoaded\",function(){',",
-      "    'document.body.classList.remove(\"palette-red\",\"palette-lapis\",\"palette-ochre\",\"palette-teal\",\"palette-green\",\"palette-violet\",\"preset-homage\",\"preset-study\",\"preset-structural\",\"preset-adobe\",\"preset-midnight\");',",
+      "    'document.body.classList.remove(\"palette-red\",\"palette-lapis\",\"palette-ochre\",\"palette-teal\",\"palette-green\",\"palette-violet\",\"preset-homage\",\"preset-interaction\",\"preset-study\",\"preset-structural\",\"preset-adobe\",\"preset-midnight\");',",
       "    'document.body.classList.add(\"palette-%s\",\"preset-%s\");',",
       "    '});</script>'",
       "  ),",
@@ -765,6 +765,7 @@ use_albersdown <- function(
 
   presets <- list(
     homage = list(bg = "#f3f5f7", ink = "#17181a"),
+    interaction = list(bg = "#f1f2f4", ink = "#15181e"),
     study = list(bg = "#f7f9fb", ink = "#17181a"),
     structural = list(bg = "#e6e9ed", ink = "#101214"),
     adobe = list(bg = "#ece9e7", ink = "#1f1c19"),

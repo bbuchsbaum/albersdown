@@ -65,6 +65,9 @@ nested "Homage to the Square".
   `albers_register_fonts()` and the `ragg` device into vignette setup chunks,
   and add `fonts` to `resource_files`. The generated `pkgdown/extra.js` now
   carries the full `albers.js` so consumer sites get the complete behaviour.
+* Setup and migration helpers now accept both featured directions, `homage` and
+  `interaction`, and generated class hooks clear `preset-interaction` before
+  applying page-specific direction classes.
 * `gt_albers()` and `albers_bs_theme()` use the per-direction type pairings.
 * Setup writes `html_vignette` metadata in the form `rmarkdown` honours, with a
   single idempotent runtime class hook; re-running no longer duplicates the

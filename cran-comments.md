@@ -1,31 +1,30 @@
 ## R CMD check results
 
-0 errors | 0 warnings | 2 notes
+0 errors | 0 warnings | 1 note
 
-The two local notes are environment-related:
+The remaining note is from CRAN incoming feasibility:
 
-* `unable to verify current time` from the local `--as-cran` check.
-* HTML validation skipped because the local `tidy` binary is not recent enough.
+* Source tarball size: 5,688,117 bytes.
 
-## Resubmission
+The package bundles web fonts and rendered vignettes so the supplied pkgdown and
+R Markdown templates render consistently offline and on CRAN.
 
-This is a patch release after 1.0.0. In this version I have:
+## Release summary
 
-* Fixed CRAN vignette rendering by ensuring `albers.css` and
-  `albers-header.html` are configured inside
-  `output: rmarkdown::html_vignette`, where `rmarkdown` actually honors them.
-* Updated `use_albersdown()` and `migrate_albersdown()` to migrate legacy
-  top-level vignette `css`/`includes` hooks to the CRAN-safe form.
-* Restored `use_albers_vignettes()` as a current-directory wrapper around
-  `use_albersdown()`.
-* Added regression tests that render a legacy CRAN-shaped vignette and verify
-  that the Albers CSS and JavaScript hooks are embedded in the HTML.
+This is a major release after 1.0.0. In this version I have:
+
+* Added the new `interaction` visual direction alongside `homage`.
+* Updated the pkgdown and R Markdown assets for the 2.0 visual system.
+* Bundled the required web fonts under their upstream open font licenses.
+* Updated `use_albersdown()` and `migrate_albersdown()` so setup and migration
+  helpers accept the current `interaction` direction and remove stale
+  `preset-interaction` classes before applying page-specific classes.
+* Added regression tests for setup and migration of the `interaction` direction.
 
 ## Test environments
 
-* local macOS (aarch64-apple-darwin), R 4.5.x
-* GitHub Actions: ubuntu-latest (release), macOS-latest (release),
-  windows-latest (release)
+* local macOS Sonoma 14.3 (aarch64-apple-darwin20), R 4.5.1
+  `R CMD check --as-cran --no-manual`
 
 ## Package documentation
 
@@ -33,4 +32,5 @@ Online documentation is available at: https://bbuchsbaum.github.io/albersdown/
 
 ## Downstream dependencies
 
-There are no known reverse dependency breakages from this vignette/setup patch.
+There are no CRAN reverse dependencies for `albersdown` according to
+`available.packages(repos = "https://cloud.r-project.org")` on 2026-07-04.

@@ -119,7 +119,7 @@ Choosing a palette family per page
 ----------------------------------
 
 - Families: red, lapis, ochre, teal, green, violet.
-- Presets: homage, study, structural, adobe, midnight.
+- Presets: homage, interaction, study, structural, adobe, midnight.
 - In YAML, add:
   `params: { family: "red", preset: "study" }`
 - In setup, call:

@@ -203,6 +203,50 @@ test_that("use_albersdown writes renderable html_vignette hooks for non-red fami
   expect_true(any(grepl("albers\\.css|0D4A4A|0d4a4a", html)))
 })
 
+test_that("use_albersdown accepts interaction as a current visual direction", {
+  skip_if_not_installed("yaml")
+
+  pkg <- file.path(tempdir(), paste0("albersdown-interaction-", Sys.getpid()))
+  dir.create(pkg, recursive = TRUE, showWarnings = FALSE)
+
+  writeLines(c(
+    "Package: demo",
+    "Version: 0.0.0.9000",
+    "Title: Demo",
+    "Authors@R: person(\"Demo\", \"User\", email = \"demo@example.com\", role = c(\"aut\", \"cre\"))",
+    "Description: Demo package.",
+    "License: MIT"
+  ), file.path(pkg, "DESCRIPTION"))
+
+  writeLines("# Demo", file.path(pkg, "README.md"))
+  dir.create(file.path(pkg, "vignettes"), showWarnings = FALSE)
+  writeLines(c(
+    "---",
+    "title: \"Demo\"",
+    "output: rmarkdown::html_vignette",
+    "vignette: >",
+    "  %\\VignetteIndexEntry{Demo}",
+    "  %\\VignetteEngine{knitr::rmarkdown}",
+    "  %\\VignetteEncoding{UTF-8}",
+    "---",
+    "",
+    "```{r setup, include=FALSE}",
+    "library(ggplot2)",
+    "```",
+    "",
+    "Demo text."
+  ), file.path(pkg, "vignettes", "demo.Rmd"))
+
+  use_albersdown(path = pkg, family = "lapis", preset = "interaction", apply_to = "all", dry_run = FALSE)
+
+  migrated <- readLines(file.path(pkg, "vignettes", "demo.Rmd"), warn = FALSE)
+  extra_js <- readLines(file.path(pkg, "pkgdown", "extra.js"), warn = FALSE)
+
+  expect_true(any(grepl("^\\s+preset:\\s+interaction\\s*$", migrated)))
+  expect_true(any(grepl("preset-interaction", migrated, fixed = TRUE)))
+  expect_true(any(grepl("preset-interaction", extra_js, fixed = TRUE)))
+})
+
 test_that("use_albersdown migrates legacy CRAN-shaped top-level vignette hooks", {
   skip_if_not_installed("yaml")
   skip_if_not_installed("rmarkdown")

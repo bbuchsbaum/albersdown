@@ -7,7 +7,7 @@
 migrate_albersdown(
   path,
   family = "red",
-  preset = c("homage", "study", "structural", "adobe", "midnight"),
+  preset = c("homage", "interaction", "study", "structural", "adobe", "midnight"),
   dry_run = FALSE
 )
 }

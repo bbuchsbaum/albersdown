@@ -21,7 +21,7 @@
 migrate_albersdown <- function(
   path,
   family = "red",
-  preset = c("homage", "study", "structural", "adobe", "midnight"),
+  preset = c("homage", "interaction", "study", "structural", "adobe", "midnight"),
   dry_run = FALSE
 ) {
   use_albersdown(

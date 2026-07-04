@@ -34,6 +34,7 @@ min_ratio <- 4.5
 
 presets <- list(
   homage = list(bg = "#f3f5f7", ink = "#17181a"),
+  interaction = list(bg = "#f1f2f4", ink = "#15181e"),
   study = list(bg = "#f7f9fb", ink = "#17181a"),
   structural = list(bg = "#e6e9ed", ink = "#101214"),
   adobe = list(bg = "#ece9e7", ink = "#1f1c19"),
