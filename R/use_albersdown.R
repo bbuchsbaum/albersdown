@@ -355,14 +355,35 @@ use_albersdown <- function(
   }
 
   ensure_fonts <- function(lines) {
-    # Idempotent: skip if the registration call is already present.
-    if (any(grepl("albers_register_fonts", lines, fixed = TRUE))) return(lines)
-    setup_chunk <- grep("^```\\{r[^}]*setup", lines)
-    if (!length(setup_chunk)) return(lines)
     inject <- c(
       "if (requireNamespace(\"ragg\", quietly = TRUE)) knitr::opts_chunk$set(dev = \"ragg_png\")",
-      "if (requireNamespace(\"systemfonts\", quietly = TRUE)) albersdown::albers_register_fonts()"
+      "if (",
+      "  requireNamespace(\"systemfonts\", quietly = TRUE) &&",
+      "  requireNamespace(\"albersdown\", quietly = TRUE) &&",
+      "  \"albers_register_fonts\" %in% getNamespaceExports(\"albersdown\")",
+      ") {",
+      "  albersdown::albers_register_fonts()",
+      "}"
     )
+
+    old_call <- "^\\s*if \\(requireNamespace\\(\"systemfonts\", quietly = TRUE\\)\\) albersdown::albers_register_fonts\\(\\)\\s*$"
+    if (any(grepl(old_call, lines))) {
+      replacement <- if (any(grepl("knitr::opts_chunk\\$set\\(dev = \"ragg_png\"\\)", lines))) inject[-1] else inject
+      out <- character()
+      for (line in lines) {
+        if (grepl(old_call, line)) out <- c(out, replacement) else out <- c(out, line)
+      }
+      return(out)
+    }
+
+    if (any(grepl("\"albers_register_fonts\" %in% getNamespaceExports(\"albersdown\")", lines, fixed = TRUE))) {
+      return(lines)
+    }
+
+    if (any(grepl("albers_register_fonts", lines, fixed = TRUE))) return(lines)
+
+    setup_chunk <- grep("^```\\{r[^}]*setup", lines)
+    if (!length(setup_chunk)) return(lines)
     append(lines, inject, after = setup_chunk[1])
   }
 

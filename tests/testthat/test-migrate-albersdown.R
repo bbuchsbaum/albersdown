@@ -172,6 +172,7 @@ test_that("use_albersdown writes renderable html_vignette hooks for non-red fami
     "",
     "```{r setup, include=FALSE}",
     "library(ggplot2)",
+    "if (requireNamespace(\"systemfonts\", quietly = TRUE)) albersdown::albers_register_fonts()",
     "```",
     "",
     "Demo text."
@@ -401,6 +402,15 @@ test_that("migrate_albersdown is idempotent for README note and class hook", {
   expect_equal(sum(grepl("^<!-- albersdown:theme-note:start -->$", readme)), 1)
   expect_equal(sum(grepl("^<!-- albersdown:theme-note:end -->$", readme)), 1)
   expect_equal(sum(grepl("^```\\{r albers-classes, echo=FALSE, results='asis'\\}\\s*$", migrated)), 1)
+  expect_false(any(grepl(
+    "^\\s*if \\(requireNamespace\\(\"systemfonts\", quietly = TRUE\\)\\) albersdown::albers_register_fonts\\(\\)\\s*$",
+    migrated
+  )))
+  expect_true(any(grepl(
+    "\"albers_register_fonts\" %in% getNamespaceExports(\"albersdown\")",
+    migrated,
+    fixed = TRUE
+  )))
 })
 
 test_that("migrate_albersdown carries family defaults into pkgdown fallback assets", {

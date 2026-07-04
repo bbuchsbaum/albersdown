@@ -38,7 +38,13 @@ library(ggplot2)
 # Render plots with a font-aware device and the bundled display fonts so plot
 # text matches the page typography (falls back to system "sans" if unavailable).
 if (requireNamespace("ragg", quietly = TRUE)) knitr::opts_chunk$set(dev = "ragg_png")
-if (requireNamespace("systemfonts", quietly = TRUE)) albersdown::albers_register_fonts()
+if (
+  requireNamespace("systemfonts", quietly = TRUE) &&
+  requireNamespace("albersdown", quietly = TRUE) &&
+  "albers_register_fonts" %in% getNamespaceExports("albersdown")
+) {
+  albersdown::albers_register_fonts()
+}
 if (requireNamespace("ggplot2", quietly = TRUE) && requireNamespace("albersdown", quietly = TRUE)) {
   ggplot2::theme_set(albersdown::theme_albers(
     family = params$family,

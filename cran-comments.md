@@ -4,7 +4,7 @@
 
 The remaining note is from CRAN incoming feasibility:
 
-* Source tarball size: 5,688,117 bytes.
+* Source tarball size: 5,688,876 bytes.
 
 The package bundles web fonts and rendered vignettes so the supplied pkgdown and
 R Markdown templates render consistently offline and on CRAN.

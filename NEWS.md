@@ -62,9 +62,10 @@ nested "Homage to the Square".
 
 * `use_albersdown()` and `migrate_albersdown()` default to `preset = "homage"`,
   copy the bundled web fonts into `vignettes/fonts/`, inject
-  `albers_register_fonts()` and the `ragg` device into vignette setup chunks,
-  and add `fonts` to `resource_files`. The generated `pkgdown/extra.js` now
-  carries the full `albers.js` so consumer sites get the complete behaviour.
+  the `ragg` device and a guarded `albers_register_fonts()` call into vignette
+  setup chunks, and add `fonts` to `resource_files`. The generated
+  `pkgdown/extra.js` now carries the full `albers.js` so consumer sites get the
+  complete behaviour.
 * Setup and migration helpers now accept both featured directions, `homage` and
   `interaction`, and generated class hooks clear `preset-interaction` before
   applying page-specific direction classes.
