@@ -1,11 +1,11 @@
 import { expect, test, type Page } from "@playwright/test";
 
 const familyA900: Record<string, string> = {
-  red: "#c22b23",
-  lapis: "#1b2a74",
-  ochre: "#6f5200",
-  teal: "#0d4a4a",
-  green: "#1b5e20"
+  red: "#760906",
+  lapis: "#213480",
+  ochre: "#513801",
+  teal: "#044746",
+  green: "#204727"
 };
 
 const presetTheme: Record<string, "light" | "dark"> = {

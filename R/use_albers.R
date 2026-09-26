@@ -15,6 +15,8 @@
 use_albers_vignettes <- function(path = ".", ...) {
   args <- list(...)
   if (is.null(args$apply_to)) args$apply_to <- "new"
+  # the legacy name always meant "copy the vignette assets"
+  if (is.null(args$method)) args$method <- "vendor"
   if (is.null(args$dry_run)) args$dry_run <- FALSE
   do.call(use_albersdown, c(list(path = path), args))
 }

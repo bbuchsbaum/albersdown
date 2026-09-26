@@ -5,14 +5,28 @@
 \alias{scale_fill_albers}
 \title{Scales that use the family's tones (discrete/continuous)}
 \usage{
-scale_color_albers(family = "red", discrete = TRUE, ...)
+scale_color_albers(
+  family = getOption("albersdown.family", "red"),
+  discrete = TRUE,
+  type = c("contrast", "family"),
+  ...
+)
 
-scale_fill_albers(family = "red", discrete = TRUE, ...)
+scale_fill_albers(
+  family = getOption("albersdown.family", "red"),
+  discrete = TRUE,
+  type = c("contrast", "family"),
+  ...
+)
 }
 \arguments{
-\item{family}{Palette family.}
+\item{family}{Palette family. Defaults to the \code{albersdown.family} option
+(set by \code{\link[=albers_vignette]{albers_vignette()}} while a vignette renders), else \code{"red"}.}
 
 \item{discrete}{Whether to use a discrete palette; if FALSE, uses a gradient.}
+
+\item{type}{Discrete colour set, \code{"contrast"} (default) or
+\code{"family"}; see \code{\link{albers_discrete}()}.}
 
 \item{...}{Passed to underlying \code{ggplot2} scale.}
 }
@@ -20,7 +34,10 @@ scale_fill_albers(family = "red", discrete = TRUE, ...)
 A \code{ggplot2} scale object.
 }
 \description{
-Scales that use the family's tones (discrete/continuous)
+Discrete scales use \code{\link{albers_discrete}()}: by default the
+family's tone is paired with its Albers complement and ochre so adjacent
+groups stay distinguishable. Use \code{type = "family"} for the single-hue
+ramp. Continuous scales run from a light tint to the family's A900.
 }
 \examples{
 \donttest{

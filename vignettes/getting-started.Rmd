@@ -1,96 +1,132 @@
 ---
-title: 'Albersdown: Getting started'
-name: getting-started
-description: Theme + vignette kit demonstration
+title: "Getting started"
+subtitle: "One line of YAML for a vignette, one line of YAML for a site"
 output:
-  rmarkdown::html_vignette:
-    toc: yes
-    toc_depth: 2
-    css: albers.css
-    includes:
-      in_header: albers-header.html
-params:
-  family: red
-  preset: homage
-resource_files:
-- albers.css
-- albers.js
-- albers-header.html
-
-vignette: |
-  %\VignetteIndexEntry{Albersdown: Getting started}
+  albersdown::albers_vignette:
+    family: red
+    preset: homage
+vignette: >
+  %\VignetteIndexEntry{Getting started}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE, comment = "#>", fig.align = "center", fig.retina = 2,
-  out.width = "100%", fig.width = 7, fig.asp = 0.618, message = FALSE, warning = FALSE
-)
-set.seed(123)
-oldopt <- options(pillar.sigfig = 7, width = 80)
+```{r setup, include = FALSE}
 library(ggplot2)
-if (requireNamespace("ragg", quietly = TRUE)) knitr::opts_chunk$set(dev = "ragg_png")
-if (
-  requireNamespace("systemfonts", quietly = TRUE) &&
-  requireNamespace("albersdown", quietly = TRUE) &&
-  "albers_register_fonts" %in% getNamespaceExports("albersdown")
-) {
-  albersdown::albers_register_fonts()
-}
-if (requireNamespace("albersdown", quietly = TRUE)) {
-  if (requireNamespace("ggplot2", quietly = TRUE) && requireNamespace("albersdown", quietly = TRUE)) ggplot2::theme_set(albersdown::theme_albers(family = params$family, preset = params$preset))
-}
 ```
 
-```{r albers-classes, echo=FALSE, results='asis'}
-cat(sprintf(
-  paste0(
-    '<script>document.addEventListener("DOMContentLoaded",function(){',
-    'document.body.classList.remove("palette-red","palette-lapis","palette-ochre","palette-teal","palette-green","palette-violet","preset-homage","preset-interaction","preset-study","preset-structural","preset-adobe","preset-midnight");',
-    'document.body.classList.add("palette-%s","preset-%s");',
-    '});</script>'
-  ),
-  params$family,
-  params$preset
-))
+albersdown themes the two places R package documentation lives: CRAN
+vignettes and pkgdown sites. This vignette is itself rendered with the
+format it describes.
+
+## A vignette
+
+Set the output format in the vignette's YAML header:
+
+```yaml
+output:
+  albersdown::albers_vignette:
+    family: red        # red, lapis, ochre, teal, green, violet
+    preset: homage     # homage (warm, serif) or interaction (cool, grotesk)
 ```
 
+and declare the packages the vignette needs in `DESCRIPTION`:
 
-
-## Overview
-
-This vignette shows how the shared theme and vignette CSS work together. Links and focus rings use the family’s accessible tone; callouts and stripes use a quiet tint.
-
-<div class="albers-plate" aria-hidden="true">
-  <div class="albers-plate__outer"></div>
-  <div class="albers-plate__inner"></div>
-  <div class="albers-plate__core"></div>
-</div>
-
-## New feature highlights
-
-- Design tokens + contrast guardrails: see `vignette("design-notes")`, section `#whats-new` and `#contrast-guardrails`.
-- Generative composition motif + semantic callouts: see `vignette("design-notes")`, sections `#whats-new` and `#semantic-callouts`.
-- Interactive visual tuning (family/preset/style/width): see `vignette("theme-lab")`.
-- Dark + non-red accent gallery: see `vignette("theme-showcase")`.
-
-## Code + output
-
-```{r}
-summary(mtcars$mpg)
+```
+Suggests:
+    albersdown (>= 2.0.0.9000),
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
+Remotes: bbuchsbaum/albersdown
 ```
 
-```{r}
-mtcars |>
-  ggplot(aes(wt, mpg, color = factor(cyl))) +
-  geom_point(size = 2.2) +
-  labs(title = "Fuel efficiency vs. weight",
-       subtitle = "Albers theme demo", x = "Weight (1000 lbs)", y = "MPG")
+Nothing is copied into `vignettes/`. The stylesheet, the fonts for the chosen
+direction and a small page script are embedded in the rendered HTML, so the
+vignette makes no network requests (the kind of vignette CRAN expects).
+
+`albers_vignette()` is in the development version of albersdown (2.0.0.9000);
+CRAN's albersdown 2.0.0 does not have it. Until a release with it is on CRAN,
+the version bound and `Remotes` above make R CMD check and CI install it from
+GitHub (`R CMD check --as-cran` notes the `Remotes` field); a CRAN package can
+use the pkgdown site theme alone for now (below).
+If a vignette build fails with `'albers_vignette' is not an exported object
+from 'namespace:albersdown'`, the albersdown being used is CRAN's 2.0.0 (R does
+not enforce `Suggests` versions when building): install the development
+version with `pak::pak("bbuchsbaum/albersdown")`.
+
+::: {.callout .callout-tip}
+**Tip.** For an existing package, `use_albersdown(".", family = "teal")`
+switches its `html_vignette` vignettes to the format and updates `DESCRIPTION`
+(with the version bound, and `Remotes` while that version is not on CRAN) and
+`_pkgdown.yml` for you; add `dry_run = TRUE` to see the changes first. It also
+migrates a package set up by albersdown 2.0.
+:::
+
+## Code and output
+
+Output sits in its own block under the code that produced it, and warnings and
+errors are marked:
+
+```{r output}
+x <- c(4.2, 5.1, 6.3, 5.8)
+summary(x)
 ```
 
-```{r cleanup, include=FALSE}
-options(oldopt)
-if (exists("oldtheme")) ggplot2::theme_set(oldtheme)
+```{r warning, warning = TRUE}
+as.integer("seven")
 ```
+
+The copy button on each block copies the code without its output.
+
+## Figures
+
+While the vignette renders, `theme_albers()` is the ggplot2 theme and the
+albersdown scales follow the vignette's family, so no `family` argument is
+needed:
+
+```{r mpg, fig.cap = "Heavier cars travel fewer miles per gallon."}
+ggplot(mtcars, aes(wt, mpg, colour = factor(cyl))) +
+  geom_point(size = 2.4) +
+  albersdown::scale_color_albers() +
+  labs(x = "Weight (1000 lbs)", y = "Miles per gallon", colour = "Cylinders")
+```
+
+Each ggplot that a chunk prints automatically is also rendered for the dark
+theme, and readers in dark mode see that version. Set `dark_figures = FALSE`
+in the format options to skip it. Base-graphics plots take the page's colours
+but have no dark version, nor do plots in chunks with `fig.show = "hold"`,
+`"animate"` or `"hide"`.
+
+## Tables
+
+```{r table}
+knitr::kable(
+  aggregate(cbind(mpg, hp) ~ cyl, data = mtcars, FUN = mean),
+  digits = 1,
+  caption = "Mean fuel efficiency and power by cylinder count."
+)
+```
+
+Tables too wide for the text column can use the margin on large screens:
+wrap the chunk in a `::: {.wide}` block.
+
+## A pkgdown site
+
+In `_pkgdown.yml`:
+
+```yaml
+template:
+  package: albersdown
+  bootstrap: 5
+```
+
+and `Config/Needs/website: bbuchsbaum/albersdown` in `DESCRIPTION`. R CMD
+check reads neither, so a CRAN package can theme its site this way without
+changing its vignettes or dependencies; `use_albersdown(".", apply_to = "new")`
+sets it up. Building the site needs the development albersdown (2.0.0.9000 or
+later): `Config/Needs/website` makes a pkgdown CI workflow install it from
+GitHub; locally, install it with `pak::pak("bbuchsbaum/albersdown")`. With
+CRAN's albersdown 2.0.0, pkgdown builds a plain Bootstrap site without an
+error. Articles written with
+`albers_vignette()` keep their own family and direction on the site.

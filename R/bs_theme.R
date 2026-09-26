@@ -31,7 +31,7 @@ albers_bs_theme <- function(
 
   preset <- match.arg(preset)
   pal <- albers_palette(family)
-  colors <- .preset_colors(preset)
+  colors <- .preset_colors(preset, family)
 
   accent <- accent %||% pal[["A700"]]
   bg <- bg %||% colors$bg

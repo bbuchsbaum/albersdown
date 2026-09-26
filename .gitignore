@@ -10,3 +10,4 @@ docs/
 .omc/
 CRAN-SUBMISSION
 .albersdown.bak/
+.ruff_cache/

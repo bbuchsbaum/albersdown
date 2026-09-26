@@ -1,138 +1,170 @@
 albersdown
-===============================
+==========
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/bbuchsbaum/albersdown/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/bbuchsbaum/albersdown/actions/workflows/R-CMD-check.yaml)
 [![pkgdown](https://github.com/bbuchsbaum/albersdown/actions/workflows/pkgdown.yaml/badge.svg)](https://bbuchsbaum.github.io/albersdown/)
 <!-- badges: end -->
 
-Minimalist theme and vignette kit for pkgdown and R Markdown.
+A vignette and pkgdown theme for R packages, built on Josef Albers's
+*Interaction of Color*. Each vignette gets a title plate in the Homage-to-the-Square
+proportions, numbered sections, a margin column for notes, legible code output,
+booktabs tables, and matching ggplot2 figures, in light and dark. Vignettes stay
+self-contained and CRAN-safe: fonts and scripts are embedded, and equations are
+written as MathML, so nothing is fetched when the page is read.
 
-- One line to theme pkgdown sites via a template package.
-- Vignettes ship with local CSS for CRAN-friendly offline builds.
-- Helper functions for ggplot2 and gt align plots/tables with the house style.
+![The title plate of each of the six colour families, in the warm homage direction (top) and the cool interaction direction (bottom).](man/figures/README-plates.png)
 
-Install (template package)
--------------------------
+The [documentation site](https://bbuchsbaum.github.io/albersdown/) is built
+with the theme.
 
-This package is meant to live on GitHub and be pinned by consumers.
+Vignettes
+---------
 
-Install with pak:
+In the vignette's YAML header:
+
+```yaml
+output:
+  albersdown::albers_vignette:
+    family: teal        # red, lapis, ochre, teal, green, violet
+    preset: homage      # homage (warm, serif) or interaction (cool, grotesk)
+```
+
+and in `DESCRIPTION`:
+
+```
+Suggests:
+    albersdown (>= 2.0.0.9000),
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
+Remotes: bbuchsbaum/albersdown
+```
+
+That is all. `albers_vignette()` is in the development version of albersdown
+(2.0.0.9000), not yet on CRAN, hence the version bound and `Remotes`, which
+make R CMD check and CI install it from GitHub (`R CMD check --as-cran` notes
+the unknown `Remotes` field). A package headed for CRAN has to wait until the
+release with `albers_vignette()` is on CRAN, and then declare that version,
+e.g. `albersdown (>= 2.1.0)`; until then it can use the pkgdown site theme
+alone (below).
+
+If a vignette build fails with `'albers_vignette' is not an exported object
+from 'namespace:albersdown'`, the albersdown being used is CRAN's 2.0.0 (R does
+not enforce `Suggests` versions when building): install the development
+version with `pak::pak("bbuchsbaum/albersdown")`.
+
+The format sets knitr defaults, uses `theme_albers()` for plots while the
+vignette renders, and renders a dark version of each ggplot for
+readers in dark mode. Scales follow the vignette's family:
+
+```r
+ggplot(mtcars, aes(wt, mpg, colour = factor(cyl))) +
+  geom_point() +
+  albersdown::scale_color_albers()
+```
+
+Writing a vignette
+------------------
+
+Ordinary R Markdown, plus a few conventions the theme understands:
+
+- **Callouts**: `::: {.callout .callout-tip}` (also `callout-note`,
+  `callout-warning`, `callout-danger`) with a bold first word as the label.
+- **Margin notes**: footnotes (`[^1]`) are also set in the right margin on wide
+  screens.
+- **Wide blocks**: wrap a chunk or table in `::: {.wide}` to use the margin
+  column; `class.source = "wide"` widens one chunk's code.
+- **Sections** are numbered; add `{.unnumbered}` to a heading to skip one.
+- **Math** is written as MathML, so it renders offline.
+
+Margin notes and `.wide` blocks use the margin column of the vignette layout; on
+a pkgdown site, footnotes use pkgdown's own popovers.
+
+What it adds to a vignette: about 155 KB of embedded fonts for Homage (about
+130 KB for Interaction) and about 110 KB of stylesheet and script, so a vignette
+with one short chunk is about 285 KB, plus a dark version of each ggplot figure
+(turn that off with `dark_figures = FALSE`). The same cost lands in the package
+tarball for every vignette. Plots drawn with `print(p)` or base graphics, and
+plots in chunks with `fig.show = "hold"`, `"animate"` or `"hide"`, get no dark
+version (they stay light in dark mode).
+
+To start a new vignette from the template: `rmarkdown::draft("vignettes/intro.Rmd",
+template = "albers_vignette", package = "albersdown")`, or *File > New File >
+R Markdown > From Template > Albers Vignette* in RStudio.
+
+pkgdown sites
+-------------
+
+In `_pkgdown.yml`:
+
+```yaml
+template:
+  package: albersdown
+  bootstrap: 5
+```
+
+and `Config/Needs/website: bbuchsbaum/albersdown` in `DESCRIPTION`. Neither
+is read by R CMD check, so a CRAN package can theme its site this way without
+changing its vignettes or dependencies. The site build does need the
+development albersdown (2.0.0.9000 or later): `Config/Needs/website` makes a
+pkgdown CI workflow install it from GitHub, and locally install it with
+`pak::pak("bbuchsbaum/albersdown")`. With CRAN's albersdown 2.0.0 installed,
+pkgdown builds a plain Bootstrap site without an error. Plots in articles
+keep your own ggplot2 theme on this route. Articles
+written with `albers_vignette()` keep their own family on the site. To change
+the site-wide default family, re-run `use_albersdown()` with that family (it
+writes `pkgdown/extra.js`), or add to `_pkgdown.yml`:
+
+```yaml
+template:
+  includes:
+    in_header: |
+      <script>window.albersdownDefaults = { family: "lapis", preset: "interaction" };</script>
+```
+
+Plots and tables outside vignettes
+----------------------------------
+
+- `theme_albers(family, preset, mode = c("light", "dark"))` for ggplot2.
+- `scale_color_albers()`, `scale_fill_albers()`: the family paired with its
+  complement (`type = "family"` for a single-hue ramp); `albers_discrete()`
+  returns the colours.
+- `gt_albers()` for gt tables; `albers_bs_theme()` for bslib/Shiny.
+
+Install
+-------
 
 ```r
 pak::pak("bbuchsbaum/albersdown")
 ```
 
-Use in a consuming package
--------------------------
-
-1) pkgdown site theme
-
-_pkgdown.yml:
-
-```yaml
-template:
-  package: albersdown
-```
-
-DESCRIPTION:
-
-```yaml
-Config/Needs/website: bbuchsbaum/albersdown
-```
-
-2) Vignettes (offline & styled)
-
-Create a new vignette using the "Albers Vignette" template (or run `albersdown::use_albers_vignettes()`). The skeleton includes:
-
-```yaml
-output:
-  rmarkdown::html_vignette:
-    css: albers.css
-    includes:
-      in_header: albers-header.html
-```
-
-In the setup chunk:
+Existing packages
+-----------------
 
 ```r
-library(ggplot2)
-ggplot2::theme_set(albersdown::theme_albers(
-  family = params$family,
-  preset = params$preset,
-  base_size = 13
-))
+albersdown::use_albersdown(".", family = "teal", preset = "homage")
 ```
 
-3) Retrofit an existing package (replace prior theming)
-
-```r
-albersdown::use_albersdown(
-  family = "red",
-  preset = "homage",
-  apply_to = "all",
-  force_replace = TRUE
-)
-```
-
-Team one-liner (same defaults as above):
-
-```r
-albersdown::migrate_albersdown()
-```
-
-Migration also exposes the Albers theme surface directly:
-
-```r
-albersdown::migrate_albersdown(family = "teal", preset = "midnight")
-```
-
-Helpers
--------
-
-- theme_albers(family = "red", preset = "homage")
-- scale_color_albers(family = "red", discrete = TRUE, ...)
-- scale_fill_albers(family = "red", discrete = TRUE, ...)
-- scale_color_albers_highlight(family = "red", tone = "A700", other = "#9aa0a6")
-- scale_fill_albers_highlight(family = "red", tone = "A700", other = "#9aa0a6")
-- gt_albers(x, family = "red", preset = "homage")
-
-Design tooling
---------------
-
-- Vignettes: `getting-started`, `design-notes`, `theme-lab`, `theme-showcase`, `proof-teal-study`, `proof-ochre-structural`.
-- Theme Lab article: interactive family/preset/style/content-width preview.
-- Theme Showcase article: dark preset + non-red accent family gallery.
-- Proof articles: full-page fixed combinations for `teal + study` and `ochre + structural`.
-- Token source of truth: `inst/tokens/albers-tokens.yml`.
-- Token sync script: `Rscript tools/sync_albers_assets.R`.
-- Homepage blueprint: `inst/pkgdown/templates/homepage-blueprint.md`.
-- Visual regression scaffold: `tests/visual-regression/` plus workflow `visual-regression.yaml`.
-
-Notes
------
-
-- Keep vignette CSS local to satisfy CRAN’s no-network rule.
-- Pin a release tag in Config/Needs/website for deterministic site builds.
-
-Choosing a palette family per page
-----------------------------------
-
-- Families: red, lapis, ochre, teal, green, violet.
-- Presets: homage, interaction, study, structural, adobe, midnight.
-- In YAML, add:
-  `params: { family: "red", preset: "study" }`
-- In setup, call:
-  `ggplot2::theme_set(albersdown::theme_albers(family = params$family, preset = params$preset))`
-- If plot text feels small, increase `base_size` (e.g., 13–14):
-  `ggplot2::theme_set(albersdown::theme_albers(family = params$family, preset = params$preset, base_size = 14))`
-- Add `albers-header.html` alongside `albers.css` and `albers.js`, then point `includes: in_header` at it.
-- Add body class so CSS tokens switch by family:
-  `cat(sprintf('<script>document.addEventListener("DOMContentLoaded",function(){document.body.classList.add("palette-%s");});</script>', params$family))`
-- Add body class so CSS preset styles switch by preset:
-  `cat(sprintf('<script>document.addEventListener("DOMContentLoaded",function(){document.body.classList.add("preset-%s");});</script>', params$preset))`
-
-<!-- albersdown:theme-note:start -->
-## Albers theme
-This package uses the albersdown theme. Existing vignette theme hooks are replaced so `albers.css` and local `albers.js` render consistently on CRAN and GitHub Pages. The defaults are configured via `params$family` and `params$preset` (family = 'red', preset = 'homage'). The pkgdown site uses `template: { package: albersdown }` together with generated `pkgdown/extra.css` and `pkgdown/extra.js` so the theme is linked and activated on site pages.
-<!-- albersdown:theme-note:end -->
+switches each vignette that uses `rmarkdown::html_vignette` to
+`albersdown::albers_vignette` (Quarto, bookdown, flow-style `output: {...}`
+headers and vignettes whose first format is something else are reported and
+left alone; articles in `vignettes/articles/` need
+`output: albersdown::albers_vignette` set by hand), adds
+`albersdown (>= <installed version>)` (in `Suggests`, or where albersdown is
+already in `Imports`/`Depends`) and the other `Suggests` and `VignetteBuilder`
+entries (plus `Remotes: bbuchsbaum/albersdown` while that version is not on
+CRAN), and points `_pkgdown.yml` at the template. When no vignette ends up on
+the format (none to convert, or `apply_to = "new"`), only `_pkgdown.yml` and
+`Config/Needs/website` change: the site-only route. A package
+set up by albersdown 2.0 is migrated (called without `family`/`preset`, the
+helper keeps the family and direction the package already uses, and says
+where it found them): its setup-chunk lines, `params`,
+generated `pkgdown/extra.css`/`extra.js` and README note are replaced, and the
+copied assets in `vignettes/` are moved out. The edits are textual (other
+output formats, comments, key order and line endings are kept), each changed
+file is backed up to `.albersdown.bak/` (which, with `_pkgdown.yml`, is added
+to `.Rbuildignore`; `.albersdown.bak/` also goes in `.gitignore`), and
+`dry_run = TRUE` shows what would change. `readme = TRUE` adds a short note
+to `README.Rmd` (re-knit it) or, without one, `README.md`. `method = "vendor"` keeps the older
+setup that copies the stylesheet and script into `vignettes/`.

@@ -18,3 +18,5 @@
 ^tools$
 ^tests/visual-regression($|/)
 ^resdesign$
+^\.ruff_cache$
+^\.albersdown\.bak$

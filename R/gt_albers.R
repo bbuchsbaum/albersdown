@@ -33,7 +33,7 @@ gt_albers <- function(
 
   preset <- match.arg(preset)
   pal <- albers_palette(family)
-  colors <- .preset_colors(preset)
+  colors <- .preset_colors(preset, family)
   bg <- bg %||% colors$bg
   fg <- fg %||% colors$fg
   stripe <- grDevices::adjustcolor(pal[["A300"]], alpha.f = 0.08)

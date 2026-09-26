@@ -27,7 +27,8 @@ accepted for backward compatibility.}
 stack; install the matching typefaces (Familjen Grotesk / Space Grotesk,
 etc.) and pass e.g. \code{base_family = "Familjen Grotesk"} for full fidelity.}
 
-\item{bg}{Override background color (default derived from preset).}
+\item{bg}{Override background color. Defaults to the preset's surface
+(the vignette sheet), so figures sit on the page rather than in a box.}
 
 \item{fg}{Override foreground/text color (default derived from preset).}
 }
