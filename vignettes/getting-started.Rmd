@@ -34,31 +34,27 @@ and declare the packages the vignette needs in `DESCRIPTION`:
 
 ```
 Suggests:
-    albersdown (>= 2.0.0.9000),
+    albersdown (>= 2.1.0),
     knitr,
     rmarkdown
 VignetteBuilder: knitr
-Remotes: bbuchsbaum/albersdown
 ```
 
 Nothing is copied into `vignettes/`. The stylesheet, the fonts for the chosen
 direction and a small page script are embedded in the rendered HTML, so the
 vignette makes no network requests (the kind of vignette CRAN expects).
 
-`albers_vignette()` is in the development version of albersdown (2.0.0.9000);
-CRAN's albersdown 2.0.0 does not have it. Until a release with it is on CRAN,
-the version bound and `Remotes` above make R CMD check and CI install it from
-GitHub (`R CMD check --as-cran` notes the `Remotes` field); a CRAN package can
-use the pkgdown site theme alone for now (below).
+`albers_vignette()` is new in albersdown 2.1.0, hence the version bound.
 If a vignette build fails with `'albers_vignette' is not an exported object
-from 'namespace:albersdown'`, the albersdown being used is CRAN's 2.0.0 (R does
-not enforce `Suggests` versions when building): install the development
-version with `pak::pak("bbuchsbaum/albersdown")`.
+from 'namespace:albersdown'`, the albersdown being used is 2.0.0 or older (R
+does not enforce `Suggests` versions when building): update it with
+`install.packages("albersdown")`.
 
 ::: {.callout .callout-tip}
 **Tip.** For an existing package, `use_albersdown(".", family = "teal")`
 switches its `html_vignette` vignettes to the format and updates `DESCRIPTION`
-(with the version bound, and `Remotes` while that version is not on CRAN) and
+(with the version bound; `Remotes` too if the installed albersdown is a
+development version) and
 `_pkgdown.yml` for you; add `dry_run = TRUE` to see the changes first. It also
 migrates a package set up by albersdown 2.0.
 :::
@@ -124,9 +120,8 @@ template:
 and `Config/Needs/website: bbuchsbaum/albersdown` in `DESCRIPTION`. R CMD
 check reads neither, so a CRAN package can theme its site this way without
 changing its vignettes or dependencies; `use_albersdown(".", apply_to = "new")`
-sets it up. Building the site needs the development albersdown (2.0.0.9000 or
-later): `Config/Needs/website` makes a pkgdown CI workflow install it from
-GitHub; locally, install it with `pak::pak("bbuchsbaum/albersdown")`. With
-CRAN's albersdown 2.0.0, pkgdown builds a plain Bootstrap site without an
+sets it up. Building the site needs albersdown 2.1.0 or later
+(`Config/Needs/website` makes a pkgdown CI workflow install it from GitHub);
+with albersdown 2.0.0, pkgdown builds a plain Bootstrap site without an
 error. Articles written with
 `albers_vignette()` keep their own family and direction on the site.

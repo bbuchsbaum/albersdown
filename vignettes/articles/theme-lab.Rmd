@@ -10,11 +10,6 @@ output:
     preset: homage
     toc: yes
     toc_depth: 2
-
-vignette: |
-  %\VignetteIndexEntry{Theme Lab: Tune Family, Preset, and Rhythm}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, include=FALSE}

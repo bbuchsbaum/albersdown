@@ -22,14 +22,11 @@
 #' ggplot2 is installed, sets [theme_albers()] as the ggplot2 theme for the
 #' duration of the render.
 #'
-#' `albers_vignette()` is new in the development version of albersdown
-#' (2.0.0.9000); CRAN's albersdown 2.0.0 does not have it. A package whose
-#' vignettes use it should declare `albersdown (>= 2.0.0.9000)` and, until
-#' that version is on CRAN, `Remotes: bbuchsbaum/albersdown` (as
+#' `albers_vignette()` is new in albersdown 2.1.0. A package whose vignettes
+#' use it should declare `albersdown (>= 2.1.0)` in `Suggests` (as
 #' [use_albersdown()] writes). If building a vignette fails with
 #' `'albers_vignette' is not an exported object from 'namespace:albersdown'`,
-#' the albersdown installed is CRAN's 2.0.0: install the development version
-#' with `pak::pak("bbuchsbaum/albersdown")`.
+#' the albersdown installed is 2.0.0 or older: update it.
 #'
 #' @param family Accent family: one of `"red"`, `"lapis"`, `"ochre"`,
 #'   `"teal"`, `"green"`, `"violet"`. While the vignette renders, the
@@ -53,6 +50,14 @@
 #'   adds one image per plot to the HTML. Plots in chunks with
 #'   `fig.show = "hold"`, `"animate"` or `"hide"` get no dark version and stay
 #'   light in dark mode.
+#' @param phone_figures If `TRUE`, each plot (ggplot2, grid or base
+#'   graphics) is also drawn at phone width (3.6 in, the same aspect ratio),
+#'   so its text is legible in a phone's column; the page shows that drawing
+#'   while the figure is displayed narrower than about 470 CSS px, in light
+#'   and dark mode alike (the dark version is drawn when `dark_figures` is
+#'   on). Printing and the enlarged view use the full figure. Figures
+#'   narrower than 4.5 in, figures whose `out.width` is not a percentage,
+#'   animations and non-PNG devices are left as they are.
 #' @param math_method How equations are rendered. The default `"mathml"`
 #'   has pandoc write native MathML, which browsers display without any
 #'   download, so vignettes with math stay offline. Use `"mathjax"` (fetched
@@ -78,6 +83,7 @@ albers_vignette <- function(
   fig_height = 4.1,
   plot_theme = TRUE,
   dark_figures = TRUE,
+  phone_figures = TRUE,
   math_method = "mathml",
   fonts = c("direction", "both"),
   css = NULL,
@@ -223,7 +229,7 @@ albers_vignette <- function(
       knitr::opts_chunk$set(chunk_defaults)
       # Base graphics: the page's ground, ink and family palette per chunk.
       old_base_hook <<- knitr::knit_hooks$get("albers.base")
-      knitr::knit_hooks$set(albers.base = .albers_base_graphics_hook(family, preset))
+      knitr::knit_hooks$set(albers.base = .albers_scalar_sizes(.albers_base_graphics_hook(family, preset)))
       knitr::opts_chunk$set(albers.base = TRUE)
       old_palette <<- grDevices::palette()
       # pkgdown applies its own figure size after pre_knit; an option hook
@@ -241,6 +247,10 @@ albers_vignette <- function(
         if (identical(options$fig.show, "hold") && !is.null(options$out.width) &&
             !identical(options$out.width, "100%") && identical(options$fig.align, "center")) {
           options$fig.align <- "default"
+        }
+        if (isTRUE(phone_figures)) {
+          .albers_wrap_plot_hook()
+          options <- .albers_phone_options(options)
         }
         options
       })
@@ -391,15 +401,114 @@ albers_vignette <- function(
   path <- paste0(options$fig.path %||% "figure/", label, "-dark-", n, ".png")
   dir.create(dirname(path), showWarnings = FALSE, recursive = TRUE)
 
-  # knitr has already multiplied options$dpi by fig.retina
-  dpi <- options$dpi %||% 72
+  # knitr has already multiplied options$dpi by fig.retina; with a phone
+  # twin, fig.width and fig.height hold the full and the phone size
+  dpi <- options$dpi[1] %||% 72
   device <- if (requireNamespace("ragg", quietly = TRUE)) ragg::agg_png else "png"
-  ggplot2::ggsave(
-    path, x,
-    width = options$fig.width %||% 7, height = options$fig.height %||% 5,
-    units = "in", dpi = dpi, device = device
+  width <- options$fig.width %||% 7
+  height <- options$fig.height %||% 5
+  ggplot2::ggsave(path, x, width = width[1], height = height[1], units = "in", dpi = dpi, device = device)
+  out <- sprintf('\n\n<img class="albers-dark-twin" src="%s" alt="" aria-hidden="true" hidden />\n\n', path)
+  # the phone drawing of the dark twin, in its own paragraph (albers.js pairs
+  # a dark twin only when it is alone in its paragraph)
+  below <- options$albers.phone
+  if (is.numeric(below) && length(width) == 2L && length(height) == 2L) {
+    phone <- sub("\\.png$", ".phone.png", path)
+    ggplot2::ggsave(phone, x, width = width[2], height = height[2], units = "in", dpi = dpi, device = device)
+    out <- paste0(out, .albers_phone_img(phone, below, dark = TRUE), "\n\n")
+  }
+  out
+}
+
+# ---------------------------------------------------------------------------
+# With a phone twin, a chunk's fig.width and fig.height hold two sizes (the
+# full drawing and the phone one); knitr needs both to save the plots, but
+# chunk code sees single values, as without phone figures:
+# ggiraph::girafe() and `if (opts_current$get("fig.width") > 5)` read them.
+.albers_scalar_sizes <- function(hook) {
+  function(before, options, envir) {
+    if (before && length(options$fig.width) > 1L && is.function(knitr::opts_current$lock)) {
+      knitr::opts_current$lock(FALSE)
+      on.exit(knitr::opts_current$lock(TRUE), add = TRUE)
+      first <- function(x) if (length(x) > 1L) x[[1]] else x
+      knitr::opts_current$set(
+        fig.width = first(options$fig.width), fig.height = first(options$fig.height),
+        out.width.px = first(options$out.width.px), out.height.px = first(options$out.height.px)
+      )
+    }
+    hook(before, options, envir)
+  }
+}
+
+# Phone twins. A figure drawn for the 6.6 in column and shown in a phone's
+# (about 350 CSS px) is scaled to about half, its axis text to 8 px (5-6 px
+# glyphs). knitr draws each recorded plot once per entry of fig.width,
+# fig.height and fig.ext (sew.recordedplot maps over them), so a second entry
+# draws the same plot -- base graphics, grid or ggplot2 -- again at phone
+# width, and the plot hook puts it, hidden, after its figure. Titles,
+# legends and axes keep their size in points, so the phone drawing is a
+# little taller than the full one scaled down (height times the square root
+# of the width ratio, never taller than square unless the figure is), or
+# its panel would be a sliver. albers.js shows it while the figure is displayed narrower
+# than the geometric mean of the two drawing widths, where each drawing is
+# equally far from its own scale.
+.albers_phone_width <- 3.6
+
+.albers_phone_options <- function(options) {
+  dim <- options$fig.dim
+  w <- if (length(dim) == 2L) dim[[1]] else options$fig.width
+  h <- if (length(dim) == 2L) dim[[2]] else options$fig.height
+  # knitr would set fig.height from fig.asp after this hook, for both drawings
+  if (length(dim) != 2L && is.numeric(options$fig.asp) && is.numeric(w)) h <- w * options$fig.asp
+  ok <- is.numeric(w) && is.numeric(h) && length(w) == 1L && length(h) == 1L &&
+    isTRUE(w >= .albers_phone_width * 1.25) &&
+    length(options$dev) == 1L && isTRUE(options$dev %in% c("ragg_png", "png")) &&
+    (is.null(options$fig.ext) || identical(options$fig.ext, "png")) &&
+    length(options$dpi) == 1L &&
+    !isTRUE(options$fig.show %in% c("animate", "hide")) &&
+    is.character(options$out.width) && length(options$out.width) == 1L &&
+    grepl("%$", options$out.width)
+  if (!ok) return(options)
+  wp <- .albers_phone_width
+  options$fig.dim <- NULL
+  options$fig.asp <- NULL
+  options$fig.width <- c(w, wp)
+  options$fig.height <- c(h, min(h * sqrt(wp / w), wp * max(h / w, 1)))
+  options$fig.ext <- c("png", "phone.png")
+  options$albers.phone <- round(sqrt(w * wp) * 96)
+  options
+}
+
+.albers_phone_img <- function(src, below, dark = FALSE) {
+  sprintf(
+    '<img class="albers-phone-twin%s" src="%s" alt="" aria-hidden="true" loading="lazy" data-albers-below="%d" hidden />',
+    if (dark) " albers-phone-dark" else "", src, as.integer(below)
   )
-  sprintf('\n\n<img class="albers-dark-twin" src="%s" alt="" aria-hidden="true" hidden />\n\n', path)
+}
+
+# The plot hook in force (rmarkdown's, or pkgdown's), followed by the phone
+# drawing right after the figure's <img>, inside the same block.
+.albers_wrap_plot_hook <- function() {
+  old <- knitr::knit_hooks$get("plot")
+  if (!is.function(old) || isTRUE(attr(old, "albers"))) return(invisible())
+  new <- function(x, options) .albers_add_phone_twin(old(x, options), x, options)
+  attr(new, "albers") <- TRUE
+  knitr::knit_hooks$set(plot = new)
+  invisible()
+}
+
+.albers_add_phone_twin <- function(out, x, options) {
+  below <- options$albers.phone
+  if (!is.numeric(below) || !is.character(out) || length(out) != 1L ||
+      !is.character(x) || length(x) != 1L || !grepl("\\.png$", x)) return(out)
+  phone <- sub("\\.png$", ".phone.png", x)
+  if (!file.exists(phone)) return(out)
+  at <- regexpr(paste0('src="', x, '"'), out, fixed = TRUE)
+  if (at < 0) return(out)
+  end <- regexpr(">", substring(out, at), fixed = TRUE)
+  if (end < 0) return(out)
+  cut <- at + end - 1L
+  paste0(substr(out, 1L, cut), .albers_phone_img(phone, below), substring(out, cut + 1L))
 }
 
 # Mirror the lightness of near-neutral colours for a dark ground:

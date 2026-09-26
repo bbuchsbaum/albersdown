@@ -8,11 +8,6 @@ output:
     preset: homage
     toc: yes
     toc_depth: 2
-
-vignette: |
-  %\VignetteIndexEntry{Theme Showcase: Directions and Families}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, include=FALSE}
@@ -105,6 +100,6 @@ knitr::kable(recipes, format = "html", caption = "A few coherent direction + fam
 
 ## Next step
 
-- Use `vignette("theme-lab")` to tune family, direction, style, and width interactively.
+- Use the [Theme Lab](theme-lab.html) to tune family, direction, style, and width interactively.
 - See `vignette("getting-started")` (homage) and `vignette("interaction")` (interaction)
   for full-page examples of each direction.

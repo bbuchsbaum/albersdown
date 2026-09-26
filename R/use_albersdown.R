@@ -958,11 +958,19 @@ use_albersdown <- function(
       checks[[paste0("link-light-", family_name, "-", preset_name)]] <- .contrast_ratio(link_fg, g$bg)
     }
     if (!is.null(fam$dark$accent_ink)) {
-      checks[[paste0("link-dark-", family_name)]] <- .contrast_ratio(fam$dark$accent_ink, "#111315")
+      # on both night grounds the theme uses (warm homage, cool interaction)
+      for (dir in c("homage", "interaction")) {
+        checks[[paste0("link-dark-", family_name, "-", dir)]] <- .contrast_ratio(
+          fam$dark$accent_ink, .preset_colors_night(dir)$bg
+        )
+      }
     }
   }
 
-  checks[["body-dark-default"]] <- .contrast_ratio("#ece8de", "#111315")
+  for (dir in c("homage", "interaction")) {
+    night <- .preset_colors_night(dir)
+    checks[[paste0("body-dark-", dir)]] <- .contrast_ratio(night$fg, night$bg)
+  }
   vals <- unlist(checks, use.names = TRUE)
   vals <- vals[!is.na(vals)]
   failing <- names(vals[vals < min_ratio])

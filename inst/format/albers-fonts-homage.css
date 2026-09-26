@@ -2,3 +2,8 @@
 @font-face { font-family: "Newsreader"; font-style: normal; font-weight: 400 600; font-display: swap; src: url("../fonts/newsreader.woff2") format("woff2"); }
 @font-face { font-family: "Newsreader"; font-style: italic; font-weight: 400 500; font-display: swap; src: url("../fonts/newsreader-italic.woff2") format("woff2"); }
 @font-face { font-family: "Spline Sans Mono"; font-style: normal; font-weight: 400 500; font-display: swap; src: url("../fonts/spline-sans-mono.woff2") format("woff2"); }
+@font-face { font-family: "Newsreader Fallback"; src: local("Georgia"), local("Gelasio"); size-adjust: 91.5%; }
+@font-face { font-family: "Newsreader Fallback"; font-style: italic; src: local("Georgia Italic"), local("Georgia-Italic"), local("Gelasio Italic"); size-adjust: 82.5%; }
+@font-face { font-family: "Newsreader Fallback"; font-weight: 600 700; src: local("Georgia Bold"), local("Georgia-Bold"), local("Gelasio Bold"); size-adjust: 83%; }
+@font-face { font-family: "Familjen Grotesk Fallback"; src: local("Arial"), local("ArialMT"), local("Liberation Sans"), local("Arimo"); size-adjust: 91%; }
+@font-face { font-family: "Familjen Grotesk Fallback"; font-weight: 600 700; src: local("Arial Bold"), local("Arial-BoldMT"), local("Liberation Sans Bold"), local("Arimo Bold"); size-adjust: 89%; }

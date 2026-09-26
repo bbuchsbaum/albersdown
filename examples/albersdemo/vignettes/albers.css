@@ -18,18 +18,20 @@
   initial-value: 640px;
 }
 
-/* Metric-matched fallbacks: local system faces scaled to the web fonts'
-   average width (measured), so text set before the fonts arrive wraps as it
-   will after -- the page need not wait for them, and nothing reflows. */
-@font-face { font-family: "Newsreader Fallback"; src: local("Georgia"); size-adjust: 92.1%; }
-@font-face { font-family: "Newsreader Fallback"; font-style: italic; src: local("Georgia Italic"), local("Georgia-Italic"); size-adjust: 90%; }
-@font-face { font-family: "Newsreader Fallback"; font-weight: 700; src: local("Georgia Bold"), local("Georgia-Bold"); size-adjust: 92.1%; }
-@font-face { font-family: "Familjen Grotesk Fallback"; src: local("Arial"), local("ArialMT"); size-adjust: 89.9%; }
-@font-face { font-family: "Familjen Grotesk Fallback"; font-weight: 700; src: local("Arial Bold"), local("Arial-BoldMT"); size-adjust: 89.9%; }
-@font-face { font-family: "Hanken Grotesk Fallback"; src: local("Arial"), local("ArialMT"); size-adjust: 100.2%; }
-@font-face { font-family: "Hanken Grotesk Fallback"; font-weight: 700; src: local("Arial Bold"), local("Arial-BoldMT"); size-adjust: 100.2%; }
-@font-face { font-family: "Space Grotesk Fallback"; src: local("Arial"), local("ArialMT"); size-adjust: 102.1%; }
-@font-face { font-family: "Space Grotesk Fallback"; font-weight: 700; src: local("Arial Bold"), local("Arial-BoldMT"); size-adjust: 102.1%; }
+/* Metric-matched fallbacks: local system faces (with metric-compatible
+   Linux faces: Liberation Sans/Arimo for Arial, Gelasio for Georgia),
+   scaled per weight and style to the web fonts' measured widths, so text
+   set before the fonts arrive wraps as it will after. The direction's font
+   file carries them (a vignette embeds only its own). */
+@font-face { font-family: "Newsreader Fallback"; src: local("Georgia"), local("Gelasio"); size-adjust: 91.5%; }
+@font-face { font-family: "Newsreader Fallback"; font-style: italic; src: local("Georgia Italic"), local("Georgia-Italic"), local("Gelasio Italic"); size-adjust: 82.5%; }
+@font-face { font-family: "Newsreader Fallback"; font-weight: 600 700; src: local("Georgia Bold"), local("Georgia-Bold"), local("Gelasio Bold"); size-adjust: 83%; }
+@font-face { font-family: "Familjen Grotesk Fallback"; src: local("Arial"), local("ArialMT"), local("Liberation Sans"), local("Arimo"); size-adjust: 91%; }
+@font-face { font-family: "Familjen Grotesk Fallback"; font-weight: 600 700; src: local("Arial Bold"), local("Arial-BoldMT"), local("Liberation Sans Bold"), local("Arimo Bold"); size-adjust: 89%; }
+@font-face { font-family: "Hanken Grotesk Fallback"; src: local("Arial"), local("ArialMT"), local("Liberation Sans"), local("Arimo"); size-adjust: 100%; }
+@font-face { font-family: "Hanken Grotesk Fallback"; font-weight: 600 700; src: local("Arial Bold"), local("Arial-BoldMT"), local("Liberation Sans Bold"), local("Arimo Bold"); size-adjust: 94.3%; }
+@font-face { font-family: "Space Grotesk Fallback"; src: local("Arial"), local("ArialMT"), local("Liberation Sans"), local("Arimo"); size-adjust: 108.5%; }
+@font-face { font-family: "Space Grotesk Fallback"; font-weight: 600 700; src: local("Arial Bold"), local("Arial-BoldMT"), local("Liberation Sans Bold"), local("Arimo Bold"); size-adjust: 101.5%; }
 
 :root {
   /* Default direction = Homage (warm). `.preset-interaction` overrides to cool. */
@@ -815,8 +817,20 @@ p.date {
 /* the home page header is short: a smaller plate, and the rule spans the column */
 .template-home main#main .page-header { min-height: 6.5rem; max-width: none !important; }
 .template-home main#main .page-header .albers-plate-mark { --plate: 5.5rem; top: 0; }
+/* The site's article column is narrower than the vignette's: a smaller plate
+   leaves a two-line title room beside it, and between phone and desktop widths
+   the plate heads the title block instead, as on a phone. */
+.template-article main#main > .page-header { --site-plate: clamp(5.5rem, 7.5vw, 7rem); }
+.template-article main#main > .page-header .albers-plate-mark { --plate: var(--site-plate); }
+.template-article main#main > .page-header.albers-titleblock:has(.albers-plate-mark) { min-height: calc(var(--site-plate) + 1.9rem); }
+@media (min-width: 992px) {
+  .template-article main#main > .page-header > :is(h1, .subtitle) { margin-right: calc(var(--site-plate) + 1.5rem); }
+}
+@media (min-width: 621px) and (max-width: 991.98px) {
+  .template-article main#main > .page-header.albers-titleblock:has(.albers-plate-mark) { min-height: 0; padding-top: calc(3.5rem + 1.1rem); }
+  .template-article main#main > .page-header .albers-plate-mark { --plate: 3.5rem; top: 0; left: 0; right: auto; }
+}
 @media (min-width: 621px) {
-  .template-article main#main > .page-header > :is(h1, .subtitle) { margin-right: calc(clamp(5.5rem, 11vw, 8.25rem) + 1.5rem); }
   .template-home main#main .page-header > h1 { margin-right: 7rem; }
 }
 
@@ -1252,7 +1266,8 @@ main#main {
   background: var(--surface);
   border: var(--rule-thin) solid var(--border);
   box-shadow: var(--shadow-soft);
-  padding: clamp(1.4rem, 3vw, 2.9rem) clamp(1.1rem, 3vw, 3rem) clamp(2rem, 4vw, 3.5rem);
+  --albers-card-pad: clamp(1.1rem, 3vw, 3rem);
+  padding: clamp(1.4rem, 3vw, 2.9rem) var(--albers-card-pad) clamp(2rem, 4vw, 3.5rem);
   /* pkgdown's navbar is fixed-top and 56px tall; clear it, then breathe. */
   margin-block: calc(56px + 1.75rem) 3rem;
 }
@@ -1285,6 +1300,12 @@ main#main p > img:only-child[src^="data:image"],
 main#main img.r-plt { max-width: min(100%, var(--albers-measure)); height: auto; margin-inline: 0; }
 main#main :is(figcaption, p.caption) { max-width: var(--albers-measure); }
 main#main .section .section { max-width: none; }
+/* A table wider than the column borrows the card's right margin before it
+   scrolls; one of many columns first sets its cells a little closer. */
+main#main .albers-table-scroll.is-wide { max-width: none; margin-right: calc(-1 * var(--albers-card-pad)); }
+main#main table.albers-table-many :is(th, td) { padding-inline: 0.6rem; }
+main#main table.albers-table-many :is(th, td):first-child { padding-left: 0.25rem; }
+main#main table.albers-table-many :is(th, td):last-child { padding-right: 0.25rem; }
 
 .page-header {
   background: none;
@@ -1892,7 +1913,19 @@ pre code > .albers-out-block:first-child { margin-top: -0.45rem; }
 .albers-out-block.is-err { background: color-mix(in srgb, var(--code-err) 9%, transparent); box-shadow: inset 2px 0 0 var(--code-err); }
 pre.albers-msg-pre > code { white-space: pre-wrap; }
 pre.albers-msg-pre { white-space: pre-wrap; }
-pre code span.albers-msg-line { display: inline-block; max-width: 100%; white-space: pre-wrap; color: var(--tok-com); box-shadow: inset 2px 0 0 var(--tok-com); padding-left: 0.5ch; }
+/* a condition line after printed output (echo-free chunks): set off from
+   the output above, clear of its rule, and hanging like one in a code block */
+pre code span.albers-msg-line { display: inline-block; max-width: 100%; white-space: pre-wrap; color: var(--tok-com); box-shadow: inset 2px 0 0 var(--tok-com); padding-left: calc(1ch + 3ch); text-indent: -3ch; margin-top: 0.35rem; }
+/* in a block of output its rule sits at the block's edge, as a standalone
+   message's does, and its text stops short of the overflow fade */
+pre.albers-plain-out code span.albers-msg-line {
+  margin-left: calc(-1 * var(--pre-px, 1.2rem));
+  padding-left: calc(var(--pre-px, 1.2rem) + 3ch);
+  max-width: calc(100% + var(--pre-px, 1.2rem));
+}
+pre.albers-plain-out.is-overflowing code span.albers-msg-line { max-width: calc(100% + var(--pre-px, 1.2rem) - 2.5rem); }
+/* an echo-free chunk's output: the ink and leading of an output band */
+pre.albers-plain-out > code { color: var(--code-out); line-height: 1.45; }
 pre code span.albers-msg-line.is-warn { color: var(--code-warn); box-shadow: inset 2px 0 0 var(--code-warn); }
 pre code span.albers-msg-line.is-err { color: var(--code-err); box-shadow: inset 2px 0 0 var(--code-err); }
 pre.albers-msg-pre.is-warn { background: color-mix(in srgb, var(--code-warn) 10%, transparent); box-shadow: inset 2px 0 0 var(--code-warn); }
@@ -1959,7 +1992,9 @@ pre.numberSource code > span > a:first-child::before {
      albers.js marks a segment wider than its line's room .is-wrap, and only
      that one may wrap inside, hanging with the rest of the line. */
   pre > code.sourceCode .albers-seg { white-space: pre; }
-  pre > code.sourceCode .albers-seg.is-wrap { white-space: pre-wrap; overflow-wrap: anywhere; }
+  /* (break-word, not anywhere: a name that fits on a row of its own moves
+     there whole; "anywhere" let the line breaker split it greedily) */
+  pre > code.sourceCode .albers-seg.is-wrap { white-space: pre-wrap; overflow-wrap: break-word; }
   /* Chromium breaks at <wbr> even inside white-space: pre: the soft breaks
      after "::" and "$" exist only in a segment that must wrap */
   pre > code.sourceCode .albers-seg:not(.is-wrap) wbr { display: none; }
@@ -1979,6 +2014,9 @@ pre.numberSource code > span > a:first-child::before {
   pre > code.sourceCode .albers-nameq,
   pre > code.sourceCode .albers-opq { white-space: pre; }
   pre > code.sourceCode .albers-indent::after { content: "\2060"; }
+  /* an author's alignment redrawn at the call's depth on a phone (albers.js
+     sets --ind-ls; the text is unchanged) */
+  pre > code.sourceCode .albers-indent { letter-spacing: var(--ind-ls, 0); }
   pre > code.sourceCode :is(.albers-lam, .albers-tail) { white-space: nowrap !important; }
   /* a glued unit wider than its line's room (a long argument name with its
      value) wraps inside rather than run under the block's edge */
@@ -2384,6 +2422,8 @@ html[data-albers-theme="dark"] img.r-plt {
    mode only; print and light mode always use the light figure. */
 /* !important: knitr's fig.align writes an inline display:block on the image */
 img.albers-dark-twin.albers-dark-twin { display: none !important; }
+/* Phone twins (albers_vignette) are sources for albers.js, never shown */
+img.albers-phone-twin.albers-phone-twin { display: none !important; }
 @media screen {
   html[data-albers-theme="dark"] img.albers-has-twin:has(+ img.albers-dark-twin) { display: none !important; }
   html[data-albers-theme="dark"] img.albers-has-twin + img.albers-dark-twin.albers-dark-twin { display: var(--albers-twin-display, block) !important; }
@@ -2601,6 +2641,12 @@ blockquote p:last-child:not(:first-child) {
   background:
     linear-gradient(90deg, color-mix(in srgb, var(--A300) 22%, transparent) 0 2px, transparent 2px),
     color-mix(in srgb, var(--accent-band) 55%, var(--surface));
+}
+
+/* An unfilled callout has no visible right side: its text runs to the edge the
+   paragraphs share, rather than stopping short of it on a third edge. */
+@media (forced-colors: none) {
+  .callout:not(.callout-important, .callout-danger, .callout-experiment) { padding-right: 0; }
 }
 
 /* -- Details, rules, footnotes ------------------------------------------- */
@@ -3046,9 +3092,10 @@ body.preset-midnight .html-widget {
     --border: #d9d6cf;
     --ink: #111;
     --muted: #555;
-    --code-bg: #f5f5f3;
+    /* the code ground keeps a light wash of the family, as on screen */
+    --code-bg: color-mix(in oklab, var(--A300) 13%, #fff);
     --code-fg: #222;
-    --code-border: #d9d6cf;
+    --code-border: color-mix(in oklab, var(--A300) 38%, #fff);
     --code-out: #444;
     /* syntax keeps the family on paper: the light-day triad (deep family,
        deep complement, third hue), all AA on white and on the code ground */
@@ -3091,11 +3138,20 @@ body.preset-midnight .html-widget {
     max-width: none;
     border: none;
     box-shadow: none;
-    padding: 0;
+    padding: 6mm 0 0;
     margin: 0;
   }
+  /* the family bar heads the first page: a thin band, its colours printed
+     even with the browser's background graphics off */
   body:where(.albers-vignette, :has(> #TOC), :has(> h1.title))::before,
-  main#main::before { display: none; }
+  main#main::before {
+    display: block;
+    inset-inline: 0;
+    top: 0;
+    height: 1.4mm;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
 
   .navbar,
   .sidebar,
@@ -3112,7 +3168,12 @@ body.preset-midnight .html-widget {
     border: none;
     box-shadow: none;
     background: #fff;
-    padding: 0;
+    padding: 6mm 0 0;
+    /* no navbar to clear, and no sidebar: the card takes the page */
+    margin-top: 0 !important;
+    flex: 0 0 100% !important;
+    width: 100% !important;
+    max-width: none !important;
   }
 
   @page { margin: 18mm 16mm; }
@@ -3148,8 +3209,34 @@ body.preset-midnight .html-widget {
     --bs-table-bg: transparent;
   }
   :is(div.sourceCode, pre, .albers-table-scroll).is-wide { margin-right: 0 !important; }
-  .albers-titleblock .albers-plate-mark { display: none; }
-  .albers-titleblock:has(.albers-plate-mark) > :not(.albers-plate-mark) { margin-right: 0; }
+  /* the title plate, small, beside the title on the first page; on paper it
+     is always the light-outside study, so no dark square fills the corner */
+  .albers-titleblock .albers-plate-mark {
+    --plate: 15mm;
+    width: 15mm !important;
+    height: 15mm !important;
+    --plate-1: var(--sq-outer);
+    --plate-2: var(--A300);
+    --plate-3: var(--A500);
+    --plate-4: var(--A900);
+    display: block !important;
+    position: absolute !important;
+    top: 0 !important;
+    right: 0 !important;
+    left: auto !important;
+    margin: 0 !important;
+    filter: none !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .albers-titleblock { display: block !important; min-height: calc(15mm + 4mm) !important; padding-top: 0 !important; margin-bottom: 7mm !important; }
+  /* the same stroke, opaque on white: a translucent chip border inside a link
+     (the site's "Source:" line) leaves Poppler-based PDF viewers painting the
+     plate's squares at a quarter of their strength */
+  a > code, a:visited > code { border-color: color-mix(in srgb, currentColor 28%, #fff) !important; }
+  .albers-titleblock:has(.albers-plate-mark) > :not(.albers-plate-mark) { margin-right: calc(15mm + 6mm) !important; }
+  /* the code ground's family wash prints without background graphics */
+  pre, div.sourceCode { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   pre { white-space: pre-wrap; break-inside: avoid; }
   /* on paper segments cannot be measured (no layout pass per page width), so
      they wrap at spaces rather than risk running off the page */

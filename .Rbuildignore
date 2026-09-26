@@ -1,7 +1,6 @@
 ^data-raw$
 ^\.github$
 ^README\.md$
-^NEWS\.md$
 ^\.DS_Store$
 ^examples$
 ^\.claude($|/)
@@ -20,3 +19,5 @@
 ^resdesign$
 ^\.ruff_cache$
 ^\.albersdown\.bak$
+^\.planning$
+^vignettes/articles$

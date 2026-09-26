@@ -1,134 +1,115 @@
-# albersdown (development version)
+# albersdown 2.1.0
 
 ## A vignette format
 
 * New output format `albersdown::albers_vignette()`: one line of YAML themes a
   CRAN vignette, with nothing copied into `vignettes/`. It embeds the installed
-  stylesheet, the page script and only the chosen direction's fonts, stamps the
+  stylesheet, the page script and only the chosen direction's fonts, sets the
   family and direction before the page draws (no restyle on load), sets knitr
-  defaults, and sets `theme_albers()` for the render. Scales and themes called
+  defaults, and uses `theme_albers()` for the render. Scales and themes called
   without a family follow the vignette's family (`albersdown.family` option).
-* Plots have dark twins: each auto-printed ggplot is also rendered with
-  `theme_albers(mode = "dark")` (and night tones for albersdown scales), and the
-  page shows it in dark mode instead of a light plot on a dark page
-  (`dark_figures = FALSE` turns this off). Plots in chunks with
-  `fig.show = "hold"`, `"animate"` or `"hide"` get no twin and stay light.
-* The R Markdown template now uses the format and renders out of the box.
+  Packages using it should declare `albersdown (>= 2.1.0)`.
+* Dark figures: each auto-printed ggplot is also rendered with
+  `theme_albers(mode = "dark")` (and night tones for albersdown scales), shown
+  in dark mode instead of a light plot on a dark page (`dark_figures = FALSE`
+  turns this off). Chunks with `fig.show = "hold"`, `"animate"` or `"hide"`
+  get no dark version.
+* Phone figures: each plot (ggplot2, grid or base graphics) is also drawn at
+  phone width (3.6 in), shown while the figure is displayed narrower than about
+  470 px, so axis text on a 390 px phone is about 15 px instead of 8 px. Print
+  and the enlarged view keep the full figure. This adds about 66 KB per simple
+  ggplot (light and dark); `phone_figures = FALSE` turns it off.
+* `albers_vignette()` writes equations as MathML by default
+  (`math_method = "mathml"`), so pages with math need no CDN, and gives
+  base-graphics plots the page's ground, ink, font and family palette.
+* The R Markdown template uses the format and renders out of the box.
 * pkgdown sites are themed by `template: package: albersdown` alone: the
   template's `in-header.html` links the stylesheet and script on every page.
   Articles on `albers_vignette()` keep their own family and direction on the
-  site. `pkgdown/extra.js` (written by `use_albersdown()`) now only sets the site
-  defaults.
+  site; `pkgdown/extra.js` (written by `use_albersdown()`) only sets the site
+  defaults. A site's own `pkgdown/extra.css` loads after the theme, so it can
+  override it.
 
 ## Design
 
 * Family ramps rebuilt in OKLCH with even lightness steps; green and violet are
-  now pigment-like. Each family has its own "interaction" complement
-  (red/gold, lapis/orange, ochre/lavender, teal/coral, green/rose,
-  violet/olive), used by the title plate, the sheet band, code strings and the
-  discrete scales.
+  now pigment-like. Each family has its own complement (red/gold, lapis/orange,
+  ochre/lavender, teal/coral, green/rose, violet/olive), used by the title
+  plate, the sheet band, code strings and the discrete scales.
 * A "Homage to the Square" title plate beside every vignette and article
   title; numbered sections; a margin column with sidenotes on wide screens;
   opt-in `.wide` blocks; a colophon; callouts as typed Albers objects.
-* Code output is set as one block per run of `#>` lines, with warnings and
-  errors marked; the copy button copies source without output.
+* Code output is set as one block per run of `#>` lines, with messages,
+  warnings and errors marked; the copy button copies source without output.
+  On phones, long source lines wrap at ranked break points with a hanging
+  indent that follows the author's own alignment.
 * Tables are booktabs with numbered captions; figures are numbered and sit on
-  the page (`theme_albers()` now uses the sheet colour, with no panel box).
+  the page (`theme_albers()` uses the sheet colour, with no panel box).
 * Real dark mode for both directions (warm and cool nights), resolved before
   first paint, with a three-state control (follow system / light / dark).
 * Syntax colours follow the family and direction everywhere: numbers take their
-  own hue, dark homage is warm and dark interaction cool, and printed code keeps
-  the family's colours.
-* The legacy `midnight` preset now sits on the family's deepest tone mixed into
+  own hue, dark homage is warm and dark interaction cool.
+* Print keeps the page's identity: the first printed page carries the title
+  plate and the family bar, the code ground keeps a light wash of the family,
+  and the syntax keeps the family's colours. Dark mode prints light, with page
+  margins and expanded `<details>`.
+* The legacy `midnight` preset sits on the family's deepest tone mixed into
   ink, not a fixed navy, with its own syntax colours. `theme_albers()`,
   `gt_albers()`, `albers_bs_theme()` and base-graphics chunks use the same
   family-tinted ground, so midnight plots match the page.
-* Bundled fonts trimmed to the axis ranges the theme uses, and Newsreader's
-  optical size fixed at its text size: each homage vignette is about 120 KB
-  smaller.
+* Bundled fonts are trimmed to the axis ranges the theme uses, with
+  Newsreader's optical size fixed at its text size.
+* `scale_color_albers()`/`scale_fill_albers()` gain `type = c("contrast",
+  "family")`; the default pairs the family with its complement. New
+  `albers_discrete()`.
 
-## Accessibility and function
+## Reading and accessibility
 
+* Long pages keep the reader's place: the page is prepared lazily in chunks
+  without moving what is on screen or losing a text selection, and the place
+  is restored on reload and Back.
+* No layout shift on load (metric-matched font fallbacks).
 * Visible keyboard focus; headings are their own permalinks; a contents list
   that tracks the reader; skip link; keyboard-scrollable wide code and tables;
-  light printing from dark mode with page margins and expanded `<details>`;
   `prefers-contrast` and `prefers-reduced-motion` honoured.
 * `tools/validate_albers_contrast.R` (in the source repository) checks every
   text role against every ground for every family and direction (362 pairs,
   all at least 4.5:1).
 
-## Other changes
+## Setup helpers
 
-* `use_albersdown()` now moves a package onto the format by default
-  (`method = "format"`): each vignette's `output:` is switched to
-  `albersdown::albers_vignette`, `DESCRIPTION` gains `albersdown`, `knitr` and
-  `rmarkdown` in `Suggests` (and `VignetteBuilder: knitr`), and `_pkgdown.yml`
-  points at the template. Edits are textual, so other output formats, comments
-  and key order are kept; changed files are backed up to `.albersdown.bak/`.
-  `method = "vendor"` keeps the 2.0 behaviour (copying the assets into
-  `vignettes/`), which `migrate_albersdown()` and `use_albers_vignettes()` still
-  use. The README note is now opt-in (`readme = TRUE`), and `pkgdown/` is added
-  to `.Rbuildignore`. For vignettes already on the format, a re-run only
-  updates their family and direction.
-* The retrofit keeps a vignette's own `css:` and `includes:` (only albersdown's
-  old `albers.css`/`albers-header.html` hooks are removed), leaves vignettes on
-  other formats (e.g. bookdown) or with another format listed first unchanged,
-  never overwrites a file's first backup, validates `family`, refuses a
-  directory that is not a package, and on a re-run updates the family and
-  direction of vignettes already on the format.
-* The format retrofit writes `albersdown (>= <installed version>)` in
-  `Suggests`, since CRAN albersdown 2.0.0 has no `albers_vignette()`; while
-  that version is a development version it also adds
-  `Remotes: bbuchsbaum/albersdown` and says so. A bare `albersdown` in
-  `Config/Needs/website` is folded into `bbuchsbaum/albersdown`.
-* The retrofit migrates a package set up by albersdown 2.0: it removes the
-  setup-chunk lines 2.0 added (`ragg`, font registration, and the
-  `theme_set(... params$family ...)` line that re-themed plots in the old
-  family), the `family`/`preset` params when nothing else reads them, 2.0's
-  `pkgdown/extra.css` (an `@import` of the theme) and `pkgdown/extra.js` (an
-  old copy of `albers.js`), rewrites its README note, and moves the copied
-  `albers.css`, `albers.js`, `albers-header.html` and fonts from `vignettes/`
-  to `.albersdown.bak/`.
-* The retrofit adds vignette dependencies (`albersdown` with its bound,
-  `knitr`, `rmarkdown`, `VignetteBuilder`, `Remotes`) only when a vignette is on
-  the format; otherwise (no vignettes, none convertible, or `apply_to = "new"`)
-  it changes only `_pkgdown.yml` and `Config/Needs/website`, a site-only
-  adoption that R CMD check does not see. An albersdown already in `Imports` or
-  `Depends` gets the bound there instead of a second listing in `Suggests`; a
-  pinned or `github::` website reference is not duplicated.
+* `use_albersdown()` moves a package onto the format by default
+  (`method = "format"`): each `html_vignette` vignette's `output:` is switched
+  to `albersdown::albers_vignette`, `DESCRIPTION` gains
+  `albersdown (>= <installed version>)` (in `Suggests`, or where albersdown is
+  already in `Imports`/`Depends`), `knitr`, `rmarkdown` and
+  `VignetteBuilder: knitr`, and `_pkgdown.yml` points at the template. When the
+  installed albersdown is a development version it also adds
+  `Remotes: bbuchsbaum/albersdown` and says so. `method = "vendor"` keeps the
+  2.0 behaviour (copying the assets into `vignettes/`).
+* Vignette dependencies are added only when a vignette is on the format;
+  otherwise (no vignettes, none convertible, or `apply_to = "new"`) only
+  `_pkgdown.yml` and `Config/Needs/website` change, a site-only adoption that
+  R CMD check does not see.
+* Edits are textual: other output formats, a vignette's own `css:` and
+  `includes:`, comments, key order, CRLF line endings and a byte-order mark are
+  kept; vignettes on other formats, Quarto vignettes, flow-style
+  `output: {...}` headers and `vignettes/articles/` are reported and left
+  alone. Changed files are backed up to `.albersdown.bak/` (a first backup is
+  never overwritten); `_pkgdown.yml`, `pkgdown/` and `.albersdown.bak/` are
+  added to `.Rbuildignore`. `dry_run = TRUE` lists every change.
+* A package set up by albersdown 2.0 is migrated: the setup-chunk lines and
+  `family`/`preset` params 2.0 added, its `pkgdown/extra.css` and
+  `pkgdown/extra.js`, and its README note are removed or rewritten, and the
+  copied assets are moved from `vignettes/` to `.albersdown.bak/`.
 * `use_albersdown()` and `migrate_albersdown()` called without `family` or
-  `preset` keep the package's current choice, read from its vignettes
-  (`albers_vignette()` entries or albersdown 2.0's `params`, the most common
-  if they differ; a vignette that leaves `family` out is not counted) or its
-  site defaults (`pkgdown/extra.js`, `_pkgdown.yml`; these come first with
-  `apply_to = "new"`, which only sets up the site), and say so; they fall back to red/homage only when nothing is found.
-  Previously a 2.0 migration without `family` switched the package to red.
-* `family` and `preset` in `use_albersdown()`, and `family`, `preset` and
-  `style` in `albers_vignette()`, are matched case-insensitively (`"Teal"`
-  works), and a bad value gives an error naming the function and the argument.
-* The retrofit removes albersdown 2.0's `family`/`preset` params only from files
-  2.0 set up, so a vignette's own `family` parameter is kept.
-* With `readme = TRUE` the note goes in `README.Rmd` when there is one, and on
-  the site-only route it describes only the site; a README note from
-  albersdown 2.0 is rewritten only once the vignettes are on the format.
-  Flow-style `output: {...}` headers are reported as such, and file names or
-  YAML containing braces no longer break the helper's messages.
-* The retrofit adds `_pkgdown.yml` (and, when it creates the file, `docs/`) to
-  `.Rbuildignore`, so it no longer causes an R CMD check NOTE.
-* The retrofit finds YAML headers as rmarkdown does (trailing blanks on the
-  fences, a closing `...`), keeps CRLF line endings and a byte-order mark,
-  writes a README note that describes the format with `readme = TRUE`, lists
-  `.Rbuildignore`/`.gitignore` edits in a dry run, and says why Quarto
-  vignettes and `vignettes/articles/` are not converted.
-* `albers_vignette()` gives base-graphics plots the page's ground, ink, font and
-  family palette.
-* `albers_vignette()` writes equations as MathML by default
-  (`math_method = "mathml"`), so pages with math need no CDN.
-* A site's own `pkgdown/extra.css` loads after the theme again, so it can
-  override it.
-* `scale_color_albers()`/`scale_fill_albers()` gain `type = c("contrast",
-  "family")`; the default pairs the family with its complement. New
-  `albers_discrete()`.
+  `preset` keep the package's current choice (read from its vignettes or site
+  defaults) and say where they found it; previously a 2.0 migration without
+  `family` switched the package to red.
+* `family`, `preset` and `style` are matched case-insensitively, and a bad
+  value gives an error naming the function and the argument.
+* The README note is opt-in (`readme = TRUE`) and goes in `README.Rmd` when
+  there is one.
 
 # albersdown 2.0.0
 

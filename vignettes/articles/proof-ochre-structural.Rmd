@@ -8,11 +8,6 @@ output:
     preset: interaction
     toc: yes
     toc_depth: 2
-
-vignette: |
-  %\VignetteIndexEntry{Theme Proof: Interaction + Ochre}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, include=FALSE}

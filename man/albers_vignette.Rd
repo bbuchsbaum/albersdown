@@ -14,6 +14,7 @@ albers_vignette(
   fig_height = 4.1,
   plot_theme = TRUE,
   dark_figures = TRUE,
+  phone_figures = TRUE,
   math_method = "mathml",
   fonts = c("direction", "both"),
   css = NULL,
@@ -47,6 +48,15 @@ that version in dark mode instead of a light plot on a dark page. This
 adds one image per plot to the HTML. Plots in chunks with
 \code{fig.show = "hold"}, \code{"animate"} or \code{"hide"} get no dark version and stay
 light in dark mode.}
+
+\item{phone_figures}{If \code{TRUE}, each plot (ggplot2, grid or base
+graphics) is also drawn at phone width (3.6 in, the same aspect ratio),
+so its text is legible in a phone's column; the page shows that drawing
+while the figure is displayed narrower than about 470 CSS px, in light
+and dark mode alike (the dark version is drawn when \code{dark_figures} is
+on). Printing and the enlarged view use the full figure. Figures
+narrower than 4.5 in, figures whose \code{out.width} is not a percentage,
+animations and non-PNG devices are left as they are.}
 
 \item{math_method}{How equations are rendered. The default \code{"mathml"}
 has pandoc write native MathML, which browsers display without any
@@ -90,14 +100,11 @@ the \code{ragg} device when available), and, when \code{plot_theme = TRUE} and
 ggplot2 is installed, sets \code{\link[=theme_albers]{theme_albers()}} as the ggplot2 theme for the
 duration of the render.
 
-\code{albers_vignette()} is new in the development version of albersdown
-(2.0.0.9000); CRAN's albersdown 2.0.0 does not have it. A package whose
-vignettes use it should declare \verb{albersdown (>= 2.0.0.9000)} and, until
-that version is on CRAN, \code{Remotes: bbuchsbaum/albersdown} (as
+\code{albers_vignette()} is new in albersdown 2.1.0. A package whose vignettes
+use it should declare \verb{albersdown (>= 2.1.0)} in \code{Suggests} (as
 \code{\link[=use_albersdown]{use_albersdown()}} writes). If building a vignette fails with
 \verb{'albers_vignette' is not an exported object from 'namespace:albersdown'},
-the albersdown installed is CRAN's 2.0.0: install the development version
-with \code{pak::pak("bbuchsbaum/albersdown")}.
+the albersdown installed is 2.0.0 or older: update it.
 }
 \examples{
 \dontrun{

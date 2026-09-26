@@ -9,11 +9,6 @@ output:
     toc: yes
     toc_depth: 2
     df_print: kable
-
-vignette: |
-  %\VignetteIndexEntry{Design notes: Homage system}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, include=FALSE}

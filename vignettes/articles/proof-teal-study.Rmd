@@ -8,11 +8,6 @@ output:
     preset: homage
     toc: yes
     toc_depth: 2
-
-vignette: |
-  %\VignetteIndexEntry{Theme Proof: Homage + Teal}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, include=FALSE}

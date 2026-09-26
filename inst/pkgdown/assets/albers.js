@@ -156,12 +156,17 @@
   // history entry, so Back to an earlier visit gets that visit's place.)
   var PLACE_KEY = null, savedPlace = null;
   try {
-    var st = history.state && typeof history.state === "object" ? history.state : null;
+    // (another script's state that is not a plain object is left alone;
+    // the place then lives in session storage only)
+    var st0 = history.state;
+    var plainState = st0 === null || (typeof st0 === "object" && !Array.isArray(st0) && Object.getPrototypeOf(st0) === Object.prototype);
+    var st = plainState ? st0 : null;
     var entry = st && st.albersEntry;
-    if (!entry) {
+    if (!entry && plainState) {
       entry = String(Date.now()) + Math.random().toString(36).slice(2, 7);
       history.replaceState(Object.assign({}, st || {}, { albersEntry: entry }), "");
     }
+    entry = entry || "page";
     PLACE_KEY = "albers-place:" + location.pathname + ":" + entry;
     var navEntry = performance.getEntriesByType ? performance.getEntriesByType("navigation")[0] : null;
     if (navEntry && navEntry.type !== "navigate") {
@@ -501,7 +506,7 @@
           Array.from(img.closest("div.figure, figure").querySelectorAll("img")).filter(function (i) { return getComputedStyle(i).display !== "none"; })[0] || img : img;
         var capEl = img.closest("div.figure, figure");
         capEl = capEl && capEl.querySelector("p.caption, figcaption");
-        open(shown.getAttribute("src"), shown.getAttribute("alt"), capEl && capEl.textContent.trim() ? capEl : null);
+        open(shown.albersFull || shown.getAttribute("src"), shown.getAttribute("alt"), capEl && capEl.textContent.trim() ? capEl : null);
       }
       img.addEventListener("click", go);
       img.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); } });
@@ -633,7 +638,8 @@
       return false;
     }
     var lambdas = [], lm, LAM = /\\\([^()]*\)/g;
-    while ((lm = LAM.exec(text))) lambdas.push([lm.index, lm.index + lm[0].length]);
+    // (a "\\(" inside a string literal is no lambda)
+    while ((lm = LAM.exec(text))) if (!inString(lm.index + 1)) lambdas.push([lm.index, lm.index + lm[0].length]);
     function inLambda(o) {
       for (var k = 0; k < lambdas.length; k++) if (o > lambdas[k][0] && o < lambdas[k][1]) return true;
       return false;
@@ -722,8 +728,32 @@
   // a string and the punctuation that closes it ('"...")', '"...", ') as
   // one inline run: when its segment has to wrap, the run is kept whole if it
   // fits the line's room (fitSegments), so the break falls before the string
+  // does this text hold a whole string literal (its closing quote, not an
+  // escaped one)?
+  function literalClosed(t) {
+    var q = t.charAt(0);
+    if (q !== '"' && q !== "'") return true;
+    for (var i = 1; i < t.length; i++) {
+      if (t.charAt(i) === "\\") i++;
+      else if (t.charAt(i) === q) return true;
+    }
+    return false;
+  }
   function stringRuns(span) {
+    // (pandoc writes an escape inside a string as its own .sc span between
+    // .st spans -- "\\(" is .st .sc .st -- so a literal's adjoining pieces
+    // are joined into one first; the line breaker allowed "\\" / "(")
     Array.from(span.querySelectorAll(".st")).forEach(function (st) {
+      if (!st.parentNode) return;
+      var nx = st.nextSibling;
+      while (nx && nx.nodeType === 1 && (nx.classList.contains("sc") || nx.classList.contains("st")) && !literalClosed(st.textContent)) {
+        var after = nx.nextSibling;
+        st.appendChild(nx);
+        nx = after;
+      }
+    });
+    Array.from(span.querySelectorAll(".st")).forEach(function (st) {
+      if (st.parentNode && st.parentNode.closest && st.parentNode.closest(".st")) return;
       var run = [st], next = st.nextSibling;
       // downlit puts ")" in its own .op span
       while (next && next.nodeType === 1 && /^[)\]}]+$/.test(next.textContent)) { run.push(next); next = next.nextSibling; }
@@ -996,7 +1026,7 @@
     if (charProbe.getAttribute("data-font") !== css) { charProbe.style.cssText = css; charProbe.setAttribute("data-font", css); }
     return charProbe.getBoundingClientRect().width / 10;
   }
-  var charProbe = null;
+  var charProbe = null, printingCode = false;
 
 
   // (`lines`, with a single code element: fit only those lines, the ones a
@@ -1030,15 +1060,59 @@
       // widths by arithmetic: characters x one character's width
       // (indentation included: it is drawn at full width everywhere)
       var iw = cw;
-      var phone = window.matchMedia && window.matchMedia("(max-width: 620px)").matches;
+      // (paper takes the author's own indentation, whatever window printed it)
+      var phone = !printingCode && window.matchMedia && window.matchMedia("(max-width: 620px)").matches;
       function width(el) {
         var text = el.textContent.replace(/\s+$/, "");
         // wide scripts (CJK, emoji) are not one character wide: measure them
         if (WIDE.test(text)) return inkWidth(el);
         var ind = 0;
         Array.from(el.querySelectorAll(".albers-indent")).forEach(function (s) { ind += s.textContent.length; });
-        return (text.length - ind) * cw + ind * iw;
+        // (indentation at the width it is drawn: on a phone an author's
+        // alignment may be redrawn at the call's depth, below)
+        var ln = ind && el.closest ? el.closest("pre > code > span") : null;
+        var shown = ln && drawn.has(ln) ? drawn.get(ln) : ind;
+        return (text.length - ind) * cw + shown * iw;
       }
+      // On a phone an author's alignment under an open bracket is redrawn at
+      // the call's depth: the aligned lines, and everything nested in them,
+      // move left to the opener's indent + 2ch -- the column its own wrapped
+      // arguments take -- so siblings share one column and children stay
+      // deeper than their parent. Only the drawn width of the indentation
+      // changes (letter-spacing), never the text. Arithmetic only.
+      var drawn = new Map(), redrawnOpeners = new Set();
+      var all = Array.from(code.querySelectorAll(":scope > span:not(.albers-out-block)"));
+      if (phone) {
+        var orig = all.map(function (ln) { return parseInt(ln.getAttribute("data-ind") || "0", 10) || 0; });
+        var cur = orig.slice();
+        var blank = all.map(function (ln) { return !/\S/.test(ln.textContent); });
+        all.forEach(function (ln, i) {
+          var at = parseInt(ln.getAttribute("data-hang") || "", 10);
+          if (!(at > 0)) return;
+          var j = i + 1;
+          while (j < all.length && blank[j]) j++;
+          if (j >= all.length || orig[j] !== at) return;
+          // the bracket's column as drawn, and the column it moves to
+          var extra = (at - (orig[i] - cur[i])) - (cur[i] + 2);
+          if (extra <= 0) return;
+          redrawnOpeners.add(ln);
+          for (var k = j; k < all.length && (blank[k] || orig[k] >= at); k++) if (!blank[k]) cur[k] -= extra;
+        });
+        all.forEach(function (ln, i) { if (cur[i] !== orig[i]) drawn.set(ln, cur[i]); });
+      }
+      all.forEach(function (ln) {
+        var o = parseInt(ln.getAttribute("data-ind") || "0", 10) || 0;
+        if (drawn.has(ln)) {
+          var d = drawn.get(ln);
+          // (over the indent's o spaces: its zero-width joiner takes no
+          // letter-spacing)
+          jobs.push({ el: ln, prop: "--ind", val: d + "ch" });
+          jobs.push({ el: ln, prop: "--ind-ls", val: ((d - o) / o).toFixed(4) + "ch" });
+        } else if (ln.style.getPropertyValue("--ind-ls")) {
+          jobs.push({ el: ln, prop: "--ind", val: o ? o + "ch" : null });
+          jobs.push({ el: ln, prop: "--ind-ls", val: null });
+        }
+      });
       // the "::" and "$" breaks inside a run (between the segment's ordinary
       // break points: spaces outside glued units, visible <wbr>s) that is
       // wider than the room -- only those may be used
@@ -1069,7 +1143,7 @@
         if (lt.length * cw <= room - 2 * cw && !WIDE.test(lt)) return;
         var segs = line.querySelectorAll(":scope > .albers-seg");
         if (!segs.length) return;
-        var key = line.style.getPropertyValue("--ind") || "0";
+        var key = String(drawn.has(line) ? drawn.get(line) : (parseInt(line.getAttribute("data-ind") || "0", 10) || 0));
         // rows the line takes with continuations at hang h (greedy, as the
         // browser fills them: the first row has the whole room)
         var segW = null;
@@ -1097,9 +1171,12 @@
         var hang = (parseInt(key, 10) || 0) * iw + (phone ? 2 : 4) * cw;
         var plainHang = hang;
         var at = parseInt(line.getAttribute("data-hang") || "", 10);
-        if (at > 0) {
-          // indentation counts at its own (on phones half) width; capped at
-          // half the room so deep calls still leave space to wrap into
+        // (an opener whose aligned lines were redrawn at its depth wraps at
+        // that same column: the plain hang)
+        if (at > 0 && redrawnOpeners.has(line)) jobs.push({ el: line, hang: null });
+        else if (at > 0) {
+          // capped at half the room (a quarter on phones) so deep calls
+          // still leave space to wrap into
           var indN = parseInt(key, 10) || 0;
           // (never left of the plain hang: a deeply indented line's
           // continuation went back under its own indent)
@@ -1173,7 +1250,11 @@
     });
     var want = new Map();
     jobs.forEach(function (j) {
-      if (j.hang === null) { if (j.el.style.getPropertyValue("--hang")) j.el.style.removeProperty("--hang"); }
+      if (j.prop) {
+        if (j.val === null) j.el.style.removeProperty(j.prop);
+        else if (j.el.style.getPropertyValue(j.prop) !== j.val) j.el.style.setProperty(j.prop, j.val);
+      }
+      else if (j.hang === null) { if (j.el.style.getPropertyValue("--hang")) j.el.style.removeProperty("--hang"); }
       else if (j.hang !== undefined) { if (j.el.style.getPropertyValue("--hang") !== j.hang + "px") j.el.style.setProperty("--hang", j.hang + "px"); }
       else if (j.over) { var w = want.get(j.el) || []; w.push(j.cls); want.set(j.el, w); }
     });
@@ -1222,9 +1303,9 @@
     var moved = !!(nav && nav.type !== "navigate") && !place;
     // the browser restores its own offset around the load event: scrolls
     // until then are not the reader's, and the place is corrected after it
-    var loaded = document.readyState === "complete";
+    var loaded = document.readyState === "complete", loadedAt = loaded ? Date.now() : 0, relands = 0;
     if (!loaded) window.addEventListener("load", function () {
-      nextFrame(function () { nextFrame(function () { loaded = true; if (place) schedule(); }); });
+      nextFrame(function () { nextFrame(function () { loaded = true; loadedAt = Date.now(); if (place) schedule(); }); });
     });
     var landed = null, since = Date.now();
     ["wheel", "touchmove", "keydown", "pointerdown"].forEach(function (ev) {
@@ -1241,9 +1322,11 @@
       var el = landingEl();
       if (el && Math.abs(el.getBoundingClientRect().top - landed) <= 48) return;
       // a returning page's saved place is re-landed when a scroll without
-      // reader input moves it away in the first seconds: Chrome restores its
-      // own offset after the load event, over the correction
-      if (place && el && Date.now() - since <= 10000) schedule();
+      // reader input moves it away just after load -- Chrome restores its
+      // own offset just after the load event, over the correction -- but
+      // only within 0.7 s of load and twice at most: later, a scroll without
+      // input is find, focus or a screen reader, and is the reader's
+      if (place && el && relands < 2 && loadedAt && Date.now() - loadedAt <= 700) { relands++; schedule(); }
       else moved = true;
     }, { passive: true });
     function refit() {
@@ -1321,8 +1404,8 @@
     } else {
       window.addEventListener("resize", scheduleResized);
     }
-    window.addEventListener("beforeprint", refit);
-    window.addEventListener("afterprint", refit);
+    window.addEventListener("beforeprint", function () { printingCode = true; refit(); });
+    window.addEventListener("afterprint", function () { printingCode = false; refit(); });
   }
 
   // Each source line hangs from its own indentation when it wraps.
@@ -1344,7 +1427,7 @@
     detached(code, function () {
       lines.forEach(function (line) {
         var m = /^( +)/.exec(line.textContent);
-        if (m) line.style.setProperty("--ind", m[1].length + "ch");
+        if (m) { line.style.setProperty("--ind", m[1].length + "ch"); line.setAttribute("data-ind", m[1].length); }
         segmentLine(line);
       });
     });
@@ -1428,9 +1511,19 @@
   // find, scrollIntoView) is not interrupted: preparing code with its place
   // correction cancelled it, stopping far short. Work that would move the
   // page waits until that scroll ends.
+  // (the reader's own scrolling: the wheel, touch, the scrolling keys, and a
+  // press that is not on a link -- a link's press starts the very smooth
+  // scroll that must not be interrupted, and counted as input it let
+  // preparation cancel a contents click mid-flight)
   var lastInput = 0, autoScrolling = false, autoEnd = null, afterScroll = [];
+  var SCROLL_KEYS = /^(ArrowUp|ArrowDown|PageUp|PageDown|Home|End| |Spacebar)$/;
+  function readerInput(e) {
+    if (e.type === "keydown" && !SCROLL_KEYS.test(e.key)) return;
+    if (e.type === "pointerdown" && e.target && e.target.closest && e.target.closest("a[href]")) return;
+    lastInput = Date.now();
+  }
   ["wheel", "touchmove", "keydown", "pointerdown"].forEach(function (ev) {
-    window.addEventListener(ev, function () { lastInput = Date.now(); }, { passive: true, capture: true });
+    window.addEventListener(ev, readerInput, { passive: true, capture: true });
   });
   function endAutoScroll() {
     autoScrolling = false;
@@ -1552,6 +1645,12 @@
     var scope = document.querySelector("main") || document.body;
     return Array.prototype.slice.call(scope.querySelectorAll(PLACE_SEL));
   }
+  // a code line's text with the lines around it (repeated lines differ in
+  // their neighbours)
+  function lineContext(line) {
+    var prev = line.previousElementSibling, next = line.nextElementSibling;
+    return [prev, line, next].map(function (l) { return l ? placeText(l).slice(0, 40) : ""; }).join("|");
+  }
   function placeText(el) { return (el.textContent || "").replace(/\s+/g, " ").trim().slice(0, 60); }
   function savePlace(codes) {
     try {
@@ -1565,7 +1664,7 @@
           var line = el.closest("pre > code.sourceCode > span");
           if (line) {
             var code = line.parentElement;
-            rec = { c: codes.indexOf(code), l: Array.prototype.indexOf.call(code.children, line), top: line.getBoundingClientRect().top };
+            rec = { c: codes.indexOf(code), l: Array.prototype.indexOf.call(code.children, line), top: line.getBoundingClientRect().top, t: lineContext(line) };
             continue;
           }
           var block = el.closest(PLACE_SEL);
@@ -1579,9 +1678,18 @@
       if (window.scrollY <= 0) rec = { atTop: true };
       // kept in the history entry itself (storage may be blocked) and in
       // session storage
+      // (only into a state that is null or a plain object -- another script's
+      // string or array is left alone -- only when the place changed, and
+      // not into a very large one)
       try {
-        var hs = history.state && typeof history.state === "object" ? history.state : {};
-        history.replaceState(Object.assign({}, hs, { albersPlace: rec || null }), "");
+        var hs = history.state;
+        var plain = hs === null || (typeof hs === "object" && !Array.isArray(hs) && Object.getPrototypeOf(hs) === Object.prototype);
+        if (plain) {
+          var before = hs && hs.albersPlace ? JSON.stringify(hs.albersPlace) : "null";
+          if (before !== JSON.stringify(rec || null) && (!hs || JSON.stringify(hs).length < 65536)) {
+            history.replaceState(Object.assign({}, hs || {}, { albersPlace: rec || null }), "");
+          }
+        }
       } catch (e3) {}
       try {
         if (rec) sessionStorage.setItem(PLACE_KEY, JSON.stringify(rec));
@@ -1608,7 +1716,27 @@
       }
     }
     else if (savedPlace.id) el = document.getElementById(savedPlace.id);
-    else if (codes[savedPlace.c]) el = codes[savedPlace.c].children[savedPlace.l] || null;
+    else if (savedPlace.c !== undefined) {
+      // (a code line by block and line, checked against its text; if the
+      // page was rebuilt, the nearest line with the same text)
+      el = codes[savedPlace.c] ? codes[savedPlace.c].children[savedPlace.l] || null : null;
+      if (savedPlace.t && (!el || lineContext(el) !== savedPlace.t)) {
+        // (the line with its neighbours, so a repeated line is not taken for
+        // another; if nothing matches -- the line was edited -- its old place
+        // by index is the best guess left)
+        var byIndex = el;
+        el = null;
+        var lines = [];
+        codes.forEach(function (c) { Array.prototype.push.apply(lines, c.children); });
+        var near = codes[savedPlace.c] && codes[savedPlace.c].children[0] ? lines.indexOf(codes[savedPlace.c].children[0]) + savedPlace.l : 0;
+        for (var dd = 0; dd < lines.length && !el; dd++) {
+          [near - dd, near + dd].forEach(function (k) {
+            if (!el && lines[k] && lineContext(lines[k]) === savedPlace.t) el = lines[k];
+          });
+        }
+        el = el || byIndex;
+      }
+    }
     return el ? { el: el, top: savedPlace.top || 0 } : null;
   }
 
@@ -1635,7 +1763,9 @@
     // (a restore without a saved place: prepare everything, so the
     // browser's saved offset still means what it meant)
     var place = restoring && total > 600 ? placeTarget(codes) : null;
-    if (typeof IntersectionObserver === "undefined" || total <= 600 || (restoring && !place)) { codes.forEach(finishCode); return; }
+    // (a saved place that is no longer on the page -- edited between visits
+    // -- is not a reason to prepare everything: that cost two seconds)
+    if (typeof IntersectionObserver === "undefined" || total <= 600 || (restoring && !place && !savedPlace)) { codes.forEach(finishCode); return; }
     if (place && place.atTop) place = null;
     var target = place ? place.el : null;
     try { if (!target && location.hash) target = document.getElementById(decodeURIComponent(location.hash.slice(1))); } catch (e) {}
@@ -1712,6 +1842,60 @@
       }
       if (holder !== twin && holder.parentNode) holder.parentNode.removeChild(holder);
     });
+  }
+
+  // Phone twins: albers_vignette() also draws each plot at phone width and
+  // puts it, hidden, after the figure (the dark twin's in the paragraph after
+  // it). While a figure is shown narrower than data-albers-below (CSS px), it
+  // shows the phone drawing, whose text keeps its size; print and the zoom
+  // use the full drawing.
+  function initPhoneTwins() {
+    var swaps = [];
+    Array.from(document.querySelectorAll("img.albers-phone-twin")).forEach(function (ph) {
+      var holder = ph.parentElement && ph.parentElement.tagName === "P" && ph.parentElement.children.length === 1
+        ? ph.parentElement : ph;
+      var img;
+      if (ph.classList.contains("albers-phone-dark")) {
+        img = holder.previousElementSibling;
+        if (img && !img.matches("img.albers-dark-twin")) img = img.querySelector("img.albers-dark-twin");
+      } else {
+        img = ph.previousElementSibling;
+        while (img && img.matches("img.albers-dark-twin, img.albers-phone-twin")) img = img.previousElementSibling;
+      }
+      var below = parseFloat(ph.getAttribute("data-albers-below"));
+      if (img && img.tagName === "IMG" && below > 0) {
+        img.albersFull = img.getAttribute("src");
+        swaps.push({ img: img, phone: ph.getAttribute("src"), below: below });
+      }
+      if (holder.parentNode) holder.parentNode.removeChild(holder);
+    });
+    if (!swaps.length) return;
+    var printing = false, queued = false;
+    function fit() {
+      queued = false;
+      swaps.forEach(function (s) {
+        // the light image and its dark twin share one width; one is hidden
+        var w = 0;
+        Array.from(s.img.parentElement.children).forEach(function (el) {
+          if (el.tagName === "IMG") w = Math.max(w, el.getBoundingClientRect().width);
+        });
+        // (only on a phone-width screen: a figure shown narrow on a desktop
+        // -- out.width 50%, side by side -- keeps its own drawing and shape)
+        var phoneScreen = !!(window.matchMedia && window.matchMedia("(max-width: 620px)").matches);
+        var src = !printing && phoneScreen && w > 0 && w < s.below ? s.phone : s.img.albersFull;
+        if (s.img.getAttribute("src") !== src) s.img.setAttribute("src", src);
+      });
+    }
+    fit();
+    function queue() { if (!queued) { queued = true; nextFrame(fit); } }
+    window.addEventListener("resize", queue);
+    // (a figure first shown later -- in <details>, a tab -- changes size)
+    if (typeof ResizeObserver !== "undefined") {
+      var fro = new ResizeObserver(queue);
+      swaps.forEach(function (s) { fro.observe(s.img); });
+    }
+    window.addEventListener("beforeprint", function () { printing = true; fit(); });
+    window.addEventListener("afterprint", function () { printing = false; fit(); });
   }
 
   /* pkgdown article headers carry the same title plate as vignettes */
@@ -1966,6 +2150,13 @@
   // echo = FALSE) is a plain <pre>: a message there wraps like prose. Then no
   // U+2063 mark is left anywhere to be copied, found or printed.
   function initPlainMessages() {
+    // an echo-free chunk is a plain <pre> of "#>" lines: it is output, and
+    // reads as output (the ink and pitch of an output band)
+    Array.from(document.querySelectorAll("pre:not(.sourceCode) > code:not(.sourceCode)")).forEach(function (code) {
+      var lines = code.textContent.split("\n").filter(function (l) { return /\S/.test(l); });
+      // ("#>" by default; "##" is knitr's own default comment)
+      if (lines.length && lines.every(function (l) { return /^(#>|##)/.test(l); })) code.parentElement.classList.add("albers-plain-out");
+    });
     Array.from(document.querySelectorAll("pre > code")).forEach(function (code) {
       if (!MARK_RE.test(code.textContent)) return;
       if (!code.querySelector(":scope > span")) {
@@ -2698,6 +2889,7 @@
     }
     if (!vignette) { safely(initSitePlate); safely(initSiteA11y); }
     safely(initFigureTwins);
+    safely(initPhoneTwins);
     safely(initWideBlocks);
 
     safely(initMath);

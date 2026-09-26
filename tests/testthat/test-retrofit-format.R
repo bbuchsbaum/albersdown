@@ -35,6 +35,22 @@ test_that("DESCRIPTION gets a version bound and, for a development version, Remo
   expect_match(msg, "--as-cran", fixed = TRUE)
 })
 
+test_that("a released version gets a plain version bound, with no Remotes or Remotes note", {
+  pkg <- toy_pkg(c("Suggests:", "    testthat"))
+  withr::local_dir(pkg)
+  msg <- paste(testthat::capture_messages(.ensure_vignette_deps(version = "2.1.0")), collapse = "")
+  desc <- readLines("DESCRIPTION")
+  expect_true("    albersdown (>= 2.1.0)," %in% desc)
+  d <- read.dcf("DESCRIPTION")
+  expect_false("Remotes" %in% colnames(d))
+  expect_identical(d[, "VignetteBuilder"], c(VignetteBuilder = "knitr"))
+  expect_no_match(msg, "Remotes: bbuchsbaum/albersdown", fixed = TRUE)
+  expect_no_match(msg, "not on CRAN", fixed = TRUE)
+  # idempotent
+  expect_false(suppressMessages(.ensure_vignette_deps(version = "2.1.0")))
+  expect_identical(readLines("DESCRIPTION"), desc)
+})
+
 test_that("existing bounds and Remotes are respected; a release adds no Remotes", {
   pkg <- toy_pkg(c("Suggests: knitr, albersdown (>= 1.0), rmarkdown",
                    "Remotes:", "    r-lib/foo,", "    github::bbuchsbaum/albersdown@main"))

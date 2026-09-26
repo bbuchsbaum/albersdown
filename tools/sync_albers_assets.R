@@ -180,8 +180,9 @@ sync_css <- function() {
   # minified copy
   core <- lines[!is_face]
   faces <- sub('url\\("fonts/', 'url("../fonts/', lines[is_face])
-  homage <- c("Newsreader", "Familjen Grotesk", "Spline Sans Mono")
-  interaction <- c("Hanken Grotesk", "Space Grotesk", "JetBrains Mono")
+  # (each direction's web faces and their metric-matched local fallbacks)
+  homage <- c("Newsreader", "Newsreader Fallback", "Familjen Grotesk", "Familjen Grotesk Fallback", "Spline Sans Mono")
+  interaction <- c("Hanken Grotesk", "Hanken Grotesk Fallback", "Space Grotesk", "Space Grotesk Fallback", "JetBrains Mono")
   pick <- function(fams) faces[vapply(faces, function(f) any(vapply(fams, function(x) grepl(sprintf('"%s"', x), f, fixed = TRUE), logical(1))), logical(1))]
   write_if_changed("inst/format/albers-fonts-homage.css", pick(homage))
   write_if_changed("inst/format/albers-fonts-interaction.css", pick(interaction))

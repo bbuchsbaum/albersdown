@@ -34,29 +34,22 @@ and in `DESCRIPTION`:
 
 ```
 Suggests:
-    albersdown (>= 2.0.0.9000),
+    albersdown (>= 2.1.0),
     knitr,
     rmarkdown
 VignetteBuilder: knitr
-Remotes: bbuchsbaum/albersdown
 ```
 
-That is all. `albers_vignette()` is in the development version of albersdown
-(2.0.0.9000), not yet on CRAN, hence the version bound and `Remotes`, which
-make R CMD check and CI install it from GitHub (`R CMD check --as-cran` notes
-the unknown `Remotes` field). A package headed for CRAN has to wait until the
-release with `albers_vignette()` is on CRAN, and then declare that version,
-e.g. `albersdown (>= 2.1.0)`; until then it can use the pkgdown site theme
-alone (below).
-
-If a vignette build fails with `'albers_vignette' is not an exported object
-from 'namespace:albersdown'`, the albersdown being used is CRAN's 2.0.0 (R does
-not enforce `Suggests` versions when building): install the development
-version with `pak::pak("bbuchsbaum/albersdown")`.
+That is all. `albers_vignette()` is new in albersdown 2.1.0, hence the version
+bound. If a vignette build fails with `'albers_vignette' is not an exported
+object from 'namespace:albersdown'`, the albersdown being used is 2.0.0 or
+older (R does not enforce `Suggests` versions when building): update it with
+`install.packages("albersdown")`.
 
 The format sets knitr defaults, uses `theme_albers()` for plots while the
-vignette renders, and renders a dark version of each ggplot for
-readers in dark mode. Scales follow the vignette's family:
+vignette renders, renders a dark version of each ggplot for readers in dark
+mode, and draws each plot a second time at phone width so its text stays
+legible on a phone. Scales follow the vignette's family:
 
 ```r
 ggplot(mtcars, aes(wt, mpg, colour = factor(cyl))) +
@@ -81,13 +74,18 @@ Ordinary R Markdown, plus a few conventions the theme understands:
 Margin notes and `.wide` blocks use the margin column of the vignette layout; on
 a pkgdown site, footnotes use pkgdown's own popovers.
 
-What it adds to a vignette: about 155 KB of embedded fonts for Homage (about
-130 KB for Interaction) and about 110 KB of stylesheet and script, so a vignette
-with one short chunk is about 285 KB, plus a dark version of each ggplot figure
-(turn that off with `dark_figures = FALSE`). The same cost lands in the package
-tarball for every vignette. Plots drawn with `print(p)` or base graphics, and
-plots in chunks with `fig.show = "hold"`, `"animate"` or `"hide"`, get no dark
-version (they stay light in dark mode).
+What it adds to a vignette: about 158 KB of embedded fonts for Homage (131 KB
+for Interaction) and about 176 KB of stylesheet and script, so a vignette with
+one short chunk and no plot is about 335 KB (Homage) or 309 KB (Interaction).
+Each plot then adds its image several times: a dark version of each ggplot
+(`dark_figures = FALSE` turns it off) and a phone-width drawing of each plot,
+light and dark (`phone_figures = FALSE` turns it off). For a simple
+`geom_point()` plot that is about 77 KB for the light and dark figures plus
+about 66 KB for their phone versions, so a one-plot vignette is about 480 KB
+(Homage). The same cost lands in the package tarball for every vignette.
+Plots drawn with `print(p)` or base graphics, and plots in chunks with
+`fig.show = "hold"`, `"animate"` or `"hide"`, get no dark version (they stay
+light in dark mode).
 
 To start a new vignette from the template: `rmarkdown::draft("vignettes/intro.Rmd",
 template = "albers_vignette", package = "albersdown")`, or *File > New File >
@@ -106,11 +104,10 @@ template:
 
 and `Config/Needs/website: bbuchsbaum/albersdown` in `DESCRIPTION`. Neither
 is read by R CMD check, so a CRAN package can theme its site this way without
-changing its vignettes or dependencies. The site build does need the
-development albersdown (2.0.0.9000 or later): `Config/Needs/website` makes a
-pkgdown CI workflow install it from GitHub, and locally install it with
-`pak::pak("bbuchsbaum/albersdown")`. With CRAN's albersdown 2.0.0 installed,
-pkgdown builds a plain Bootstrap site without an error. Plots in articles
+changing its vignettes or dependencies. The site build needs albersdown
+2.1.0 or later: `Config/Needs/website` makes a pkgdown CI workflow install it
+from GitHub. With albersdown 2.0.0 installed, pkgdown builds a plain Bootstrap
+site without an error. Plots in articles
 keep your own ggplot2 theme on this route. Articles
 written with `albers_vignette()` keep their own family on the site. To change
 the site-wide default family, re-run `use_albersdown()` with that family (it
@@ -136,6 +133,8 @@ Install
 -------
 
 ```r
+install.packages("albersdown")
+# or the development version:
 pak::pak("bbuchsbaum/albersdown")
 ```
 
@@ -153,8 +152,8 @@ left alone; articles in `vignettes/articles/` need
 `output: albersdown::albers_vignette` set by hand), adds
 `albersdown (>= <installed version>)` (in `Suggests`, or where albersdown is
 already in `Imports`/`Depends`) and the other `Suggests` and `VignetteBuilder`
-entries (plus `Remotes: bbuchsbaum/albersdown` while that version is not on
-CRAN), and points `_pkgdown.yml` at the template. When no vignette ends up on
+entries (plus `Remotes: bbuchsbaum/albersdown` when the installed albersdown
+is a development version), and points `_pkgdown.yml` at the template. When no vignette ends up on
 the format (none to convert, or `apply_to = "new"`), only `_pkgdown.yml` and
 `Config/Needs/website` change: the site-only route. A package
 set up by albersdown 2.0 is migrated (called without `family`/`preset`, the
