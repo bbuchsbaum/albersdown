@@ -23,10 +23,9 @@ This is a minor release (2.0.0 -> 2.1.0). In this version I have:
   `R CMD check --as-cran --no-manual`, Status: OK.
 * win-builder, R-devel: [TODO: result]
 * win-builder, R-release: [TODO: result]
-* GitHub Actions, ubuntu-latest (R-devel, R-release, R-oldrel-1): [TODO: result]
-* GitHub Actions, windows-latest (R-release): [TODO: result]
-* GitHub Actions, macos-latest (R-release): [TODO: result]
-* R-hub: [TODO: result, or remove]
+* GitHub Actions, ubuntu-latest (R-devel, R-release, R-oldrel-1): Status: OK.
+* GitHub Actions, windows-latest (R-release): Status: OK.
+* GitHub Actions, macos-latest (R-release): Status: OK.
 
 ## Package documentation
 
