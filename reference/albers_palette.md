@@ -23,8 +23,8 @@ Named character vector of four hex colors (A900, A700, A500, A300).
 ``` r
 albers_palette("red")
 #>      A900      A700      A500      A300 
-#> "#C22B23" "#DC3925" "#E44926" "#E35B2D" 
+#> "#760906" "#AE1703" "#D74A21" "#F7A885" 
 albers_palette("lapis")
 #>      A900      A700      A500      A300 
-#> "#1B2A74" "#20399C" "#2C4FCC" "#4968D6" 
+#> "#213480" "#3154B9" "#507ADF" "#A2BEF5" 
 ```

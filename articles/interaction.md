@@ -68,7 +68,7 @@ panel.
 mtcars |>
   ggplot(aes(wt, mpg, color = factor(cyl))) +
   geom_point(size = 2.4) +
-  albersdown::scale_color_albers(family = params$family) +
+  albersdown::scale_color_albers() +
   labs(
     title = "Fuel efficiency vs. weight",
     subtitle = "Interaction direction (cool) with the lapis family",
@@ -76,4 +76,8 @@ mtcars |>
   )
 ```
 
-![](interaction_files/figure-html/unnamed-chunk-3-1.png)
+![](interaction_files/figure-html/unnamed-chunk-3-1.png)![](interaction_files/figure-html/unnamed-chunk-3-1.phone.png)
+
+![](interaction_files/figure-html/unnamed-chunk-3-dark-1.png)
+
+![](interaction_files/figure-html/unnamed-chunk-3-dark-1.phone.png)

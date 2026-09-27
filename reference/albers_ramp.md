@@ -32,5 +32,5 @@ Character vector of `n` hex colors.
 
 ``` r
 albers_ramp("lapis", n = 5)
-#> [1] "#1B2A74" "#1E3592" "#2644B4" "#3355CE" "#4968D6"
+#> [1] "#213480" "#2D4CAA" "#4067CC" "#648BE4" "#A2BEF5"
 ```

@@ -44,7 +44,8 @@ theme_albers_void(
 
 - bg:
 
-  Override background color (default derived from preset).
+  Override background color. Defaults to the preset's surface (the
+  vignette sheet), so figures sit on the page rather than in a box.
 
 - fg:
 

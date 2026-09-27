@@ -61,15 +61,15 @@ if (requireNamespace("bslib", quietly = TRUE)) {
 #> $border-radius-lg: 0 !default;
 #> $headings-font-weight: 700 !default;
 #> $font-size-base: 1.05rem !default;
-#> $body-secondary-color: #7a7264 !default;
+#> $body-secondary-color: #6b6355 !default;
 #> $body-tertiary-bg: #fbf7ee !default;
 #> $border-color: #d8cbae !default;
 #> $code-bg: #fbf7ee !default;
 #> $font-family-base: Newsreader, Georgia, 'Times New Roman', serif !default;
 #> $font-family-monospace: 'Spline Sans Mono', ui-monospace, SFMono-Regular, Menlo, monospace !default;
 #> $headings-font-family: 'Familjen Grotesk', system-ui, -apple-system, sans-serif !default;
-#> $primary: #DC3925 !default;
-#> $secondary: #7A7264 !default;
+#> $primary: #AE1703 !default;
+#> $secondary: #6B6355 !default;
 #> $white: #EFE7D6 !default;
 #> $gray-100: #DAD3C3 !default;
 #> $gray-200: #C5BEB0 !default;
@@ -150,7 +150,7 @@ if (requireNamespace("bslib", quietly = TRUE)) {
 #>  $ html_deps       :List of 1
 #>   ..$ :List of 10
 #>   .. ..$ name      : chr "bs3compat"
-#>   .. ..$ version   : chr "0.11.0"
+#>   .. ..$ version   : chr "0.12.0"
 #>   .. ..$ src       :List of 1
 #>   .. .. ..$ file: chr "bs3compat/js"
 #>   .. ..$ meta      : NULL

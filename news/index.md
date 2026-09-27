@@ -1,6 +1,145 @@
 # Changelog
 
+## albersdown 2.1.0
+
+### A vignette format
+
+- New output format
+  [`albersdown::albers_vignette()`](https://bbuchsbaum.github.io/albersdown/reference/albers_vignette.md):
+  one line of YAML themes a CRAN vignette, with nothing copied into
+  `vignettes/`. It embeds the installed stylesheet, the page script and
+  only the chosen direction’s fonts, sets the family and direction
+  before the page draws (no restyle on load), sets knitr defaults, and
+  uses
+  [`theme_albers()`](https://bbuchsbaum.github.io/albersdown/reference/theme_albers.md)
+  for the render. Scales and themes called without a family follow the
+  vignette’s family (`albersdown.family` option). Packages using it
+  should declare `albersdown (>= 2.1.0)`.
+- Dark figures: each auto-printed ggplot is also rendered with
+  `theme_albers(mode = "dark")` (and night tones for albersdown scales),
+  shown in dark mode instead of a light plot on a dark page
+  (`dark_figures = FALSE` turns this off). Chunks with
+  `fig.show = "hold"`, `"animate"` or `"hide"` get no dark version.
+- Phone figures: each plot (ggplot2, grid or base graphics) is also
+  drawn at phone width (3.6 in), shown while the figure is displayed
+  narrower than about 470 px, so axis text on a 390 px phone is about 15
+  px instead of 8 px. Print and the enlarged view keep the full figure.
+  This adds about 66 KB per simple ggplot (light and dark);
+  `phone_figures = FALSE` turns it off.
+- [`albers_vignette()`](https://bbuchsbaum.github.io/albersdown/reference/albers_vignette.md)
+  writes equations as MathML by default (`math_method = "mathml"`), so
+  pages with math need no CDN, and gives base-graphics plots the page’s
+  ground, ink, font and family palette.
+- The R Markdown template uses the format and renders out of the box.
+- pkgdown sites are themed by `template: package: albersdown` alone: the
+  template’s `in-header.html` links the stylesheet and script on every
+  page. Articles on
+  [`albers_vignette()`](https://bbuchsbaum.github.io/albersdown/reference/albers_vignette.md)
+  keep their own family and direction on the site; `pkgdown/extra.js`
+  (written by
+  [`use_albersdown()`](https://bbuchsbaum.github.io/albersdown/reference/use_albersdown.md))
+  only sets the site defaults. A site’s own `pkgdown/extra.css` loads
+  after the theme, so it can override it.
+
+### Design
+
+- Family ramps rebuilt in OKLCH with even lightness steps; green and
+  violet are now pigment-like. Each family has its own complement
+  (red/gold, lapis/orange, ochre/lavender, teal/coral, green/rose,
+  violet/olive), used by the title plate, the sheet band, code strings
+  and the discrete scales.
+- A “Homage to the Square” title plate beside every vignette and article
+  title; numbered sections; a margin column with sidenotes on wide
+  screens; opt-in `.wide` blocks; a colophon; callouts as typed Albers
+  objects.
+- Code output is set as one block per run of `#>` lines, with messages,
+  warnings and errors marked; the copy button copies source without
+  output. On phones, long source lines wrap at ranked break points with
+  a hanging indent that follows the author’s own alignment.
+- Tables are booktabs with numbered captions; figures are numbered and
+  sit on the page
+  ([`theme_albers()`](https://bbuchsbaum.github.io/albersdown/reference/theme_albers.md)
+  uses the sheet colour, with no panel box).
+- Real dark mode for both directions (warm and cool nights), resolved
+  before first paint, with a three-state control (follow system / light
+  / dark).
+- Syntax colours follow the family and direction everywhere: numbers
+  take their own hue, dark homage is warm and dark interaction cool.
+- Print keeps the page’s identity: the first printed page carries the
+  title plate and the family bar, the code ground keeps a light wash of
+  the family, and the syntax keeps the family’s colours. Dark mode
+  prints light, with page margins and expanded `<details>`.
+- The legacy `midnight` preset sits on the family’s deepest tone mixed
+  into ink, not a fixed navy, with its own syntax colours.
+  [`theme_albers()`](https://bbuchsbaum.github.io/albersdown/reference/theme_albers.md),
+  [`gt_albers()`](https://bbuchsbaum.github.io/albersdown/reference/gt_albers.md),
+  [`albers_bs_theme()`](https://bbuchsbaum.github.io/albersdown/reference/albers_bs_theme.md)
+  and base-graphics chunks use the same family-tinted ground, so
+  midnight plots match the page.
+- Bundled fonts are trimmed to the axis ranges the theme uses, with
+  Newsreader’s optical size fixed at its text size.
+- [`scale_color_albers()`](https://bbuchsbaum.github.io/albersdown/reference/scale_color_albers.md)/[`scale_fill_albers()`](https://bbuchsbaum.github.io/albersdown/reference/scale_color_albers.md)
+  gain `type = c("contrast", "family")`; the default pairs the family
+  with its complement. New
+  [`albers_discrete()`](https://bbuchsbaum.github.io/albersdown/reference/albers_discrete.md).
+
+### Reading and accessibility
+
+- Long pages keep the reader’s place: the page is prepared lazily in
+  chunks without moving what is on screen or losing a text selection,
+  and the place is restored on reload and Back.
+- No layout shift on load (metric-matched font fallbacks).
+- Visible keyboard focus; headings are their own permalinks; a contents
+  list that tracks the reader; skip link; keyboard-scrollable wide code
+  and tables; `prefers-contrast` and `prefers-reduced-motion` honoured.
+- `tools/validate_albers_contrast.R` (in the source repository) checks
+  every text role against every ground for every family and direction
+  (362 pairs, all at least 4.5:1).
+
+### Setup helpers
+
+- [`use_albersdown()`](https://bbuchsbaum.github.io/albersdown/reference/use_albersdown.md)
+  moves a package onto the format by default (`method = "format"`): each
+  `html_vignette` vignette’s `output:` is switched to
+  [`albersdown::albers_vignette`](https://bbuchsbaum.github.io/albersdown/reference/albers_vignette.md),
+  `DESCRIPTION` gains `albersdown (>= <installed version>)` (in
+  `Suggests`, or where albersdown is already in `Imports`/`Depends`),
+  `knitr`, `rmarkdown` and `VignetteBuilder: knitr`, and `_pkgdown.yml`
+  points at the template. When the installed albersdown is a development
+  version it also adds `Remotes: bbuchsbaum/albersdown` and says so.
+  `method = "vendor"` keeps the 2.0 behaviour (copying the assets into
+  `vignettes/`).
+- Vignette dependencies are added only when a vignette is on the format;
+  otherwise (no vignettes, none convertible, or `apply_to = "new"`) only
+  `_pkgdown.yml` and `Config/Needs/website` change, a site-only adoption
+  that R CMD check does not see.
+- Edits are textual: other output formats, a vignette’s own `css:` and
+  `includes:`, comments, key order, CRLF line endings and a byte-order
+  mark are kept; vignettes on other formats, Quarto vignettes,
+  flow-style `output: {...}` headers and `vignettes/articles/` are
+  reported and left alone. Changed files are backed up to
+  `.albersdown.bak/` (a first backup is never overwritten);
+  `_pkgdown.yml`, `pkgdown/` and `.albersdown.bak/` are added to
+  `.Rbuildignore`. `dry_run = TRUE` lists every change.
+- A package set up by albersdown 2.0 is migrated: the setup-chunk lines
+  and `family`/`preset` params 2.0 added, its `pkgdown/extra.css` and
+  `pkgdown/extra.js`, and its README note are removed or rewritten, and
+  the copied assets are moved from `vignettes/` to `.albersdown.bak/`.
+- [`use_albersdown()`](https://bbuchsbaum.github.io/albersdown/reference/use_albersdown.md)
+  and
+  [`migrate_albersdown()`](https://bbuchsbaum.github.io/albersdown/reference/migrate_albersdown.md)
+  called without `family` or `preset` keep the package’s current choice
+  (read from its vignettes or site defaults) and say where they found
+  it; previously a 2.0 migration without `family` switched the package
+  to red.
+- `family`, `preset` and `style` are matched case-insensitively, and a
+  bad value gives an error naming the function and the argument.
+- The README note is opt-in (`readme = TRUE`) and goes in `README.Rmd`
+  when there is one.
+
 ## albersdown 2.0.0
+
+CRAN release: 2026-07-05
 
 albersdown 2.0.0 is a visual redesign organised around two curated
 **directions** — **homage** (warm cream ground, Newsreader serif body,
@@ -78,11 +217,14 @@ the signature heading marker is a nested “Homage to the Square”.
   and
   [`migrate_albersdown()`](https://bbuchsbaum.github.io/albersdown/reference/migrate_albersdown.md)
   default to `preset = "homage"`, copy the bundled web fonts into
-  `vignettes/fonts/`, inject
+  `vignettes/fonts/`, inject the `ragg` device and a guarded
   [`albers_register_fonts()`](https://bbuchsbaum.github.io/albersdown/reference/albers_register_fonts.md)
-  and the `ragg` device into vignette setup chunks, and add `fonts` to
-  `resource_files`. The generated `pkgdown/extra.js` now carries the
-  full `albers.js` so consumer sites get the complete behaviour.
+  call into vignette setup chunks, and add `fonts` to `resource_files`.
+  The generated `pkgdown/extra.js` now carries the full `albers.js` so
+  consumer sites get the complete behaviour.
+- Setup and migration helpers now accept both featured directions,
+  `homage` and `interaction`, and generated class hooks clear
+  `preset-interaction` before applying page-specific direction classes.
 - [`gt_albers()`](https://bbuchsbaum.github.io/albersdown/reference/gt_albers.md)
   and
   [`albers_bs_theme()`](https://bbuchsbaum.github.io/albersdown/reference/albers_bs_theme.md)

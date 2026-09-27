@@ -2,15 +2,17 @@
 
 ### Vignettes
 
-- [Albersdown: Getting
+- [Getting
   started](https://bbuchsbaum.github.io/albersdown/articles/getting-started.md):
-
-  Theme + vignette kit demonstration
 
 - [Interaction: the cool
   direction](https://bbuchsbaum.github.io/albersdown/articles/interaction.md):
 
-  The cool, grotesk, dark-code direction of the albersdown 2.0 theme.
+  The cool, grotesk, dark-code direction of the albersdown theme.
+
+### Design and showcase
+
+Website-only articles (not shipped with the package).
 
 - [Design notes: Homage
   system](https://bbuchsbaum.github.io/albersdown/articles/design-notes.md):
@@ -20,8 +22,8 @@
 - [Theme Lab: Tune Family, Preset, and
   Rhythm](https://bbuchsbaum.github.io/albersdown/articles/theme-lab.md):
 
-  Interactive controls for palette family, preset, style intensity, and
-  content width.
+  Interactive controls for palette family, direction, style intensity,
+  and reading width.
 
 - [Theme Showcase: Directions and
   Families](https://bbuchsbaum.github.io/albersdown/articles/theme-showcase.md):

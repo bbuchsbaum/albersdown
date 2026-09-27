@@ -19,7 +19,7 @@ it against
 
 albersdown::albers_palette("teal")
 #>      A900      A700      A500      A300 
-#> "#0D4A4A" "#0F5E5E" "#127373" "#2F8C8C"
+#> "#044746" "#0A6C69" "#2E918C" "#8DCCC5"
 ```
 
 Inline tokens like
@@ -55,7 +55,7 @@ Teal accents on the table header rule. {.table}
 
 ggplot(mtcars, aes(wt, mpg, colour = factor(cyl))) +
   geom_point(size = 2.3) +
-  albersdown::scale_color_albers(family = params$family) +
+  albersdown::scale_color_albers() +
   labs(
     title = "Fuel efficiency vs. weight",
     subtitle = "Homage ground with teal accents",
@@ -63,4 +63,8 @@ ggplot(mtcars, aes(wt, mpg, colour = factor(cyl))) +
   )
 ```
 
-![](proof-teal-study_files/figure-html/unnamed-chunk-3-1.png)
+![](proof-teal-study_files/figure-html/unnamed-chunk-3-1.png)![](proof-teal-study_files/figure-html/unnamed-chunk-3-1.phone.png)
+
+![](proof-teal-study_files/figure-html/unnamed-chunk-3-dark-1.png)
+
+![](proof-teal-study_files/figure-html/unnamed-chunk-3-dark-1.phone.png)

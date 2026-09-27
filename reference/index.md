@@ -4,6 +4,8 @@
 
 - [`albers_bs_theme()`](https://bbuchsbaum.github.io/albersdown/reference/albers_bs_theme.md)
   : bs_theme for pkgdown (light/dark aware)
+- [`albers_discrete()`](https://bbuchsbaum.github.io/albersdown/reference/albers_discrete.md)
+  : Discrete colours for a family
 - [`albers_palette()`](https://bbuchsbaum.github.io/albersdown/reference/albers_palette.md)
   : Return four-tone Homage family by name
 - [`albers_palette_img()`](https://bbuchsbaum.github.io/albersdown/reference/albers_palette_img.md)
@@ -16,6 +18,8 @@
   : Register the bundled Albers display fonts for R graphics
 - [`albers_swatch()`](https://bbuchsbaum.github.io/albersdown/reference/albers_swatch.md)
   : Visual swatch of Albers palette families and presets
+- [`albers_vignette()`](https://bbuchsbaum.github.io/albersdown/reference/albers_vignette.md)
+  : Albers vignette output format
 - [`gt_albers()`](https://bbuchsbaum.github.io/albersdown/reference/gt_albers.md)
   : Quiet, legible gt style with subtle stripe from A300
 - [`migrate_albersdown()`](https://bbuchsbaum.github.io/albersdown/reference/migrate_albersdown.md)

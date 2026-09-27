@@ -10,10 +10,11 @@
 <link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
-<script src="../extra.js"></script><meta property="og:title" content="Theme Proof: Interaction + Ochre">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><script src="../extra.js"></script><meta property="og:title" content="Theme Proof: Interaction + Ochre">
 <meta name="description" content="A full page in the cool Interaction direction with the ochre family.">
 <meta property="og:description" content="A full page in the cool Interaction direction with the ochre family.">
+<link href="../albers.css" rel="stylesheet">
+<script>window.albersdownDefaults = window.albersdownDefaults || { family: "red", preset: "homage", style: "minimal" };</script><script src="../albers.js"></script>
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -23,7 +24,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">albersdown</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -55,13 +56,13 @@
       <h1>Theme Proof: Interaction + Ochre</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/bbuchsbaum/albersdown/blob/main/vignettes/proof-ochre-structural.Rmd" class="external-link"><code>vignettes/proof-ochre-structural.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/bbuchsbaum/albersdown/blob/main/vignettes/articles/proof-ochre-structural.Rmd" class="external-link"><code>vignettes/articles/proof-ochre-structural.Rmd</code></a></small>
       <div class="d-none name"><code>proof-ochre-structural.Rmd</code></div>
     </div>
 
     
     
-<script>document.addEventListener("DOMContentLoaded",function(){document.body.classList.remove("palette-red","palette-lapis","palette-ochre","palette-teal","palette-green","palette-violet","preset-homage","preset-interaction","preset-study","preset-structural","preset-adobe","preset-midnight");document.body.classList.add("palette-ochre","preset-interaction");});</script><div class="section level2">
+<script>(function(b){b.className=b.className.replace(/\b(palette|preset|style)-[a-z]+\b/g,"").trim();b.classList.add("palette-ochre","preset-interaction","style-minimal");document.documentElement.setAttribute("data-albers-marks","");})(document.body);</script><div class="section level2">
 <h2 id="what-this-page-proves">What this page proves<a class="anchor" aria-label="anchor" href="#what-this-page-proves"></a>
 </h2>
 <p>This is a full page in the <strong>Interaction</strong> direction
@@ -82,7 +83,7 @@ automatically so code stays legible regardless of the family.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">albersdown</span><span class="fu">::</span><span class="fu"><a href="../reference/albers_palette.html">albers_palette</a></span><span class="op">(</span><span class="st">"ochre"</span><span class="op">)</span></span>
 <span><span class="co">#&gt;      A900      A700      A500      A300 </span></span>
-<span><span class="co">#&gt; "#6F5200" "#8B6700" "#B48900" "#D7A700"</span></span></code></pre></div>
+<span><span class="co">#&gt; "#513801" "#7A5604" "#A47807" "#DEB95C"</span></span></code></pre></div>
 <p>Inline code such as <code>theme_albers(preset = "interaction")</code>
 stays a light chip so it reads inside the body text.</p>
 </div>
@@ -153,15 +154,17 @@ stays a light chip so it reads inside the body text.</p>
 <h2 id="a-plot-on-the-matching-ground">A plot on the matching ground<a class="anchor" aria-label="anchor" href="#a-plot-on-the-matching-ground"></a>
 </h2>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">mtcars</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">wt</span>, <span class="va">mpg</span>, colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">cyl</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">2.3</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">albersdown</span><span class="fu">::</span><span class="fu"><a href="../reference/scale_color_albers.html">scale_color_albers</a></span><span class="op">(</span>family <span class="op">=</span> <span class="va">params</span><span class="op">$</span><span class="va">family</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span><span class="va">mtcars</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">wt</span>, <span class="va">mpg</span>, colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">cyl</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span>size <span class="op">=</span> <span class="fl">2.3</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">albersdown</span><span class="fu">::</span><span class="fu"><a href="../reference/scale_color_albers.html">scale_color_albers</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">labs</span><span class="op">(</span></span>
 <span>    title <span class="op">=</span> <span class="st">"Fuel efficiency vs. weight"</span>,</span>
 <span>    subtitle <span class="op">=</span> <span class="st">"Interaction ground with ochre accents"</span>,</span>
 <span>    x <span class="op">=</span> <span class="st">"Weight (1000 lbs)"</span>, y <span class="op">=</span> <span class="st">"MPG"</span>, colour <span class="op">=</span> <span class="st">"Cylinders"</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
-<p><img src="proof-ochre-structural_files/figure-html/unnamed-chunk-3-1.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;"></p>
+<p><img src="proof-ochre-structural_files/figure-html/unnamed-chunk-3-1.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;"><img class="albers-phone-twin" src="proof-ochre-structural_files/figure-html/unnamed-chunk-3-1.phone.png" alt="" aria-hidden="true" loading="lazy" data-albers-below="468" hidden></p>
+<p><img class="albers-dark-twin" src="proof-ochre-structural_files/figure-html/unnamed-chunk-3-dark-1.png" alt="" aria-hidden="true" hidden></p>
+<p><img class="albers-phone-twin albers-phone-dark" src="proof-ochre-structural_files/figure-html/unnamed-chunk-3-dark-1.phone.png" alt="" aria-hidden="true" loading="lazy" data-albers-below="468" hidden></p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
@@ -174,7 +177,7 @@ stays a light chip so it reads inside the body text.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>

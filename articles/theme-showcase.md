@@ -28,7 +28,7 @@ plot scales all draw from the active family.
 albersdown::albers_swatch(c("red", "lapis", "ochre", "teal", "green", "violet"))
 ```
 
-![](theme-showcase_files/figure-html/families-swatch-1.png)
+![](theme-showcase_files/figure-html/families-swatch-1.png)![](theme-showcase_files/figure-html/families-swatch-1.phone.png)
 
 ``` r
 
@@ -54,7 +54,11 @@ ggplot(plot_df, aes(wt, mpg, colour = family)) +
   theme(legend.position = "none")
 ```
 
-![](theme-showcase_files/figure-html/accent-families-1.png)
+![](theme-showcase_files/figure-html/accent-families-1.png)![](theme-showcase_files/figure-html/accent-families-1.phone.png)
+
+![](theme-showcase_files/figure-html/accent-families-dark-1.png)
+
+![](theme-showcase_files/figure-html/accent-families-dark-1.phone.png)
 
 ## The two directions, in plots
 
@@ -72,7 +76,7 @@ ggplot(mtcars, aes(wt, mpg, colour = factor(cyl))) +
   albersdown::theme_albers(family = "red", preset = "homage")
 ```
 
-![](theme-showcase_files/figure-html/homage-plot-1.png)
+![](theme-showcase_files/figure-html/homage-plot-1.png)![](theme-showcase_files/figure-html/homage-plot-1.phone.png)
 
 ``` r
 
@@ -83,7 +87,7 @@ ggplot(mtcars, aes(wt, mpg, colour = factor(cyl))) +
   albersdown::theme_albers(family = "lapis", preset = "interaction")
 ```
 
-![](theme-showcase_files/figure-html/interaction-plot-1.png)
+![](theme-showcase_files/figure-html/interaction-plot-1.png)![](theme-showcase_files/figure-html/interaction-plot-1.phone.png)
 
 ## Picking a combination
 
@@ -110,9 +114,9 @@ A few coherent direction + family pairings. {.table}
 
 ## Next step
 
-- Use
-  [`vignette("theme-lab")`](https://bbuchsbaum.github.io/albersdown/articles/theme-lab.md)
-  to tune family, direction, style, and width interactively.
+- Use the [Theme
+  Lab](https://bbuchsbaum.github.io/albersdown/articles/theme-lab.md) to
+  tune family, direction, style, and width interactively.
 - See
   [`vignette("getting-started")`](https://bbuchsbaum.github.io/albersdown/articles/getting-started.md)
   (homage) and

@@ -27,7 +27,7 @@ Content width (ch)
 
 A900 A700 A500 A300
 
-family=red \| preset=homage \| style=minimal \| width=80ch
+family=red \| preset=homage \| style=minimal \| width=66ch
 
 ## What Does Each Control Change?
 
@@ -36,14 +36,17 @@ family=red \| preset=homage \| style=minimal \| width=80ch
   active family’s tones).
 - `preset` (direction): warm **homage** (cream ground, serif body, light
   code) vs cool **interaction** (grey ground, grotesk, dark code).
-- `style`: structural weight (`minimal`, `balanced`, `assertive`).
-- `content_width`: reading measure in `ch` units.
+- `style`: structural weight (`minimal` or `assertive`).
+- Content width: the reading measure in `ch` units, for this preview
+  only. The theme sets it (66ch in homage, 64ch in interaction); it is
+  not a format option.
 
 ## Can You Validate The Palette Quickly?
 
 ``` r
 
-pal <- albersdown::albers_palette(params$family)
+# the format sets the albersdown.family option to the vignette's family
+pal <- albersdown::albers_palette(getOption("albersdown.family", "red"))
 stopifnot(
   identical(names(pal), c("A900", "A700", "A500", "A300")),
   all(nzchar(unname(pal)))
@@ -53,20 +56,21 @@ knitr::kable(data.frame(tone = names(pal), hex = unname(pal)), format = "html")
 
 | tone | hex      |
 |:-----|:---------|
-| A900 | \#C22B23 |
-| A700 | \#DC3925 |
-| A500 | \#E44926 |
-| A300 | \#E35B2D |
+| A900 | \#760906 |
+| A700 | \#AE1703 |
+| A500 | \#D74A21 |
+| A300 | \#F7A885 |
 
 ## Copy Into YAML
 
+Put the choice in the vignette’s output format:
+
 ``` yaml
-params:
-  family: red
-  preset: homage
-  base_size: 13
-  content_width: 80
-  style: minimal
+output:
+  albersdown::albers_vignette:
+    family: red        # red, lapis, ochre, teal, green, violet
+    preset: homage     # homage or interaction
+    style: minimal     # minimal, balanced or assertive
 ```
 
 ## Example Plot
@@ -78,10 +82,15 @@ stopifnot(length(levels(mtcars$grp)) >= 3)
 
 ggplot(mtcars, aes(wt, mpg, colour = grp)) +
   geom_point(size = 2.2) +
+  albersdown::scale_color_albers() +
   labs(
     title = "Theme Lab preview",
     subtitle = "Tune family + preset + style, then copy YAML"
   )
 ```
 
-![](theme-lab_files/figure-html/example-plot-1.png)
+![](theme-lab_files/figure-html/example-plot-1.png)![](theme-lab_files/figure-html/example-plot-1.phone.png)
+
+![](theme-lab_files/figure-html/example-plot-dark-1.png)
+
+![](theme-lab_files/figure-html/example-plot-dark-1.phone.png)

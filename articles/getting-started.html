@@ -5,15 +5,14 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Albersdown: Getting started • albersdown</title>
+<title>Getting started • albersdown</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
-<script src="../extra.js"></script><meta property="og:title" content="Albersdown: Getting started">
-<meta name="description" content="Theme + vignette kit demonstration">
-<meta property="og:description" content="Theme + vignette kit demonstration">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><script src="../extra.js"></script><meta property="og:title" content="Getting started">
+<link href="../albers.css" rel="stylesheet">
+<script>window.albersdownDefaults = window.albersdownDefaults || { family: "red", preset: "homage", style: "minimal" };</script><script src="../albers.js"></script>
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -23,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">albersdown</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -52,7 +51,9 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
 
-      <h1>Albersdown: Getting started</h1>
+      <h1>Getting started</h1>
+            <h3 data-toc-skip class="subtitle">One line of YAML for a
+vignette, one line of YAML for a site</h3>
             
       
       <small class="dont-index">Source: <a href="https://github.com/bbuchsbaum/albersdown/blob/main/vignettes/getting-started.Rmd" class="external-link"><code>vignettes/getting-started.Rmd</code></a></small>
@@ -61,54 +62,140 @@
 
     
     
-<script>document.addEventListener("DOMContentLoaded",function(){document.body.classList.remove("palette-red","palette-lapis","palette-ochre","palette-teal","palette-green","palette-violet","preset-homage","preset-study","preset-structural","preset-adobe","preset-midnight");document.body.classList.add("palette-red","preset-homage");});</script><div class="section level2">
-<h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
+<script>(function(b){b.className=b.className.replace(/\b(palette|preset|style)-[a-z]+\b/g,"").trim();b.classList.add("palette-red","preset-homage","style-minimal");document.documentElement.setAttribute("data-albers-marks","");})(document.body);</script><p>albersdown themes the two places R package documentation lives: CRAN
+vignettes and pkgdown sites. This vignette is itself rendered with the
+format it describes.</p>
+<div class="section level2">
+<h2 id="a-vignette">A vignette<a class="anchor" aria-label="anchor" href="#a-vignette"></a>
 </h2>
-<p>This vignette shows how the shared theme and vignette CSS work
-together. Links and focus rings use the family’s accessible tone;
-callouts and stripes use a quiet tint.</p>
-<div class="albers-plate" aria-hidden="true">
-<div class="albers-plate__outer">
-
-</div>
-<div class="albers-plate__inner">
-
-</div>
-<div class="albers-plate__core">
-
-</div>
+<p>Set the output format in the vignette’s YAML header:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">output</span><span class="kw">:</span></span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="at">  albersdown:</span><span class="fu">:albers_vignette</span><span class="kw">:</span></span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="at">    </span><span class="fu">family</span><span class="kw">:</span><span class="at"> red</span><span class="co">        # red, lapis, ochre, teal, green, violet</span></span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="at">    </span><span class="fu">preset</span><span class="kw">:</span><span class="at"> homage</span><span class="co">     # homage (warm, serif) or interaction (cool, grotesk)</span></span></code></pre></div>
+<p>and declare the packages the vignette needs in
+<code>DESCRIPTION</code>:</p>
+<pre><code>Suggests:
+    albersdown (&gt;= 2.1.0),
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr</code></pre>
+<p>Nothing is copied into <code>vignettes/</code>. The stylesheet, the
+fonts for the chosen direction and a small page script are embedded in
+the rendered HTML, so the vignette makes no network requests (the kind
+of vignette CRAN expects).</p>
+<p><code><a href="../reference/albers_vignette.html">albers_vignette()</a></code> is new in albersdown 2.1.0, hence the
+version bound. If a vignette build fails with
+<code>'albers_vignette' is not an exported object from 'namespace:albersdown'</code>,
+the albersdown being used is 2.0.0 or older (R does not enforce
+<code>Suggests</code> versions when building): update it with
+<code>install.packages("albersdown")</code>.</p>
+<div class="callout callout-tip">
+<p><strong>Tip.</strong> For an existing package,
+<code>use_albersdown(".", family = "teal")</code> switches its
+<code>html_vignette</code> vignettes to the format and updates
+<code>DESCRIPTION</code> (with the version bound; <code>Remotes</code>
+too if the installed albersdown is a development version) and
+<code>_pkgdown.yml</code> for you; add <code>dry_run = TRUE</code> to
+see the changes first. It also migrates a package set up by albersdown
+2.0.</p>
 </div>
 </div>
 <div class="section level2">
-<h2 id="new-feature-highlights">New feature highlights<a class="anchor" aria-label="anchor" href="#new-feature-highlights"></a>
+<h2 id="code-and-output">Code and output<a class="anchor" aria-label="anchor" href="#code-and-output"></a>
 </h2>
-<ul>
-<li>Design tokens + contrast guardrails: see
-<code><a href="../articles/design-notes.html">vignette("design-notes")</a></code>, section <code>#whats-new</code>
-and <code>#contrast-guardrails</code>.</li>
-<li>Generative composition motif + semantic callouts: see
-<code><a href="../articles/design-notes.html">vignette("design-notes")</a></code>, sections <code>#whats-new</code>
-and <code>#semantic-callouts</code>.</li>
-<li>Interactive visual tuning (family/preset/style/width): see
-<code><a href="../articles/theme-lab.html">vignette("theme-lab")</a></code>.</li>
-<li>Dark + non-red accent gallery: see
-<code><a href="../articles/theme-showcase.html">vignette("theme-showcase")</a></code>.</li>
-</ul>
-</div>
-<div class="section level2">
-<h2 id="code-output">Code + output<a class="anchor" aria-label="anchor" href="#code-output"></a>
-</h2>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">$</span><span class="va">mpg</span><span class="op">)</span></span>
+<p>Output sits in its own block under the code that produced it, and
+warnings and errors are marked:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4.2</span>, <span class="fl">5.1</span>, <span class="fl">6.3</span>, <span class="fl">5.8</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. </span></span>
-<span><span class="co">#&gt;   10.40   15.43   19.20   20.09   22.80   33.90</span></span></code></pre></div>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">mtcars</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">wt</span>, <span class="va">mpg</span>, color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">cyl</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">2.2</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Fuel efficiency vs. weight"</span>,</span>
-<span>       subtitle <span class="op">=</span> <span class="st">"Albers theme demo"</span>, x <span class="op">=</span> <span class="st">"Weight (1000 lbs)"</span>, y <span class="op">=</span> <span class="st">"MPG"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="getting-started_files/figure-html/unnamed-chunk-2-1.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;"></p>
+<span><span class="co">#&gt;   4.200   4.875   5.450   5.350   5.925   6.300</span></span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="st">"seven"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; ⁤Warning: NAs introduced by coercion</span></span>
+<span><span class="co">#&gt; [1] NA</span></span></code></pre></div>
+<p>The copy button on each block copies the code without its output.</p>
+</div>
+<div class="section level2">
+<h2 id="figures">Figures<a class="anchor" aria-label="anchor" href="#figures"></a>
+</h2>
+<p>While the vignette renders, <code><a href="../reference/theme_albers.html">theme_albers()</a></code> is the
+ggplot2 theme and the albersdown scales follow the vignette’s family, so
+no <code>family</code> argument is needed:</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span><span class="va">mtcars</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">wt</span>, <span class="va">mpg</span>, colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">cyl</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span>size <span class="op">=</span> <span class="fl">2.4</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">albersdown</span><span class="fu">::</span><span class="fu"><a href="../reference/scale_color_albers.html">scale_color_albers</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Weight (1000 lbs)"</span>, y <span class="op">=</span> <span class="st">"Miles per gallon"</span>, colour <span class="op">=</span> <span class="st">"Cylinders"</span><span class="op">)</span></span></code></pre></div>
+<div class="figure" style="text-align: center">
+<img src="getting-started_files/figure-html/mpg-1.png" class="r-plt" alt="Heavier cars travel fewer miles per gallon." width="100%"><img class="albers-phone-twin" src="getting-started_files/figure-html/mpg-1.phone.png" alt="" aria-hidden="true" loading="lazy" data-albers-below="468" hidden><p class="caption">
+Heavier cars travel fewer miles per gallon.
+</p>
+</div>
+<p><img class="albers-dark-twin" src="getting-started_files/figure-html/mpg-dark-1.png" alt="" aria-hidden="true" hidden></p>
+<p><img class="albers-phone-twin albers-phone-dark" src="getting-started_files/figure-html/mpg-dark-1.phone.png" alt="" aria-hidden="true" loading="lazy" data-albers-below="468" hidden></p>
+<p>Each ggplot that a chunk prints automatically is also rendered for
+the dark theme, and readers in dark mode see that version. Set
+<code>dark_figures = FALSE</code> in the format options to skip it.
+Base-graphics plots take the page’s colours but have no dark version,
+nor do plots in chunks with <code>fig.show = "hold"</code>,
+<code>"animate"</code> or <code>"hide"</code>.</p>
+</div>
+<div class="section level2">
+<h2 id="tables">Tables<a class="anchor" aria-label="anchor" href="#tables"></a>
+</h2>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/aggregate.html" class="external-link">aggregate</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">mpg</span>, <span class="va">hp</span><span class="op">)</span> <span class="op">~</span> <span class="va">cyl</span>, data <span class="op">=</span> <span class="va">mtcars</span>, FUN <span class="op">=</span> <span class="va">mean</span><span class="op">)</span>,</span>
+<span>  digits <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  caption <span class="op">=</span> <span class="st">"Mean fuel efficiency and power by cylinder count."</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<table class="table">
+<caption>Mean fuel efficiency and power by cylinder count.</caption>
+<thead><tr class="header">
+<th align="right">cyl</th>
+<th align="right">mpg</th>
+<th align="right">hp</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="right">4</td>
+<td align="right">26.7</td>
+<td align="right">82.6</td>
+</tr>
+<tr class="even">
+<td align="right">6</td>
+<td align="right">19.7</td>
+<td align="right">122.3</td>
+</tr>
+<tr class="odd">
+<td align="right">8</td>
+<td align="right">15.1</td>
+<td align="right">209.2</td>
+</tr>
+</tbody>
+</table>
+<p>Tables too wide for the text column can use the margin on large
+screens: wrap the chunk in a <code>::: {.wide}</code> block.</p>
+</div>
+<div class="section level2">
+<h2 id="a-pkgdown-site">A pkgdown site<a class="anchor" aria-label="anchor" href="#a-pkgdown-site"></a>
+</h2>
+<p>In <code>_pkgdown.yml</code>:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">template</span><span class="kw">:</span></span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="at">  </span><span class="fu">package</span><span class="kw">:</span><span class="at"> albersdown</span></span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a><span class="at">  </span><span class="fu">bootstrap</span><span class="kw">:</span><span class="at"> </span><span class="dv">5</span></span></code></pre></div>
+<p>and <code>Config/Needs/website: bbuchsbaum/albersdown</code> in
+<code>DESCRIPTION</code>. R CMD check reads neither, so a CRAN package
+can theme its site this way without changing its vignettes or
+dependencies; <code>use_albersdown(".", apply_to = "new")</code> sets it
+up. Building the site needs albersdown 2.1.0 or later
+(<code>Config/Needs/website</code> makes a pkgdown CI workflow install
+it from GitHub); with albersdown 2.0.0, pkgdown builds a plain Bootstrap
+site without an error. Articles written with
+<code><a href="../reference/albers_vignette.html">albers_vignette()</a></code> keep their own family and direction on
+the site.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
@@ -121,7 +208,7 @@ and <code>#semantic-callouts</code>.</li>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>

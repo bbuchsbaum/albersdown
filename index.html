@@ -10,10 +10,11 @@
 <link href="deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
 <script src="deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><link href="extra.css" rel="stylesheet">
-<script src="extra.js"></script><meta property="og:title" content="Minimalist Theme and Vignette Kit for pkgdown and R Markdown">
+<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><script src="extra.js"></script><meta property="og:title" content="Minimalist Theme and Vignette Kit for pkgdown and R Markdown">
 <meta name="description" content="Provides a minimalist ggplot2 theme, colour scales, and pkgdown template built around a curated colour palette system inspired by Josef Albers colour theory (Albers (1963, ISBN:978-0-300-17935-4) &quot;Interaction of Color&quot;). Includes helpers to apply consistent theming to ggplot2 plots, gt tables, and bslib' Bootstrap 5 sites, along with one-command setup functions for adopting the style across an R package.">
 <meta property="og:description" content="Provides a minimalist ggplot2 theme, colour scales, and pkgdown template built around a curated colour palette system inspired by Josef Albers colour theory (Albers (1963, ISBN:978-0-300-17935-4) &quot;Interaction of Color&quot;). Includes helpers to apply consistent theming to ggplot2 plots, gt tables, and bslib' Bootstrap 5 sites, along with one-command setup functions for adopting the style across an R package.">
+<link href="albers.css" rel="stylesheet">
+<script>window.albersdownDefaults = window.albersdownDefaults || { family: "red", preset: "homage", style: "minimal" };</script><script src="albers.js"></script>
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -23,7 +24,7 @@
 
     <a class="navbar-brand me-2" href="index.html">albersdown</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -51,123 +52,91 @@
 </h1></div>
 <!-- badges: start -->
 
-<p>Minimalist theme and vignette kit for pkgdown and R Markdown.</p>
-<ul>
-<li>One line to theme pkgdown sites via a template package.</li>
-<li>Vignettes ship with local CSS for CRAN-friendly offline builds.</li>
-<li>Helper functions for ggplot2 and gt align plots/tables with the house style.</li>
-</ul>
+<p>A vignette and pkgdown theme for R packages, built on Josef Albers’s <em>Interaction of Color</em>. Each vignette gets a title plate in the Homage-to-the-Square proportions, numbered sections, a margin column for notes, legible code output, booktabs tables, and matching ggplot2 figures, in light and dark. Vignettes stay self-contained and CRAN-safe: fonts and scripts are embedded, and equations are written as MathML, so nothing is fetched when the page is read.</p>
+<div class="float">
+<img src="reference/figures/README-plates.png" alt="The title plate of each of the six colour families, in the warm homage direction (top) and the cool interaction direction (bottom)."><div class="figcaption">The title plate of each of the six colour families, in the warm homage direction (top) and the cool interaction direction (bottom).</div>
+</div>
+<p>The <a href="https://bbuchsbaum.github.io/albersdown/">documentation site</a> is built with the theme.</p>
 <div class="section level2">
-<h2 id="install-template-package">Install (template package)<a class="anchor" aria-label="anchor" href="#install-template-package"></a>
+<h2 id="vignettes">Vignettes<a class="anchor" aria-label="anchor" href="#vignettes"></a>
 </h2>
-<p>This package is meant to live on GitHub and be pinned by consumers.</p>
-<p>Install with pak:</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pak.html" class="external-link">pak</a></span><span class="op">(</span><span class="st">"bbuchsbaum/albersdown"</span><span class="op">)</span></span></code></pre></div>
+<p>In the vignette’s YAML header:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">output</span><span class="kw">:</span></span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="at">  albersdown:</span><span class="fu">:albers_vignette</span><span class="kw">:</span></span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="at">    </span><span class="fu">family</span><span class="kw">:</span><span class="at"> teal</span><span class="co">        # red, lapis, ochre, teal, green, violet</span></span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="at">    </span><span class="fu">preset</span><span class="kw">:</span><span class="at"> homage</span><span class="co">      # homage (warm, serif) or interaction (cool, grotesk)</span></span></code></pre></div>
+<p>and in <code>DESCRIPTION</code>:</p>
+<pre><code>Suggests:
+    albersdown (&gt;= 2.1.0),
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr</code></pre>
+<p>That is all. <code><a href="reference/albers_vignette.html">albers_vignette()</a></code> is new in albersdown 2.1.0, hence the version bound. If a vignette build fails with <code>'albers_vignette' is not an exported object from 'namespace:albersdown'</code>, the albersdown being used is 2.0.0 or older (R does not enforce <code>Suggests</code> versions when building): update it with <code>install.packages("albersdown")</code>.</p>
+<p>The format sets knitr defaults, uses <code><a href="reference/theme_albers.html">theme_albers()</a></code> for plots while the vignette renders, renders a dark version of each ggplot for readers in dark mode, and draws each plot a second time at phone width so its text stays legible on a phone. Scales follow the vignette’s family:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span><span class="va">mtcars</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">wt</span>, <span class="va">mpg</span>, colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">cyl</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">albersdown</span><span class="fu">::</span><span class="fu"><a href="reference/scale_color_albers.html">scale_color_albers</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="use-in-a-consuming-package">Use in a consuming package<a class="anchor" aria-label="anchor" href="#use-in-a-consuming-package"></a>
+<h2 id="writing-a-vignette">Writing a vignette<a class="anchor" aria-label="anchor" href="#writing-a-vignette"></a>
 </h2>
-<ol style="list-style-type: decimal">
-<li>pkgdown site theme</li>
-</ol>
-<p>_pkgdown.yml:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">template</span><span class="kw">:</span></span>
-<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="at">  </span><span class="fu">package</span><span class="kw">:</span><span class="at"> albersdown</span></span></code></pre></div>
-<p>DESCRIPTION:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">Config/Needs/website</span><span class="kw">:</span><span class="at"> bbuchsbaum/albersdown</span></span></code></pre></div>
-<ol start="2" style="list-style-type: decimal">
-<li>Vignettes (offline &amp; styled)</li>
-</ol>
-<p>Create a new vignette using the “Albers Vignette” template (or run <code><a href="reference/use_albers_vignettes.html">albersdown::use_albers_vignettes()</a></code>). The skeleton includes:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">output</span><span class="kw">:</span></span>
-<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="at">  rmarkdown:</span><span class="fu">:html_vignette</span><span class="kw">:</span></span>
-<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="at">    </span><span class="fu">css</span><span class="kw">:</span><span class="at"> albers.css</span></span>
-<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a><span class="at">    </span><span class="fu">includes</span><span class="kw">:</span></span>
-<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a><span class="at">      </span><span class="fu">in_header</span><span class="kw">:</span><span class="at"> albers-header.html</span></span></code></pre></div>
-<p>In the setup chunk:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
-<span><span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/get_theme.html" class="external-link">theme_set</a></span><span class="op">(</span><span class="fu">albersdown</span><span class="fu">::</span><span class="fu"><a href="reference/theme_albers.html">theme_albers</a></span><span class="op">(</span></span>
-<span>  family <span class="op">=</span> <span class="va">params</span><span class="op">$</span><span class="va">family</span>,</span>
-<span>  preset <span class="op">=</span> <span class="va">params</span><span class="op">$</span><span class="va">preset</span>,</span>
-<span>  base_size <span class="op">=</span> <span class="fl">13</span></span>
-<span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<ol start="3" style="list-style-type: decimal">
-<li>Retrofit an existing package (replace prior theming)</li>
-</ol>
+<p>Ordinary R Markdown, plus a few conventions the theme understands:</p>
+<ul>
+<li>
+<strong>Callouts</strong>: <code>::: {.callout .callout-tip}</code> (also <code>callout-note</code>, <code>callout-warning</code>, <code>callout-danger</code>) with a bold first word as the label.</li>
+<li>
+<strong>Margin notes</strong>: footnotes (<code>[^1]</code>) are also set in the right margin on wide screens.</li>
+<li>
+<strong>Wide blocks</strong>: wrap a chunk or table in <code>::: {.wide}</code> to use the margin column; <code>class.source = "wide"</code> widens one chunk’s code.</li>
+<li>
+<strong>Sections</strong> are numbered; add <code>{.unnumbered}</code> to a heading to skip one.</li>
+<li>
+<strong>Math</strong> is written as MathML, so it renders offline.</li>
+</ul>
+<p>Margin notes and <code>.wide</code> blocks use the margin column of the vignette layout; on a pkgdown site, footnotes use pkgdown’s own popovers.</p>
+<p>What it adds to a vignette: about 158 KB of embedded fonts for Homage (131 KB for Interaction) and about 176 KB of stylesheet and script, so a vignette with one short chunk and no plot is about 335 KB (Homage) or 309 KB (Interaction). Each plot then adds its image several times: a dark version of each ggplot (<code>dark_figures = FALSE</code> turns it off) and a phone-width drawing of each plot, light and dark (<code>phone_figures = FALSE</code> turns it off). For a simple <code>geom_point()</code> plot that is about 77 KB for the light and dark figures plus about 66 KB for their phone versions, so a one-plot vignette is about 480 KB (Homage). The same cost lands in the package tarball for every vignette. Plots drawn with <code>print(p)</code> or base graphics, and plots in chunks with <code>fig.show = "hold"</code>, <code>"animate"</code> or <code>"hide"</code>, get no dark version (they stay light in dark mode).</p>
+<p>To start a new vignette from the template: <code>rmarkdown::draft("vignettes/intro.Rmd", template = "albers_vignette", package = "albersdown")</code>, or <em>File &gt; New File &gt; R Markdown &gt; From Template &gt; Albers Vignette</em> in RStudio.</p>
+</div>
+<div class="section level2">
+<h2 id="pkgdown-sites">pkgdown sites<a class="anchor" aria-label="anchor" href="#pkgdown-sites"></a>
+</h2>
+<p>In <code>_pkgdown.yml</code>:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">template</span><span class="kw">:</span></span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="at">  </span><span class="fu">package</span><span class="kw">:</span><span class="at"> albersdown</span></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="at">  </span><span class="fu">bootstrap</span><span class="kw">:</span><span class="at"> </span><span class="dv">5</span></span></code></pre></div>
+<p>and <code>Config/Needs/website: bbuchsbaum/albersdown</code> in <code>DESCRIPTION</code>. Neither is read by R CMD check, so a CRAN package can theme its site this way without changing its vignettes or dependencies. The site build needs albersdown 2.1.0 or later: <code>Config/Needs/website</code> makes a pkgdown CI workflow install it from GitHub. With albersdown 2.0.0 installed, pkgdown builds a plain Bootstrap site without an error. Plots in articles keep your own ggplot2 theme on this route. Articles written with <code><a href="reference/albers_vignette.html">albers_vignette()</a></code> keep their own family on the site. To change the site-wide default family, re-run <code><a href="reference/use_albersdown.html">use_albersdown()</a></code> with that family (it writes <code>pkgdown/extra.js</code>), or add to <code>_pkgdown.yml</code>:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">template</span><span class="kw">:</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="at">  </span><span class="fu">includes</span><span class="kw">:</span></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="fu">    in_header</span><span class="kw">: </span><span class="ch">|</span></span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>      &lt;script&gt;window.albersdownDefaults = { family: "lapis", preset: "interaction" };&lt;/script&gt;</span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="plots-and-tables-outside-vignettes">Plots and tables outside vignettes<a class="anchor" aria-label="anchor" href="#plots-and-tables-outside-vignettes"></a>
+</h2>
+<ul>
+<li>
+<code>theme_albers(family, preset, mode = c("light", "dark"))</code> for ggplot2.</li>
+<li>
+<code><a href="reference/scale_color_albers.html">scale_color_albers()</a></code>, <code><a href="reference/scale_color_albers.html">scale_fill_albers()</a></code>: the family paired with its complement (<code>type = "family"</code> for a single-hue ramp); <code><a href="reference/albers_discrete.html">albers_discrete()</a></code> returns the colours.</li>
+<li>
+<code><a href="reference/gt_albers.html">gt_albers()</a></code> for gt tables; <code><a href="reference/albers_bs_theme.html">albers_bs_theme()</a></code> for bslib/Shiny.</li>
+</ul>
+</div>
+<div class="section level2">
+<h2 id="install">Install<a class="anchor" aria-label="anchor" href="#install"></a>
+</h2>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">albersdown</span><span class="fu">::</span><span class="fu"><a href="reference/use_albersdown.html">use_albersdown</a></span><span class="op">(</span></span>
-<span>  family <span class="op">=</span> <span class="st">"red"</span>,</span>
-<span>  preset <span class="op">=</span> <span class="st">"homage"</span>,</span>
-<span>  apply_to <span class="op">=</span> <span class="st">"all"</span>,</span>
-<span>  force_replace <span class="op">=</span> <span class="cn">TRUE</span></span>
-<span><span class="op">)</span></span></code></pre></div>
-<p>Team one-liner (same defaults as above):</p>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"albersdown"</span><span class="op">)</span></span>
+<span><span class="co"># or the development version:</span></span>
+<span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pak.html" class="external-link">pak</a></span><span class="op">(</span><span class="st">"bbuchsbaum/albersdown"</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="existing-packages">Existing packages<a class="anchor" aria-label="anchor" href="#existing-packages"></a>
+</h2>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">albersdown</span><span class="fu">::</span><span class="fu"><a href="reference/migrate_albersdown.html">migrate_albersdown</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p>Migration also exposes the Albers theme surface directly:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">albersdown</span><span class="fu">::</span><span class="fu"><a href="reference/migrate_albersdown.html">migrate_albersdown</a></span><span class="op">(</span>family <span class="op">=</span> <span class="st">"teal"</span>, preset <span class="op">=</span> <span class="st">"midnight"</span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level2">
-<h2 id="helpers">Helpers<a class="anchor" aria-label="anchor" href="#helpers"></a>
-</h2>
-<ul>
-<li>theme_albers(family = “red”, preset = “homage”)</li>
-<li>scale_color_albers(family = “red”, discrete = TRUE, …)</li>
-<li>scale_fill_albers(family = “red”, discrete = TRUE, …)</li>
-<li>scale_color_albers_highlight(family = “red”, tone = “A700”, other = “#9aa0a6”)</li>
-<li>scale_fill_albers_highlight(family = “red”, tone = “A700”, other = “#9aa0a6”)</li>
-<li>gt_albers(x, family = “red”, preset = “homage”)</li>
-</ul>
-</div>
-<div class="section level2">
-<h2 id="design-tooling">Design tooling<a class="anchor" aria-label="anchor" href="#design-tooling"></a>
-</h2>
-<ul>
-<li>Vignettes: <code>getting-started</code>, <code>design-notes</code>, <code>theme-lab</code>, <code>theme-showcase</code>, <code>proof-teal-study</code>, <code>proof-ochre-structural</code>.</li>
-<li>Theme Lab article: interactive family/preset/style/content-width preview.</li>
-<li>Theme Showcase article: dark preset + non-red accent family gallery.</li>
-<li>Proof articles: full-page fixed combinations for <code>teal + study</code> and <code>ochre + structural</code>.</li>
-<li>Token source of truth: <code>inst/tokens/albers-tokens.yml</code>.</li>
-<li>Token sync script: <code>Rscript tools/sync_albers_assets.R</code>.</li>
-<li>Homepage blueprint: <code>inst/pkgdown/templates/homepage-blueprint.md</code>.</li>
-<li>Visual regression scaffold: <code>tests/visual-regression/</code> plus workflow <code>visual-regression.yaml</code>.</li>
-</ul>
-</div>
-<div class="section level2">
-<h2 id="notes">Notes<a class="anchor" aria-label="anchor" href="#notes"></a>
-</h2>
-<ul>
-<li>Keep vignette CSS local to satisfy CRAN’s no-network rule.</li>
-<li>Pin a release tag in Config/Needs/website for deterministic site builds.</li>
-</ul>
-</div>
-<div class="section level2">
-<h2 id="choosing-a-palette-family-per-page">Choosing a palette family per page<a class="anchor" aria-label="anchor" href="#choosing-a-palette-family-per-page"></a>
-</h2>
-<ul>
-<li>Families: red, lapis, ochre, teal, green, violet.</li>
-<li>Presets: homage, study, structural, adobe, midnight.</li>
-<li>In YAML, add: <code>params: { family: "red", preset: "study" }</code>
-</li>
-<li>In setup, call: <code>ggplot2::theme_set(albersdown::theme_albers(family = params$family, preset = params$preset))</code>
-</li>
-<li>If plot text feels small, increase <code>base_size</code> (e.g., 13–14): <code>ggplot2::theme_set(albersdown::theme_albers(family = params$family, preset = params$preset, base_size = 14))</code>
-</li>
-<li>Add <code>albers-header.html</code> alongside <code>albers.css</code> and <code>albers.js</code>, then point <code>includes: in_header</code> at it.</li>
-<li>Add body class so CSS tokens switch by family: <code>cat(sprintf('&lt;script&gt;document.addEventListener("DOMContentLoaded",function(){document.body.classList.add("palette-%s");});&lt;/script&gt;', params$family))</code>
-</li>
-<li>Add body class so CSS preset styles switch by preset: <code>cat(sprintf('&lt;script&gt;document.addEventListener("DOMContentLoaded",function(){document.body.classList.add("preset-%s");});&lt;/script&gt;', params$preset))</code>
-</li>
-</ul>
-<!-- albersdown:theme-note:start -->
-</div>
-<div class="section level2">
-<h2 id="albers-theme">Albers theme<a class="anchor" aria-label="anchor" href="#albers-theme"></a>
-</h2>
-<p>This package uses the albersdown theme. Existing vignette theme hooks are replaced so <code>albers.css</code> and local <code>albers.js</code> render consistently on CRAN and GitHub Pages. The defaults are configured via <code>params$family</code> and <code>params$preset</code> (family = ‘red’, preset = ‘homage’). The pkgdown site uses <code>template: { package: albersdown }</code> together with generated <code>pkgdown/extra.css</code> and <code>pkgdown/extra.js</code> so the theme is linked and activated on site pages. <!-- albersdown:theme-note:end --></p>
+<code class="sourceCode R"><span><span class="fu">albersdown</span><span class="fu">::</span><span class="fu"><a href="reference/use_albersdown.html">use_albersdown</a></span><span class="op">(</span><span class="st">"."</span>, family <span class="op">=</span> <span class="st">"teal"</span>, preset <span class="op">=</span> <span class="st">"homage"</span><span class="op">)</span></span></code></pre></div>
+<p>switches each vignette that uses <code><a href="https://pkgs.rstudio.com/rmarkdown/reference/html_vignette.html" class="external-link">rmarkdown::html_vignette</a></code> to <code><a href="reference/albers_vignette.html">albersdown::albers_vignette</a></code> (Quarto, bookdown, flow-style <code>output: {...}</code> headers and vignettes whose first format is something else are reported and left alone; articles in <code>vignettes/articles/</code> need <code>output: albersdown::albers_vignette</code> set by hand), adds <code>albersdown (&gt;= &lt;installed version&gt;)</code> (in <code>Suggests</code>, or where albersdown is already in <code>Imports</code>/<code>Depends</code>) and the other <code>Suggests</code> and <code>VignetteBuilder</code> entries (plus <code>Remotes: bbuchsbaum/albersdown</code> when the installed albersdown is a development version), and points <code>_pkgdown.yml</code> at the template. When no vignette ends up on the format (none to convert, or <code>apply_to = "new"</code>), only <code>_pkgdown.yml</code> and <code>Config/Needs/website</code> change: the site-only route. A package set up by albersdown 2.0 is migrated (called without <code>family</code>/<code>preset</code>, the helper keeps the family and direction the package already uses, and says where it found them): its setup-chunk lines, <code>params</code>, generated <code>pkgdown/extra.css</code>/<code>extra.js</code> and README note are replaced, and the copied assets in <code>vignettes/</code> are moved out. The edits are textual (other output formats, comments, key order and line endings are kept), each changed file is backed up to <code>.albersdown.bak/</code> (which, with <code>_pkgdown.yml</code>, is added to <code>.Rbuildignore</code>; <code>.albersdown.bak/</code> also goes in <code>.gitignore</code>), and <code>dry_run = TRUE</code> shows what would change. <code>readme = TRUE</code> adds a short note to <code>README.Rmd</code> (re-knit it) or, without one, <code>README.md</code>. <code>method = "vendor"</code> keeps the older setup that copies the stylesheet and script into <code>vignettes/</code>.</p>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">
@@ -220,7 +189,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>

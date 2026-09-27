@@ -109,7 +109,11 @@ mtcars |>
   ggplot2::theme(legend.position = "right")
 ```
 
-![](design-notes_files/figure-html/img-seq-1.png)
+![](design-notes_files/figure-html/img-seq-1.png)![](design-notes_files/figure-html/img-seq-1.phone.png)
+
+![](design-notes_files/figure-html/img-seq-dark-1.png)
+
+![](design-notes_files/figure-html/img-seq-dark-1.phone.png)
 
 Diverging (image-based)
 
@@ -122,7 +126,11 @@ ggplot(df, aes(eruptions, centered, colour = centered)) +
   albersdown::scale_color_albers_img_red_teal(neutral = "#e5e7eb")
 ```
 
-![](design-notes_files/figure-html/img-div-1.png)
+![](design-notes_files/figure-html/img-div-1.png)![](design-notes_files/figure-html/img-div-1.phone.png)
+
+![](design-notes_files/figure-html/img-div-dark-1.png)
+
+![](design-notes_files/figure-html/img-div-dark-1.phone.png)
 
 Notes - The `*_img` scales are opt-in and don’t change existing
 defaults. - `neutral` can be set to `"#e5e7eb"` (site border token) for
@@ -136,8 +144,8 @@ Links and focus rings always meet AA. Move the cursor over H2/H3 to
 reveal the structural dash anchor.
 
 Style modes - `style: minimal` (default): lighter rules and quieter dash
-language. - `style: balanced`: the calibrated middle ground. -
-`style: assertive`: stronger edges and more emphatic structural marks.
+language. - `style: assertive`: stronger edges and more emphatic
+structural marks.
 
 ## Callouts and code blocks
 
@@ -181,7 +189,6 @@ mtcars$grp <- factor(mtcars$grp, levels = c("other", "highlight"))
 ggplot(mtcars, aes(wt, mpg, color = grp)) +
   geom_point(size = 2.2) +
   albersdown::scale_color_albers_highlight(
-    family = params$family,
     tone = "A700",
     highlight = "highlight",
     other_name = "other"
@@ -191,7 +198,11 @@ ggplot(mtcars, aes(wt, mpg, color = grp)) +
        x = "Weight (1000 lbs)", y = "MPG")
 ```
 
-![](design-notes_files/figure-html/unnamed-chunk-2-1.png)
+![](design-notes_files/figure-html/unnamed-chunk-2-1.png)![](design-notes_files/figure-html/unnamed-chunk-2-1.phone.png)
+
+![](design-notes_files/figure-html/unnamed-chunk-2-dark-1.png)
+
+![](design-notes_files/figure-html/unnamed-chunk-2-dark-1.phone.png)
 
 ## See also
 

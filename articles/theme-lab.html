@@ -10,10 +10,11 @@
 <link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
-<script src="../extra.js"></script><meta property="og:title" content="Theme Lab: Tune Family, Preset, and Rhythm">
-<meta name="description" content="Interactive controls for palette family, preset, style intensity, and content width.">
-<meta property="og:description" content="Interactive controls for palette family, preset, style intensity, and content width.">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><script src="../extra.js"></script><meta property="og:title" content="Theme Lab: Tune Family, Preset, and Rhythm">
+<meta name="description" content="Interactive controls for palette family, direction, style intensity, and reading width.">
+<meta property="og:description" content="Interactive controls for palette family, direction, style intensity, and reading width.">
+<link href="../albers.css" rel="stylesheet">
+<script>window.albersdownDefaults = window.albersdownDefaults || { family: "red", preset: "homage", style: "minimal" };</script><script src="../albers.js"></script>
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -23,7 +24,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">albersdown</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -55,14 +56,13 @@
       <h1>Theme Lab: Tune Family, Preset, and Rhythm</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/bbuchsbaum/albersdown/blob/main/vignettes/theme-lab.Rmd" class="external-link"><code>vignettes/theme-lab.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/bbuchsbaum/albersdown/blob/main/vignettes/articles/theme-lab.Rmd" class="external-link"><code>vignettes/articles/theme-lab.Rmd</code></a></small>
       <div class="d-none name"><code>theme-lab.Rmd</code></div>
     </div>
 
     
     
-<script>document.addEventListener("DOMContentLoaded",function(){document.body.classList.remove("palette-red","palette-lapis","palette-ochre","palette-teal","palette-green","palette-violet","preset-homage","preset-study","preset-structural","preset-adobe","preset-midnight");document.body.classList.add("palette-red","preset-homage");});</script><script>document.addEventListener("DOMContentLoaded",function(){if(!document.body.classList.contains("style-minimal") && !document.body.classList.contains("style-assertive") && "minimal"!=="balanced") document.body.classList.add("style-minimal");});</script><style>:root{--content:80ch}</style>
-<div class="section level2">
+<script>(function(b){b.className=b.className.replace(/\b(palette|preset|style)-[a-z]+\b/g,"").trim();b.classList.add("palette-red","preset-homage","style-minimal");document.documentElement.setAttribute("data-albers-marks","");})(document.body);</script><div class="section level2">
 <h2 id="what-is-this-page-for">What Is This Page For?<a class="anchor" aria-label="anchor" href="#what-is-this-page-for"></a>
 </h2>
 <p>Use this page to choose a visual direction before you retrofit or
@@ -111,7 +111,7 @@ weight).</li>
 </div>
 <div>
 <label for="albers-width">Content width (ch)</label>
-<input id="albers-width" data-albers-control="width" type="number" min="60" max="100" value="80">
+<input id="albers-width" data-albers-control="width" type="number" min="56" max="100" placeholder="66">
 </div>
 </div>
 </div>
@@ -121,7 +121,7 @@ weight).</li>
 <span class="albers-chip">A300</span>
 </div>
 <p data-albers-lab-summary>
-family=red | preset=homage | style=minimal | width=80ch
+family=red | preset=homage | style=minimal | width=66ch
 </p>
 <div class="albers-composition albers-composition--dense" data-seed="theme-lab" data-density="8" aria-hidden="true">
 
@@ -142,18 +142,19 @@ show the active family’s tones).</li>
 ground, serif body, light code) vs cool <strong>interaction</strong>
 (grey ground, grotesk, dark code).</li>
 <li>
-<code>style</code>: structural weight (<code>minimal</code>,
-<code>balanced</code>, <code>assertive</code>).</li>
-<li>
-<code>content_width</code>: reading measure in <code>ch</code>
-units.</li>
+<code>style</code>: structural weight (<code>minimal</code> or
+<code>assertive</code>).</li>
+<li>Content width: the reading measure in <code>ch</code> units, for
+this preview only. The theme sets it (66ch in homage, 64ch in
+interaction); it is not a format option.</li>
 </ul>
 </div>
 <div class="section level2">
 <h2 id="can-you-validate-the-palette-quickly">Can You Validate The Palette Quickly?<a class="anchor" aria-label="anchor" href="#can-you-validate-the-palette-quickly"></a>
 </h2>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">pal</span> <span class="op">&lt;-</span> <span class="fu">albersdown</span><span class="fu">::</span><span class="fu"><a href="../reference/albers_palette.html">albers_palette</a></span><span class="op">(</span><span class="va">params</span><span class="op">$</span><span class="va">family</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="co"># the format sets the albersdown.family option to the vignette's family</span></span>
+<span><span class="va">pal</span> <span class="op">&lt;-</span> <span class="fu">albersdown</span><span class="fu">::</span><span class="fu"><a href="../reference/albers_palette.html">albers_palette</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"albersdown.family"</span>, <span class="st">"red"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/stopifnot.html" class="external-link">stopifnot</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/identical.html" class="external-link">identical</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">pal</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A900"</span>, <span class="st">"A700"</span>, <span class="st">"A500"</span>, <span class="st">"A300"</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/all.html" class="external-link">all</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nchar.html" class="external-link">nzchar</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unname.html" class="external-link">unname</a></span><span class="op">(</span><span class="va">pal</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
@@ -174,7 +175,7 @@ hex
 A900
 </td>
 <td style="text-align:left;">
-#C22B23
+#760906
 </td>
 </tr>
 <tr>
@@ -182,7 +183,7 @@ A900
 A700
 </td>
 <td style="text-align:left;">
-#DC3925
+#AE1703
 </td>
 </tr>
 <tr>
@@ -190,7 +191,7 @@ A700
 A500
 </td>
 <td style="text-align:left;">
-#E44926
+#D74A21
 </td>
 </tr>
 <tr>
@@ -198,7 +199,7 @@ A500
 A300
 </td>
 <td style="text-align:left;">
-#E35B2D
+#F7A885
 </td>
 </tr>
 </tbody>
@@ -207,27 +208,30 @@ A300
 <div class="section level2">
 <h2 id="copy-into-yaml">Copy Into YAML<a class="anchor" aria-label="anchor" href="#copy-into-yaml"></a>
 </h2>
-<div class="sourceCode" id="cb2"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">params</span><span class="kw">:</span></span>
-<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="at">  </span><span class="fu">family</span><span class="kw">:</span><span class="at"> red</span></span>
-<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="at">  </span><span class="fu">preset</span><span class="kw">:</span><span class="at"> homage</span></span>
-<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a><span class="at">  </span><span class="fu">base_size</span><span class="kw">:</span><span class="at"> </span><span class="dv">13</span></span>
-<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a><span class="at">  </span><span class="fu">content_width</span><span class="kw">:</span><span class="at"> </span><span class="dv">80</span></span>
-<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a><span class="at">  </span><span class="fu">style</span><span class="kw">:</span><span class="at"> minimal</span></span></code></pre></div>
+<p>Put the choice in the vignette’s output format:</p>
+<div class="sourceCode" id="albers-lab-yaml"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="albers-lab-yaml-1"><a href="#albers-lab-yaml-1" tabindex="-1"></a><span class="fu">output</span><span class="kw">:</span></span>
+<span id="albers-lab-yaml-2"><a href="#albers-lab-yaml-2" tabindex="-1"></a><span class="at">  albersdown:</span><span class="fu">:albers_vignette</span><span class="kw">:</span></span>
+<span id="albers-lab-yaml-3"><a href="#albers-lab-yaml-3" tabindex="-1"></a><span class="at">    </span><span class="fu">family</span><span class="kw">:</span><span class="at"> red</span><span class="co">        # red, lapis, ochre, teal, green, violet</span></span>
+<span id="albers-lab-yaml-4"><a href="#albers-lab-yaml-4" tabindex="-1"></a><span class="at">    </span><span class="fu">preset</span><span class="kw">:</span><span class="at"> homage</span><span class="co">     # homage or interaction</span></span>
+<span id="albers-lab-yaml-5"><a href="#albers-lab-yaml-5" tabindex="-1"></a><span class="at">    </span><span class="fu">style</span><span class="kw">:</span><span class="at"> minimal</span><span class="co">     # minimal, balanced or assertive</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="example-plot">Example Plot<a class="anchor" aria-label="anchor" href="#example-plot"></a>
 </h2>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mtcars</span><span class="op">$</span><span class="va">grp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">$</span><span class="va">cyl</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/stopifnot.html" class="external-link">stopifnot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/levels.html" class="external-link">levels</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">$</span><span class="va">grp</span><span class="op">)</span><span class="op">)</span> <span class="op">&gt;=</span> <span class="fl">3</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">mtcars</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">wt</span>, <span class="va">mpg</span>, colour <span class="op">=</span> <span class="va">grp</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">2.2</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span></span>
+<span><span class="fu">ggplot</span><span class="op">(</span><span class="va">mtcars</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">wt</span>, <span class="va">mpg</span>, colour <span class="op">=</span> <span class="va">grp</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span>size <span class="op">=</span> <span class="fl">2.2</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">albersdown</span><span class="fu">::</span><span class="fu"><a href="../reference/scale_color_albers.html">scale_color_albers</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">labs</span><span class="op">(</span></span>
 <span>    title <span class="op">=</span> <span class="st">"Theme Lab preview"</span>,</span>
 <span>    subtitle <span class="op">=</span> <span class="st">"Tune family + preset + style, then copy YAML"</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
-<p><img src="theme-lab_files/figure-html/example-plot-1.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;"></p>
+<p><img src="theme-lab_files/figure-html/example-plot-1.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;"><img class="albers-phone-twin" src="theme-lab_files/figure-html/example-plot-1.phone.png" alt="" aria-hidden="true" loading="lazy" data-albers-below="468" hidden></p>
+<p><img class="albers-dark-twin" src="theme-lab_files/figure-html/example-plot-dark-1.png" alt="" aria-hidden="true" hidden></p>
+<p><img class="albers-phone-twin albers-phone-dark" src="theme-lab_files/figure-html/example-plot-dark-1.phone.png" alt="" aria-hidden="true" loading="lazy" data-albers-below="468" hidden></p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
@@ -240,7 +244,7 @@ A300
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>

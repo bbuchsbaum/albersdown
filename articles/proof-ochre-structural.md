@@ -19,7 +19,7 @@ the mood; family sets the hue.
 
 albersdown::albers_palette("ochre")
 #>      A900      A700      A500      A300 
-#> "#6F5200" "#8B6700" "#B48900" "#D7A700"
+#> "#513801" "#7A5604" "#A47807" "#DEB95C"
 ```
 
 Inline code such as `theme_albers(preset = "interaction")` stays a light
@@ -52,7 +52,7 @@ Ochre accents on the table header rule, cool ground. {.table}
 
 ggplot(mtcars, aes(wt, mpg, colour = factor(cyl))) +
   geom_point(size = 2.3) +
-  albersdown::scale_color_albers(family = params$family) +
+  albersdown::scale_color_albers() +
   labs(
     title = "Fuel efficiency vs. weight",
     subtitle = "Interaction ground with ochre accents",
@@ -60,4 +60,8 @@ ggplot(mtcars, aes(wt, mpg, colour = factor(cyl))) +
   )
 ```
 
-![](proof-ochre-structural_files/figure-html/unnamed-chunk-3-1.png)
+![](proof-ochre-structural_files/figure-html/unnamed-chunk-3-1.png)![](proof-ochre-structural_files/figure-html/unnamed-chunk-3-1.phone.png)
+
+![](proof-ochre-structural_files/figure-html/unnamed-chunk-3-dark-1.png)
+
+![](proof-ochre-structural_files/figure-html/unnamed-chunk-3-dark-1.phone.png)

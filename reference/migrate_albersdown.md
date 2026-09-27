@@ -1,8 +1,10 @@
 # One-command migration to latest albersdown
 
-Convenience helper for existing packages that already use albersdown and
-need to replace older vignette/site wiring with the latest defaults
-while choosing an Albers accent family and preset.
+Convenience helper for existing packages that already use the vendored
+albersdown setup (copied `albers.css`/`albers.js` in `vignettes/`) and
+need to refresh it with the latest assets while choosing an Albers
+accent family and preset. To move to the output format instead, use
+`use_albersdown(path, method = "format")`.
 
 ## Usage
 
@@ -10,7 +12,7 @@ while choosing an Albers accent family and preset.
 migrate_albersdown(
   path,
   family = "red",
-  preset = c("homage", "study", "structural", "adobe", "midnight"),
+  preset = c("homage", "interaction", "study", "structural", "adobe", "midnight"),
   dry_run = FALSE
 )
 ```
@@ -23,14 +25,11 @@ migrate_albersdown(
   no default so that the function never writes to an unexpected
   location.
 
-- family:
+- family, preset:
 
-  one of: "red","lapis","ochre","teal","green","violet"
-
-- preset:
-
-  Visual preset (default `"homage"`). See
-  [`albers_presets()`](https://bbuchsbaum.github.io/albersdown/reference/albers_presets.md).
+  As in
+  [`use_albersdown()`](https://bbuchsbaum.github.io/albersdown/reference/use_albersdown.md):
+  if not given, the package's current family and direction are kept.
 
 - dry_run:
 

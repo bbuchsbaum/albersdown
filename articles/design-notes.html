@@ -10,10 +10,11 @@
 <link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
-<script src="../extra.js"></script><meta property="og:title" content="Design notes: Homage system">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><script src="../extra.js"></script><meta property="og:title" content="Design notes: Homage system">
 <meta name="description" content="Visual tokens, palette families, and component rules for albersdown.">
 <meta property="og:description" content="Visual tokens, palette families, and component rules for albersdown.">
+<link href="../albers.css" rel="stylesheet">
+<script>window.albersdownDefaults = window.albersdownDefaults || { family: "red", preset: "homage", style: "minimal" };</script><script src="../albers.js"></script>
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -23,7 +24,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">albersdown</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -55,14 +56,13 @@
       <h1>Design notes: Homage system</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/bbuchsbaum/albersdown/blob/main/vignettes/design-notes.Rmd" class="external-link"><code>vignettes/design-notes.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/bbuchsbaum/albersdown/blob/main/vignettes/articles/design-notes.Rmd" class="external-link"><code>vignettes/articles/design-notes.Rmd</code></a></small>
       <div class="d-none name"><code>design-notes.Rmd</code></div>
     </div>
 
     
     
-<script>document.addEventListener("DOMContentLoaded",function(){document.body.classList.remove("palette-red","palette-lapis","palette-ochre","palette-teal","palette-green","palette-violet","preset-homage","preset-study","preset-structural","preset-adobe","preset-midnight");document.body.classList.add("palette-red","preset-homage");});</script><script>document.addEventListener("DOMContentLoaded",function(){document.body.classList.remove("style-minimal","style-assertive");document.body.classList.add("style-minimal");});</script><style>:root{--content:80ch}</style>
-<div class="homage-hero" aria-hidden="true">
+<script>(function(b){b.className=b.className.replace(/\b(palette|preset|style)-[a-z]+\b/g,"").trim();b.classList.add("palette-red","preset-homage","style-minimal");document.documentElement.setAttribute("data-albers-marks","");})(document.body);</script><div class="homage-hero" aria-hidden="true">
 
 </div>
 <div class="albers-plate" aria-hidden="true">
@@ -190,9 +190,9 @@ fully opt-in.</p>
 <p>Sequential (image-based)</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mtcars</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">wt</span>, <span class="va">mpg</span>, colour <span class="op">=</span> <span class="va">hp</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">2.2</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Image-derived sequential (lapis)"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span><span class="va">wt</span>, <span class="va">mpg</span>, colour <span class="op">=</span> <span class="va">hp</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span>size <span class="op">=</span> <span class="fl">2.2</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">labs</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Image-derived sequential (lapis)"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">albersdown</span><span class="fu">::</span><span class="fu"><a href="../reference/scale_color_albers_img.html">scale_color_albers_img</a></span><span class="op">(</span></span>
 <span>    <span class="st">"lapis"</span>,</span>
 <span>    discrete <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -206,15 +206,19 @@ fully opt-in.</p>
 <span>    <span class="op">)</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"right"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="design-notes_files/figure-html/img-seq-1.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;"></p>
+<p><img src="design-notes_files/figure-html/img-seq-1.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;"><img class="albers-phone-twin" src="design-notes_files/figure-html/img-seq-1.phone.png" alt="" aria-hidden="true" loading="lazy" data-albers-below="468" hidden></p>
+<p><img class="albers-dark-twin" src="design-notes_files/figure-html/img-seq-dark-1.png" alt="" aria-hidden="true" hidden></p>
+<p><img class="albers-phone-twin albers-phone-dark" src="design-notes_files/figure-html/img-seq-dark-1.phone.png" alt="" aria-hidden="true" loading="lazy" data-albers-below="468" hidden></p>
 <p>Diverging (image-based)</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/transform.html" class="external-link">transform</a></span><span class="op">(</span><span class="fu">datasets</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/r/datasets/faithful.html" class="external-link">faithful</a></span>, centered <span class="op">=</span> <span class="va">waiting</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">waiting</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">df</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">eruptions</span>, <span class="va">centered</span>, colour <span class="op">=</span> <span class="va">centered</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">0.9</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Image-derived diverging (red &lt;-&gt; teal)"</span><span class="op">)</span> <span class="op">+</span></span>
+<span><span class="fu">ggplot</span><span class="op">(</span><span class="va">df</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">eruptions</span>, <span class="va">centered</span>, colour <span class="op">=</span> <span class="va">centered</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">0.9</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">labs</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Image-derived diverging (red &lt;-&gt; teal)"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">albersdown</span><span class="fu">::</span><span class="fu"><a href="../reference/scale_color_albers_img_red_teal.html">scale_color_albers_img_red_teal</a></span><span class="op">(</span>neutral <span class="op">=</span> <span class="st">"#e5e7eb"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="design-notes_files/figure-html/img-div-1.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;"></p>
+<p><img src="design-notes_files/figure-html/img-div-1.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;"><img class="albers-phone-twin" src="design-notes_files/figure-html/img-div-1.phone.png" alt="" aria-hidden="true" loading="lazy" data-albers-below="468" hidden></p>
+<p><img class="albers-dark-twin" src="design-notes_files/figure-html/img-div-dark-1.png" alt="" aria-hidden="true" hidden></p>
+<p><img class="albers-phone-twin albers-phone-dark" src="design-notes_files/figure-html/img-div-dark-1.phone.png" alt="" aria-hidden="true" loading="lazy" data-albers-below="468" hidden></p>
 <p>Notes - The <code>*_img</code> scales are opt-in and don’t change
 existing defaults. - <code>neutral</code> can be set to
 <code>"#e5e7eb"</code> (site border token) for visual coherence with
@@ -228,8 +232,7 @@ contrasts.</p>
 <p>Links and focus rings always meet AA. Move the cursor over H2/H3 to
 reveal the structural dash anchor.</p>
 <p>Style modes - <code>style: minimal</code> (default): lighter rules
-and quieter dash language. - <code>style: balanced</code>: the
-calibrated middle ground. - <code>style: assertive</code>: stronger
+and quieter dash language. - <code>style: assertive</code>: stronger
 edges and more emphatic structural marks.</p>
 <div class="hr-notch" role="presentation">
 
@@ -406,18 +409,19 @@ Valiant
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mtcars</span><span class="op">$</span><span class="va">grp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">$</span><span class="va">cyl</span> <span class="op">==</span> <span class="fl">6</span>, <span class="st">"highlight"</span>, <span class="st">"other"</span><span class="op">)</span></span>
 <span><span class="va">mtcars</span><span class="op">$</span><span class="va">grp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">$</span><span class="va">grp</span>, levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"other"</span>, <span class="st">"highlight"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">mtcars</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">wt</span>, <span class="va">mpg</span>, color <span class="op">=</span> <span class="va">grp</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">2.2</span><span class="op">)</span> <span class="op">+</span></span>
+<span><span class="fu">ggplot</span><span class="op">(</span><span class="va">mtcars</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">wt</span>, <span class="va">mpg</span>, color <span class="op">=</span> <span class="va">grp</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span>size <span class="op">=</span> <span class="fl">2.2</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">albersdown</span><span class="fu">::</span><span class="fu"><a href="../reference/scale_color_albers_highlight.html">scale_color_albers_highlight</a></span><span class="op">(</span></span>
-<span>    family <span class="op">=</span> <span class="va">params</span><span class="op">$</span><span class="va">family</span>,</span>
 <span>    tone <span class="op">=</span> <span class="st">"A700"</span>,</span>
 <span>    highlight <span class="op">=</span> <span class="st">"highlight"</span>,</span>
 <span>    other_name <span class="op">=</span> <span class="st">"other"</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"One highlighted series; others neutral"</span>,</span>
+<span>  <span class="fu">labs</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"One highlighted series; others neutral"</span>,</span>
 <span>       subtitle <span class="op">=</span> <span class="st">"A700 draws the eye; gray recedes"</span>,</span>
 <span>       x <span class="op">=</span> <span class="st">"Weight (1000 lbs)"</span>, y <span class="op">=</span> <span class="st">"MPG"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="design-notes_files/figure-html/unnamed-chunk-2-1.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;"></p>
+<p><img src="design-notes_files/figure-html/unnamed-chunk-2-1.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;"><img class="albers-phone-twin" src="design-notes_files/figure-html/unnamed-chunk-2-1.phone.png" alt="" aria-hidden="true" loading="lazy" data-albers-below="468" hidden></p>
+<p><img class="albers-dark-twin" src="design-notes_files/figure-html/unnamed-chunk-2-dark-1.png" alt="" aria-hidden="true" hidden></p>
+<p><img class="albers-phone-twin albers-phone-dark" src="design-notes_files/figure-html/unnamed-chunk-2-dark-1.phone.png" alt="" aria-hidden="true" loading="lazy" data-albers-below="468" hidden></p>
 </div>
 <div class="section level2">
 <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a>
@@ -445,7 +449,7 @@ Valiant
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>

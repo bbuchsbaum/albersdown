@@ -1,15 +1,15 @@
 pandoc: 3.8.3
-pkgdown: 2.2.0
+pkgdown: 2.2.1
 pkgdown_sha: ~
 articles:
-  design-notes: design-notes.html
+  articles/design-notes: design-notes.html
   getting-started: getting-started.html
   interaction: interaction.html
-  proof-ochre-structural: proof-ochre-structural.html
-  proof-teal-study: proof-teal-study.html
-  theme-lab: theme-lab.html
-  theme-showcase: theme-showcase.html
-last_built: 2026-06-30T22:43Z
+  articles/proof-ochre-structural: proof-ochre-structural.html
+  articles/proof-teal-study: proof-teal-study.html
+  articles/theme-lab: theme-lab.html
+  articles/theme-showcase: theme-showcase.html
+last_built: 2026-09-27T01:18Z
 urls:
   reference: https://bbuchsbaum.github.io/albersdown/reference
   article: https://bbuchsbaum.github.io/albersdown/articles
