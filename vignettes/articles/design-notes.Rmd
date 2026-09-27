@@ -3,28 +3,12 @@ title: 'Design notes: Homage system'
 name: design-notes
 description: Visual tokens, palette families, and component rules for albersdown.
 output:
-  rmarkdown::html_vignette:
+  albersdown::albers_vignette:
+    family: red
+    preset: homage
     toc: yes
     toc_depth: 2
     df_print: kable
-    css: albers.css
-    includes:
-      in_header: albers-header.html
-params:
-  family: red
-  preset: homage
-  base_size: 13
-  content_width: 80
-  style: minimal
-resource_files:
-- albers.css
-- albers.js
-- albers-header.html
-
-vignette: |
-  %\VignetteIndexEntry{Design notes: Homage system}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, include=FALSE}
@@ -33,45 +17,8 @@ knitr::opts_chunk$set(
   out.width = "100%", fig.width = 7, fig.asp = 0.618, message = FALSE, warning = FALSE
 )
 set.seed(123)
-oldopt <- options(pillar.sigfig = 7, width = 80)
-`%||%` <- function(a, b) if (is.null(a)) b else a
+oldopt <- options(pillar.sigfig = 7)
 library(ggplot2)
-if (requireNamespace("ragg", quietly = TRUE)) knitr::opts_chunk$set(dev = "ragg_png")
-if (requireNamespace("systemfonts", quietly = TRUE)) albersdown::albers_register_fonts()
-if (requireNamespace("ggplot2", quietly = TRUE) && requireNamespace("albersdown", quietly = TRUE)) {
-  if (requireNamespace("ggplot2", quietly = TRUE) && requireNamespace("albersdown", quietly = TRUE)) ggplot2::theme_set(albersdown::theme_albers(family = params$family, preset = params$preset))
-}
-```
-
-```{r albers-classes, echo=FALSE, results='asis'}
-cat(sprintf(
-  paste0(
-    '<script>document.addEventListener("DOMContentLoaded",function(){',
-    'document.body.classList.remove("palette-red","palette-lapis","palette-ochre","palette-teal","palette-green","palette-violet","preset-homage","preset-study","preset-structural","preset-adobe","preset-midnight");',
-    'document.body.classList.add("palette-%s","preset-%s");',
-    '});</script>'
-  ),
-  params$family,
-  params$preset
-))
-```
-
-
-
-```{r albers-style, echo=FALSE, results='asis'}
-style_class <- switch(
-  tolower(params$style %||% "balanced"),
-  minimal = "style-minimal",
-  assertive = "style-assertive",
-  balanced = ""
-)
-if (nzchar(style_class)) {
-  cat(sprintf('<script>document.addEventListener("DOMContentLoaded",function(){document.body.classList.remove("style-minimal","style-assertive");document.body.classList.add("%s");});</script>', style_class))
-}
-```
-
-```{r content-width, echo=FALSE, results='asis'}
-cat(sprintf('<style>:root{--content:%sch}</style>', params$content_width))
 ```
 
 <div class="homage-hero" aria-hidden="true"></div>
@@ -202,7 +149,6 @@ Links and focus rings always meet AA. Move the cursor over H2/H3 to reveal the s
 
 Style modes
 - `style: minimal` (default): lighter rules and quieter dash language.
-- `style: balanced`: the calibrated middle ground.
 - `style: assertive`: stronger edges and more emphatic structural marks.
 
 <div class="hr-notch" role="presentation"></div>
@@ -235,7 +181,6 @@ mtcars$grp <- factor(mtcars$grp, levels = c("other", "highlight"))
 ggplot(mtcars, aes(wt, mpg, color = grp)) +
   geom_point(size = 2.2) +
   albersdown::scale_color_albers_highlight(
-    family = params$family,
     tone = "A700",
     highlight = "highlight",
     other_name = "other"
@@ -255,5 +200,4 @@ ggplot(mtcars, aes(wt, mpg, color = grp)) +
 
 ```{r cleanup, include=FALSE}
 options(oldopt)
-if (exists("oldtheme")) ggplot2::theme_set(oldtheme)
 ```

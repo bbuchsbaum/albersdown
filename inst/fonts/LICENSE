@@ -5,7 +5,10 @@ albersdown ships latin-subset, variable-weight WOFF2 builds of the following
 typefaces so that vignettes and the pkgdown site render the intended typography
 offline and without third-party network requests (CRAN-safe). Each typeface is
 licensed under the SIL Open Font License, Version 1.1 (OFL-1.1). The full
-license text follows the attributions below.
+license text follows the attributions below. The variable axes are limited to
+the ranges the theme uses (e.g. Newsreader wght 400-600, with its optical size
+fixed at 18) with the fontTools instancer to reduce file size; no Reserved Font
+Names apply.
 
   familjen-grotesk.woff2
     Familjen Grotesk
@@ -22,7 +25,7 @@ license text follows the attributions below.
     Copyright 2020 The Space Grotesk Project Authors
     https://github.com/floriankarsten/space-grotesk
 
-  hanken-grotesk.woff2
+  hanken-grotesk.woff2, hanken-grotesk-italic.woff2
     Hanken Grotesk
     Copyright 2021 The Hanken Grotesk Project Authors
     https://github.com/marcologous/hanken-grotesk

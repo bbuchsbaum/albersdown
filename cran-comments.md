@@ -1,31 +1,30 @@
+## Release summary
+
+This is a minor release (2.0.0 -> 2.1.0). In this version I have:
+
+* Added the output format `albers_vignette()`, which themes a vignette with one
+  line of YAML and embeds the stylesheet, script and fonts in the
+  self-contained HTML, so the page makes no network requests.
+* Added dark and phone-width versions of plots in vignettes, a print style,
+  and reading and accessibility improvements to the pkgdown and vignette
+  assets.
+* Updated `use_albersdown()` to move packages onto the new format.
+* Moved the design showcase and proof pages from vignettes to website-only
+  articles, which reduces the installed size from 7.1 MB to 2.8 MB.
+* Shipped NEWS.md.
+
 ## R CMD check results
 
-0 errors | 0 warnings | 2 notes
-
-The two local notes are environment-related:
-
-* `unable to verify current time` from the local `--as-cran` check.
-* HTML validation skipped because the local `tidy` binary is not recent enough.
-
-## Resubmission
-
-This is a patch release after 1.0.0. In this version I have:
-
-* Fixed CRAN vignette rendering by ensuring `albers.css` and
-  `albers-header.html` are configured inside
-  `output: rmarkdown::html_vignette`, where `rmarkdown` actually honors them.
-* Updated `use_albersdown()` and `migrate_albersdown()` to migrate legacy
-  top-level vignette `css`/`includes` hooks to the CRAN-safe form.
-* Restored `use_albers_vignettes()` as a current-directory wrapper around
-  `use_albersdown()`.
-* Added regression tests that render a legacy CRAN-shaped vignette and verify
-  that the Albers CSS and JavaScript hooks are embedded in the HTML.
+0 errors | 0 warnings | 0 notes
 
 ## Test environments
 
-* local macOS (aarch64-apple-darwin), R 4.5.x
-* GitHub Actions: ubuntu-latest (release), macOS-latest (release),
-  windows-latest (release)
+* local macOS Sonoma 14.3 (aarch64-apple-darwin20), R 4.5.1:
+  `R CMD check --as-cran --no-manual`, Status: OK.
+* win-builder, R-devel (2026-09-25 r90590 ucrt, x86_64-w64-mingw32): Status: OK.
+* GitHub Actions, ubuntu-latest (R-devel, R-release, R-oldrel-1): Status: OK.
+* GitHub Actions, windows-latest (R-release): Status: OK.
+* GitHub Actions, macos-latest (R-release): Status: OK.
 
 ## Package documentation
 
@@ -33,4 +32,15 @@ Online documentation is available at: https://bbuchsbaum.github.io/albersdown/
 
 ## Downstream dependencies
 
-There are no known reverse dependency breakages from this vignette/setup patch.
+`tools::package_dependencies("albersdown", reverse = TRUE, which = "all")`
+against CRAN on 2026-09-26 lists three reverse dependencies, all of which
+suggest albersdown: bidser, genpca and neuroim2. I checked each (current CRAN
+version) with albersdown 2.1.0 installed:
+
+* bidser 0.5.0: Status OK.
+* genpca 0.2.1: vignettes rebuilt and tests passed; 1 WARNING from the local
+  compiler (Homebrew clang 20 reports an unknown warning group in R's
+  `R_ext/Boolean.h`), which is unrelated to albersdown.
+* neuroim2 0.13.0: Status OK.
+
+(`R CMD check --no-manual` on local macOS, R 4.5.1.)

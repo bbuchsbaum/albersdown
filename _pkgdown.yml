@@ -13,8 +13,11 @@ articles:
   contents:
   - getting-started
   - interaction
-  - design-notes
-  - theme-lab
-  - theme-showcase
-  - proof-teal-study
-  - proof-ochre-structural
+- title: Design and showcase
+  desc: Website-only articles (not shipped with the package).
+  contents:
+  - articles/design-notes
+  - articles/theme-lab
+  - articles/theme-showcase
+  - articles/proof-teal-study
+  - articles/proof-ochre-structural

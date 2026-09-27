@@ -1,103 +1,41 @@
 ---
 title: "Getting started"
-name: getting-started
-description: "A quiet, minimalist vignette styled with Albers."
+subtitle: "One sentence on what this vignette shows"
 output:
-  rmarkdown::html_vignette:
-    toc: true
-    toc_depth: 2
-    css: albers.css
-    includes:
-      in_header: albers-header.html
-params:
-  family: "red"     # choices: red, lapis, ochre, teal, green, violet
-  preset: "homage"  # direction: homage (warm) or interaction (cool)
-  base_size: 13
-  content_width: 80   # in ch units
-  style: "minimal"    # choices: minimal (default), balanced, assertive
+  albersdown::albers_vignette:
+    family: red        # red, lapis, ochre, teal, green, violet
+    preset: homage     # homage (warm, serif) or interaction (cool, grotesk)
 vignette: >
   %\VignetteIndexEntry{Getting started}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
-resource_files:
-  - albers.css
-  - albers.js
-  - albers-header.html
-  - fonts
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE, comment = "#>", fig.align = "center", fig.retina = 2,
-  out.width = "100%", fig.width = 7, fig.asp = 0.618, message = FALSE, warning = FALSE
-)
-set.seed(123); options(pillar.sigfig = 7, width = 80)
-`%||%` <- function(a, b) if (is.null(a)) b else a
-library(ggplot2)
-# Render plots with a font-aware device and the bundled display fonts so plot
-# text matches the page typography (falls back to system "sans" if unavailable).
-if (requireNamespace("ragg", quietly = TRUE)) knitr::opts_chunk$set(dev = "ragg_png")
-if (requireNamespace("systemfonts", quietly = TRUE)) albersdown::albers_register_fonts()
-if (requireNamespace("ggplot2", quietly = TRUE) && requireNamespace("albersdown", quietly = TRUE)) {
-  ggplot2::theme_set(albersdown::theme_albers(
-    family = params$family,
-    preset = params$preset,
-    base_size = params$base_size
-  ))
-}
+```{r setup, include = FALSE}
+library(ggplot2)  # add ggplot2 to Suggests in DESCRIPTION
 ```
 
-```{r albers-family, echo=FALSE, results='asis'}
-cat(sprintf('<script>document.addEventListener("DOMContentLoaded",function(){document.body.classList.add("palette-%s");});</script>', params$family))
-```
+The first paragraph states the question this vignette answers. Keep it short;
+let code, output, and figures carry the argument.
 
-```{r albers-preset, echo=FALSE, results='asis'}
-cat(sprintf('<script>document.addEventListener("DOMContentLoaded",function(){document.body.classList.add("preset-%s");});</script>', params$preset))
-```
-
-```{r albers-style, echo=FALSE, results='asis'}
-style_class <- switch(
-  tolower(params$style %||% "balanced"),
-  minimal = "style-minimal",
-  assertive = "style-assertive",
-  balanced = ""
-)
-if (nzchar(style_class)) {
-  cat(sprintf('<script>document.addEventListener("DOMContentLoaded",function(){document.body.classList.remove("style-minimal","style-assertive");document.body.classList.add("%s");});</script>', style_class))
-}
-```
-
-```{r content-width, echo=FALSE, results='asis'}
-cat(sprintf('<style>:root{--content:%sch}</style>', params$content_width))
-```
-
-<!-- Optional Albers hero tile and structural ribbon rule -->
-<div class="homage-hero" aria-hidden="true"></div>
-<div class="albers-composition" data-seed="template-vignette" data-density="6" aria-hidden="true"></div>
-<div class="hr-notch" role="presentation"></div>
-
-```{r anchors, echo=FALSE, results='asis'}
-cat('<script>document.addEventListener("DOMContentLoaded",function(){document.querySelectorAll("h2, h3").forEach(function(h){if(!h.id)return;if(h.querySelector("a.anchor"))return;var a=document.createElement("a");a.href="#"+h.id;a.className="anchor";a.textContent="—";a.setAttribute("aria-label","Link to this section");a.setAttribute("title","Link to this section");h.appendChild(a);});});</script>')
-```
-
-## Goal
-
-This vignette shows the happy path with a clean, legible presentation.
-
-> TIP: Keep paragraphs short; let code and output carry the meaning.
-
-## TL;DR {#tldr}
+## A first result
 
 ```{r}
 summary(mtcars$mpg)
 ```
 
-## A small plot {#plot}
+::: {.callout .callout-tip}
+**Tip.** Callouts come in `callout-note`, `callout-tip`, `callout-warning` and
+`callout-danger`.
+:::
 
-```{r}
-mtcars |>
-  ggplot(aes(wt, mpg, color = factor(cyl))) +
+## A figure
+
+The format sets `theme_albers()` for the render, so plots match the page.
+
+```{r mpg-weight, fig.cap = "Heavier cars travel fewer miles per gallon."}
+ggplot(mtcars, aes(wt, mpg, colour = factor(cyl))) +
   geom_point(size = 2.2) +
-  labs(title = "Fuel efficiency vs. weight",
-       subtitle = "Example with Albers theme", x = "Weight (1000 lbs)", y = "MPG")
+  albersdown::scale_color_albers() +
+  labs(x = "Weight (1000 lbs)", y = "Miles per gallon", colour = "Cylinders")
 ```

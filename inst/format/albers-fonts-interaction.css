@@ -1,0 +1,8 @@
+@font-face { font-family: "Space Grotesk"; font-style: normal; font-weight: 300 700; font-display: swap; src: url("../fonts/space-grotesk.woff2") format("woff2"); }
+@font-face { font-family: "Hanken Grotesk"; font-style: normal; font-weight: 400 700; font-display: swap; src: url("../fonts/hanken-grotesk.woff2") format("woff2"); }
+@font-face { font-family: "Hanken Grotesk"; font-style: italic; font-weight: 400 700; font-display: swap; src: url("../fonts/hanken-grotesk-italic.woff2") format("woff2"); }
+@font-face { font-family: "JetBrains Mono"; font-style: normal; font-weight: 400 500; font-display: swap; src: url("../fonts/jetbrains-mono.woff2") format("woff2"); }
+@font-face { font-family: "Hanken Grotesk Fallback"; src: local("Arial"), local("ArialMT"), local("Liberation Sans"), local("Arimo"); size-adjust: 100%; }
+@font-face { font-family: "Hanken Grotesk Fallback"; font-weight: 600 700; src: local("Arial Bold"), local("Arial-BoldMT"), local("Liberation Sans Bold"), local("Arimo Bold"); size-adjust: 94.3%; }
+@font-face { font-family: "Space Grotesk Fallback"; src: local("Arial"), local("ArialMT"), local("Liberation Sans"), local("Arimo"); size-adjust: 108.5%; }
+@font-face { font-family: "Space Grotesk Fallback"; font-weight: 600 700; src: local("Arial Bold"), local("Arial-BoldMT"), local("Liberation Sans Bold"), local("Arimo Bold"); size-adjust: 101.5%; }

@@ -1,25 +1,75 @@
 #' One-shot setup for existing packages
 #'
-#' Turn-key retrofit to adopt the albersdown theme in an existing package.
-#' Copies local assets for CRAN-safe vignettes, ensures pkgdown template,
-#' optionally patches all vignettes, writes a README note, and prints a doctor report.
+#' Adopt the albersdown theme in an existing package.
+#'
+#' With `method = "format"` (the default) each `vignettes/*.Rmd` whose first
+#' output format is `html_vignette` is switched to [albers_vignette()], and
+#' `_pkgdown.yml` is pointed at the albersdown template (it is created, and
+#' added to `.Rbuildignore` with `docs/`, if missing). `DESCRIPTION` gains
+#' `bbuchsbaum/albersdown` in `Config/Needs/website`. When at least one
+#' vignette is on the format, it also gains `albersdown (>= <installed
+#' version>)` in `Suggests` (or that bound where albersdown is already in
+#' `Imports`/`Depends`), `knitr` and `rmarkdown`, and `VignetteBuilder: knitr`;
+#' and, when the installed albersdown is a development version (not on CRAN),
+#' `Remotes: bbuchsbaum/albersdown`, so that R CMD check and CI install the
+#' version with `albers_vignette()` (`R CMD check --as-cran` notes that
+#' field). Otherwise (no vignettes, none convertible, or `apply_to = "new"`
+#' with none already on the format) the adoption is site-only and no field that
+#' R CMD check reads is changed. Nothing is copied into
+#' `vignettes/`. Edits are textual (other output formats, comments, key order
+#' and line endings are kept) and each changed file is backed up to
+#' `.albersdown.bak/`, which is added to `.Rbuildignore` and `.gitignore`.
+#'
+#' A package set up by albersdown 2.0 (the vendor setup) is migrated: the
+#' setup-chunk lines and `params` (`family`, `preset`) that 2.0 added are
+#' removed, as are its generated `pkgdown/extra.css` (an `@import` of the
+#' theme) and `pkgdown/extra.js`, and its README note is rewritten. The copied
+#' `albers.css`, `albers.js`, `albers-header.html` and fonts in `vignettes/` are
+#' moved to `.albersdown.bak/` once no remaining vignette uses them.
+#'
+#' Quarto vignettes, flow-style `output: {...}` headers and pkgdown-only
+#' articles in `vignettes/articles/` are listed but not changed: articles take the site default family unless you
+#' set `output: albersdown::albers_vignette` in their YAML by hand.
+#'
+#' With `method = "vendor"` the stylesheet, script and fonts are copied into
+#' `vignettes/` and each vignette keeps `rmarkdown::html_vignette` with the
+#' theme's css and header include (the albersdown 2.0 setup).
 #'
 #' @param path Path to the package directory.  Must be supplied explicitly;
 #'   there is no default so that the function never writes to an unexpected
 #'   location.
-#' @param family one of: "red","lapis","ochre","teal","green","violet"
-#' @param preset Visual preset (default \code{"homage"}). See [albers_presets()].
-#' @param apply_to "all" to patch every *.Rmd/*.qmd in vignettes/, or "new" to only add the template and assets
-#' @param dry_run if TRUE, show changes without writing
-#' @param fallback_extra Controls writing site-wide fallbacks into `pkgdown/`:
+#' @param family One of `"red"`, `"lapis"`, `"ochre"`, `"teal"`, `"green"`,
+#'   `"violet"` (case-insensitive). If not given, the family the package
+#'   already uses is kept: from its vignettes (a `family:` stated in their
+#'   `albers_vignette()` entries, or albersdown 2.0's `params`; the most
+#'   common if they differ), else from site defaults in `pkgdown/extra.js` or
+#'   `_pkgdown.yml`, else `"red"`. With `apply_to = "new"` the site defaults
+#'   come first. A message says which was kept and where it came from.
+#' @param preset Direction, `"homage"` or `"interaction"` (legacy presets are
+#'   accepted; case-insensitive). If not given, inferred like `family`, else
+#'   `"homage"`. See [albers_presets()].
+#' @param apply_to `"all"` to convert the vignettes as well (every `*.Rmd` in
+#'   `vignettes/`; with `method = "vendor"` also `*.qmd`), or `"new"` to set up
+#'   only `_pkgdown.yml`, the site defaults and `DESCRIPTION` (vignette
+#'   dependencies only if a vignette is already on the format).
+#' @param method `"format"` (default) or `"vendor"`; see Details.
+#' @param readme If `TRUE`, add a short note about the theme to `README.Rmd`
+#'   (re-knit it afterwards) or, when there is none, `README.md` (default
+#'   `FALSE`), describing the setup `method` makes.
+#' @param dry_run if TRUE, report the changes (including `.Rbuildignore` and
+#'   `.gitignore` entries) without writing anything.
+#' @param fallback_extra `method = "vendor"` only. Controls writing site-wide
+#'   fallbacks into `pkgdown/`:
 #'   - "auto": write `pkgdown/extra.css` and `pkgdown/extra.js` whenever
-#'     site-wide defaults are needed, including the standard
-#'     `template: { package: albersdown }` setup where pkgdown template
-#'     assets are copied but not linked automatically.
+#'     site-wide defaults are needed.
 #'   - "always": always write to `pkgdown/` (useful as a safety net or for custom setups).
 #'   - "never": never copy site-wide fallbacks.
-#' @param force_replace if TRUE (default), overwrite existing albersdown assets and
-#'   replace existing vignette CSS/header hooks so albersdown becomes the active theme.
+#'
+#'   With `method = "format"`, only the site default family is written, to
+#'   `pkgdown/extra.js`, and only when it is not red/homage (or was set before).
+#' @param force_replace `method = "vendor"` only. If TRUE (default), overwrite
+#'   existing albersdown assets and replace existing vignette CSS/header hooks
+#'   so albersdown becomes the active theme.
 #' @return \code{TRUE} invisibly.
 #' @export
 #' @examples
@@ -31,18 +81,100 @@
 use_albersdown <- function(
   path,
   family = "red",
-  preset = c("homage", "study", "structural", "adobe", "midnight"),
+  preset = c("homage", "interaction", "study", "structural", "adobe", "midnight"),
   apply_to = c("all", "new"),
   dry_run = FALSE,
   fallback_extra = c("auto", "always", "never"),
-  force_replace = TRUE
+  force_replace = TRUE,
+  method = c("format", "vendor"),
+  readme = FALSE
 ) {
   apply_to <- match.arg(apply_to)
-  preset <- match.arg(preset)
   fallback_extra <- match.arg(fallback_extra)
+  method <- match.arg(method)
+  infer <- c(family = missing(family), preset = missing(preset))
+  family <- .albers_choice(family, .albers_families, "family", "use_albersdown")
+  preset <- .albers_choice(preset, .albers_all_presets, "preset", "use_albersdown")
+  if (!file.exists(file.path(path, "DESCRIPTION"))) {
+    stop("`path` must be an R package (no DESCRIPTION in ", normalizePath(path, mustWork = FALSE), ").", call. = FALSE)
+  }
   oldwd <- setwd(path)
   on.exit(setwd(oldwd), add = TRUE)
   if (requireNamespace("cli", quietly = TRUE)) cli::cli_h1("albersdown setup") else message("albersdown setup")
+
+  # Not given: keep what the package already uses (a re-run, or a package
+  # set up by albersdown 2.0) rather than resetting it to red/homage.
+  if (any(infer)) {
+    found <- .albers_infer_choice(names(infer)[infer], site_first = identical(apply_to, "new"))
+    for (key in names(found)) {
+      f <- found[[key]]
+      if (identical(key, "family")) family <- f$value else preset <- f$value
+      .albers_say(sprintf("Kept the package's %s: %s (from %s%s); pass `%s` to change it",
+                          key, f$value, f$from, if (nzchar(f$note)) paste0("; ", f$note) else "", key),
+                  if (nzchar(f$note)) "warning" else "info")
+    }
+  }
+
+  if (identical(method, "format")) {
+    changed <- .ensure_pkgdown_template_text(dry_run = dry_run)
+    files <- c(Sys.glob("vignettes/*.Rmd"), Sys.glob("vignettes/*.rmd"))
+    if (apply_to == "all") {
+      status <- vapply(files, .patch_rmd_to_format, character(1), family = family, preset = preset, dry_run = dry_run)
+      changed <- c(changed, status %in% c("converted", "updated"))
+      qmd <- Sys.glob("vignettes/*.qmd")
+      if (length(qmd)) {
+        .albers_say(sprintf(
+          "Not converted: %s (Quarto; albers_vignette() is an R Markdown format, so these keep their own theme)",
+          paste(basename(qmd), collapse = ", ")), "warning")
+      }
+      articles <- c(Sys.glob("vignettes/articles/*.Rmd"), Sys.glob("vignettes/articles/*.qmd"))
+      if (length(articles)) {
+        .albers_say(sprintf(paste(
+          "Not converted: %s in vignettes/articles/ (pkgdown-only articles take the site default family;",
+          "to give one its own, set `output: albersdown::albers_vignette` with family/preset in its YAML by hand)"),
+          paste(basename(articles), collapse = ", ")), "warning")
+      }
+      others <- c(files[status == "skipped"], qmd, articles)
+      changed <- c(changed, .albers_retire_vendored(others, dry_run = dry_run))
+      on_format <- any(status != "skipped")
+    } else {
+      on_format <- any(vapply(files, .albers_on_format, logical(1)))
+    }
+    # vignette dependencies (and Remotes) only for vignettes on the format: a
+    # site-only adoption touches no field that R CMD check reads
+    changed <- c(changed, .ensure_vignette_deps(dry_run = dry_run, vignettes = on_format))
+    if (!on_format) {
+      .albers_say(paste(
+        "No vignettes on albersdown::albers_vignette(): DESCRIPTION gets only Config/Needs/website.",
+        "Re-run use_albersdown() after switching a vignette to the format to add its dependencies."))
+    }
+    changed <- c(changed, .albers_retire_extra_css(dry_run = dry_run))
+    # the site default follows the family, including a return to red/homage
+    js <- file.path("pkgdown", "extra.js")
+    js_lines <- if (file.exists(js)) readLines(js, warn = FALSE) else character()
+    has_defaults <- any(grepl("^window\\.albersdownDefaults\\s*=", js_lines)) || .albers_legacy_extra_js(js_lines)
+    if (has_defaults || !(identical(family, "red") && identical(preset, "homage"))) {
+      changed <- c(changed, .albers_site_defaults(family = family, preset = preset, dry_run = dry_run))
+    }
+    # albersdown 2.0's README note describes the vendored setup: replace it
+    # once the vignettes have moved to the format; while they have not, it
+    # is still true of them
+    vendor_note <- .albers_readme_has_vendor_note()
+    if (isTRUE(readme) || (vendor_note && on_format)) {
+      .write_readme_snippet(family = family, preset = preset, dry_run = dry_run, method = "format", on_format = on_format)
+    } else if (vendor_note) {
+      .albers_say("README note from albersdown 2.0 left as is: no vignette is on albersdown::albers_vignette() yet")
+    }
+    if (dir.exists(".albersdown.bak") || (dry_run && any(changed))) {
+      .albers_build_ignore("^\\.albersdown\\.bak$", dry_run = dry_run)
+      .albers_build_ignore(".albersdown.bak/", file = ".gitignore", dry_run = dry_run)
+    }
+    .albers_say(if (dry_run) "Dry run: no files were changed." else if (on_format)
+      "Vignettes use albersdown::albers_vignette(); the theme is embedded when they render." else
+      "The pkgdown site uses the albersdown template.")
+    return(invisible(TRUE))
+  }
+
   .ensure_pkgdown_template(dry_run = dry_run)
   .add_website_dep(dry_run = dry_run)
   .copy_resources(
@@ -53,7 +185,7 @@ use_albersdown <- function(
     force_replace = force_replace
   )
   if (apply_to == "all") .patch_all_rmds(family = family, preset = preset, dry_run = dry_run, force_replace = force_replace)
-  .write_readme_snippet(family = family, preset = preset, dry_run = dry_run)
+  if (isTRUE(readme)) .write_readme_snippet(family = family, preset = preset, dry_run = dry_run)
   .doctor(family = family)
   invisible(TRUE)
 }
@@ -89,13 +221,13 @@ use_albersdown <- function(
   fallback_extra <- match.arg(fallback_extra)
   dir.create("vignettes", showWarnings = FALSE)
 
-  src_css_v_local <- file.path("inst", "rmarkdown", "templates", "albers_vignette", "skeleton", "albers.css")
-  src_header_local <- file.path("inst", "rmarkdown", "templates", "albers_vignette", "skeleton", "albers-header.html")
+  src_css_v_local <- file.path("inst", "pkgdown", "assets", "albers.css")
+  src_header_local <- file.path("inst", "format", "albers-header.html")
   src_css_site_local <- file.path("inst", "pkgdown", "assets", "albers.css")
   src_js_local <- file.path("inst", "pkgdown", "assets", "albers.js")
 
-  src_css_v <- if (file.exists(src_css_v_local)) src_css_v_local else system.file("rmarkdown/templates/albers_vignette/skeleton/albers.css", package = "albersdown")
-  src_header <- if (file.exists(src_header_local)) src_header_local else system.file("rmarkdown/templates/albers_vignette/skeleton/albers-header.html", package = "albersdown")
+  src_css_v <- if (file.exists(src_css_v_local)) src_css_v_local else system.file("pkgdown/assets/albers.css", package = "albersdown")
+  src_header <- if (file.exists(src_header_local)) src_header_local else system.file("format/albers-header.html", package = "albersdown")
   src_css_site <- if (file.exists(src_css_site_local)) src_css_site_local else system.file("pkgdown/assets/albers.css", package = "albersdown")
   src_js <- if (file.exists(src_js_local)) src_js_local else system.file("pkgdown/assets/albers.js", package = "albersdown")
 
@@ -195,6 +327,13 @@ use_albersdown <- function(
   }
 
   raw <- readLines(path, warn = FALSE)
+  # Vignettes already on the output format carry the theme themselves; leave
+  # them exactly as they are.
+  if (any(grepl("albersdown::albers_vignette", raw, fixed = TRUE))) {
+    msg <- sprintf("%s already uses albersdown::albers_vignette(); left unchanged", basename(path))
+    if (requireNamespace("cli", quietly = TRUE)) cli::cli_alert_info(msg) else message(msg)
+    return(invisible(TRUE))
+  }
   if (length(raw) < 3 || raw[1] != "---") {
     if (requireNamespace("cli", quietly = TRUE)) cli::cli_alert_warning("No YAML header in {.file {basename(path)}}; skipping") else message(sprintf("No YAML header in %s; skipping", basename(path)))
     return(invisible(FALSE))
@@ -242,6 +381,8 @@ use_albersdown <- function(
     } else {
       list()
     }
+    # `html_vignette: default` parses to a string
+    if (!is.list(html_vignette)) html_vignette <- list()
 
     if (is.null(html_vignette$toc)) html_vignette$toc <- TRUE
     if (is.null(html_vignette$toc_depth)) html_vignette$toc_depth <- 2
@@ -340,10 +481,10 @@ use_albersdown <- function(
       "```{r albers-classes, echo=FALSE, results='asis'}",
       "cat(sprintf(",
       "  paste0(",
-      "    '<script>document.addEventListener(\"DOMContentLoaded\",function(){',",
-      "    'document.body.classList.remove(\"palette-red\",\"palette-lapis\",\"palette-ochre\",\"palette-teal\",\"palette-green\",\"palette-violet\",\"preset-homage\",\"preset-study\",\"preset-structural\",\"preset-adobe\",\"preset-midnight\");',",
+      "    '<script>(function(){',",
+      "    'document.body.classList.remove(\"palette-red\",\"palette-lapis\",\"palette-ochre\",\"palette-teal\",\"palette-green\",\"palette-violet\",\"preset-homage\",\"preset-interaction\",\"preset-study\",\"preset-structural\",\"preset-adobe\",\"preset-midnight\");',",
       "    'document.body.classList.add(\"palette-%s\",\"preset-%s\");',",
-      "    '});</script>'",
+      "    '})();</script>'",
       "  ),",
       "  params$family,",
       "  params$preset",
@@ -355,14 +496,35 @@ use_albersdown <- function(
   }
 
   ensure_fonts <- function(lines) {
-    # Idempotent: skip if the registration call is already present.
-    if (any(grepl("albers_register_fonts", lines, fixed = TRUE))) return(lines)
-    setup_chunk <- grep("^```\\{r[^}]*setup", lines)
-    if (!length(setup_chunk)) return(lines)
     inject <- c(
       "if (requireNamespace(\"ragg\", quietly = TRUE)) knitr::opts_chunk$set(dev = \"ragg_png\")",
-      "if (requireNamespace(\"systemfonts\", quietly = TRUE)) albersdown::albers_register_fonts()"
+      "if (",
+      "  requireNamespace(\"systemfonts\", quietly = TRUE) &&",
+      "  requireNamespace(\"albersdown\", quietly = TRUE) &&",
+      "  \"albers_register_fonts\" %in% getNamespaceExports(\"albersdown\")",
+      ") {",
+      "  albersdown::albers_register_fonts()",
+      "}"
     )
+
+    old_call <- "^\\s*if \\(requireNamespace\\(\"systemfonts\", quietly = TRUE\\)\\) albersdown::albers_register_fonts\\(\\)\\s*$"
+    if (any(grepl(old_call, lines))) {
+      replacement <- if (any(grepl("knitr::opts_chunk\\$set\\(dev = \"ragg_png\"\\)", lines))) inject[-1] else inject
+      out <- character()
+      for (line in lines) {
+        if (grepl(old_call, line)) out <- c(out, replacement) else out <- c(out, line)
+      }
+      return(out)
+    }
+
+    if (any(grepl("\"albers_register_fonts\" %in% getNamespaceExports(\"albersdown\")", lines, fixed = TRUE))) {
+      return(lines)
+    }
+
+    if (any(grepl("albers_register_fonts", lines, fixed = TRUE))) return(lines)
+
+    setup_chunk <- grep("^```\\{r[^}]*setup", lines)
+    if (!length(setup_chunk)) return(lines)
     append(lines, inject, after = setup_chunk[1])
   }
 
@@ -376,37 +538,56 @@ use_albersdown <- function(
   invisible(TRUE)
 }
 
-.write_readme_snippet <- function(family, preset = "homage", dry_run = FALSE) {
-  if (!file.exists("README.md")) return(invisible(TRUE))
+.write_readme_snippet <- function(family, preset = "homage", dry_run = FALSE, method = c("vendor", "format"),
+                                  on_format = TRUE) {
+  method <- match.arg(method)
+  # README.md knitted from README.Rmd: the note goes in the source
+  readme <- if (file.exists("README.Rmd")) "README.Rmd" else "README.md"
+  if (!file.exists(readme)) return(invisible(TRUE))
 
   start_tag <- "<!-- albersdown:theme-note:start -->"
   end_tag <- "<!-- albersdown:theme-note:end -->"
-  block <- c(
-    start_tag,
-    "## Albers theme",
+  text <- if (identical(method, "format") && !isTRUE(on_format)) {
+    # site-only adoption: the vignettes were not changed
+    paste0(
+      "This package's pkgdown site uses the albersdown theme (`template: package: albersdown`, site default family = '",
+      family,
+      "', preset = '",
+      preset,
+      "'). Its vignettes keep their own output format."
+    )
+  } else if (identical(method, "format")) {
+    paste0(
+      "This package uses the albersdown theme. Its vignettes use the `albersdown::albers_vignette()` output format (family = '",
+      family,
+      "', preset = '",
+      preset,
+      "', set in each vignette's YAML), which embeds the stylesheet, script and fonts when a vignette renders. The pkgdown site uses `template: package: albersdown`."
+    )
+  } else {
     paste0(
       "This package uses the albersdown theme. Existing vignette theme hooks are replaced so `albers.css` and local `albers.js` render consistently on CRAN and GitHub Pages. The defaults are configured via `params$family` and `params$preset` (family = '",
       family,
       "', preset = '",
       preset,
       "'). The pkgdown site uses `template: { package: albersdown }` together with generated `pkgdown/extra.css` and `pkgdown/extra.js` so the theme is linked and activated on site pages."
-    ),
-    end_tag
-  )
+    )
+  }
+  block <- c(start_tag, "## Albers theme", text, end_tag)
 
-  lines <- readLines("README.md", warn = FALSE)
+  lines <- readLines(readme, warn = FALSE)
   updated <- .replace_or_append_marked_block(lines, block, start_tag, end_tag)
 
   if (identical(lines, updated)) {
-    if (requireNamespace("cli", quietly = TRUE)) cli::cli_alert_info("README.md already contains an up-to-date Albers note") else message("README.md already contains an up-to-date Albers note")
+    .albers_say(sprintf("%s already contains an up-to-date Albers note", readme))
     return(invisible(TRUE))
   }
-
+  reknit <- if (identical(readme, "README.Rmd")) "; re-knit it (devtools::build_readme()) to update README.md" else ""
   if (dry_run) {
-    if (requireNamespace("cli", quietly = TRUE)) cli::cli_alert_info("Would write/update marked Albers note in {.file README.md}") else message("Would write/update marked Albers note in README.md")
+    .albers_say(sprintf("Would write/update marked Albers note in %s%s", readme, reknit))
   } else {
-    writeLines(updated, "README.md", useBytes = TRUE)
-    if (requireNamespace("cli", quietly = TRUE)) cli::cli_alert_success("Updated marked Albers note in {.file README.md}") else message("Updated marked Albers note in README.md")
+    .albers_write_lines(updated, readme)
+    .albers_say(sprintf("Updated marked Albers note in %s%s", readme, reknit), "success")
   }
 
   invisible(TRUE)
@@ -447,12 +628,12 @@ use_albersdown <- function(
     penalize(12, "Missing vignettes/albers-header.html; html_vignette will ignore custom head hooks")
   }
 
-  src_css_local <- file.path("inst", "rmarkdown", "templates", "albers_vignette", "skeleton", "albers.css")
-  src_css <- if (file.exists(src_css_local)) src_css_local else system.file("rmarkdown/templates/albers_vignette/skeleton/albers.css", package = "albersdown")
+  src_css_local <- file.path("inst", "pkgdown", "assets", "albers.css")
+  src_css <- if (file.exists(src_css_local)) src_css_local else system.file("pkgdown/assets/albers.css", package = "albersdown")
   src_js_local <- file.path("inst", "pkgdown", "assets", "albers.js")
   src_js <- if (file.exists(src_js_local)) src_js_local else system.file("pkgdown/assets/albers.js", package = "albersdown")
-  src_header_local <- file.path("inst", "rmarkdown", "templates", "albers_vignette", "skeleton", "albers-header.html")
-  src_header <- if (file.exists(src_header_local)) src_header_local else system.file("rmarkdown/templates/albers_vignette/skeleton/albers-header.html", package = "albersdown")
+  src_header_local <- file.path("inst", "format", "albers-header.html")
+  src_header <- if (file.exists(src_header_local)) src_header_local else system.file("format/albers-header.html", package = "albersdown")
   if (ok_css && nzchar(src_css) && file.exists(src_css)) {
     if (!identical(.md5(src_css), .md5("vignettes/albers.css"))) {
       penalize(8, "vignettes/albers.css is not the packaged version (drift detected)")
@@ -616,63 +797,48 @@ use_albersdown <- function(
 }
 
 .render_pkgdown_extra_js <- function(family = "red", preset = "homage") {
-  # Site default classes. Uses "add only if none present" so per-article
-  # direction (set by each vignette's inline hook) is never clobbered, while
-  # bare site pages (home, reference) still pick up the configured direction.
+  # Site default classes. albers.js applies them the moment <body> exists
+  # ("add only if none present"), so bare site pages (home, reference) pick up
+  # the configured direction without a late restyle, and each article's inline
+  # hook can still replace them.
   defaults <- c(
-    "(function () {",
-    "  var FAMILY_CLASSES = [\"red\", \"lapis\", \"ochre\", \"teal\", \"green\", \"violet\"];",
-    "  var PRESET_CLASSES = [\"homage\", \"interaction\", \"study\", \"structural\", \"adobe\", \"midnight\"];",
-    "  var STYLE_CLASSES = [\"minimal\", \"assertive\"];",
-    "",
-    "  function hasAny(prefix, values) {",
-    "    return values.some(function (v) { return document.body.classList.contains(prefix + v); });",
-    "  }",
-    "",
-    "  function applyDefaults() {",
-    "    if (!document.body) return;",
-    sprintf("    if (!hasAny(\"palette-\", FAMILY_CLASSES)) document.body.classList.add(\"palette-%s\");", family),
-    sprintf("    if (!hasAny(\"preset-\", PRESET_CLASSES)) document.body.classList.add(\"preset-%s\");", preset),
-    "    if (!hasAny(\"style-\", STYLE_CLASSES)) document.body.classList.add(\"style-minimal\");",
-    "",
-    "    var theme = document.body.classList.contains(\"preset-midnight\") ? \"dark\" : \"light\";",
-    "    document.documentElement.setAttribute(\"data-bs-theme\", theme);",
-    "    document.body.setAttribute(\"data-bs-theme\", theme);",
-    "    var nav = document.querySelector(\"nav.navbar\");",
-    "    if (nav) nav.setAttribute(\"data-bs-theme\", theme);",
-    "  }",
-    "",
-    "  if (document.readyState === \"loading\") {",
-    "    document.addEventListener(\"DOMContentLoaded\", applyDefaults);",
-    "  } else {",
-    "    applyDefaults();",
-    "  }",
-    "})();",
+    sprintf(
+      "window.albersdownDefaults = { family: \"%s\", preset: \"%s\", style: \"minimal\" };",
+      family, preset
+    ),
     ""
   )
 
-  # pkgdown auto-loads pkgdown/extra.js but strips a vignette's in_header
-  # <script src="albers.js">, so the site never gets the full behaviour
-  # (Theme Lab, compositions, anchors). Inline the packaged albers.js here so
-  # site pages and articles get the complete script.
-  src_js_local <- file.path("inst", "pkgdown", "assets", "albers.js")
-  src_js <- if (file.exists(src_js_local)) {
-    src_js_local
-  } else {
-    system.file("pkgdown/assets/albers.js", package = "albersdown")
-  }
-  full <- if (nzchar(src_js) && file.exists(src_js)) {
-    readLines(src_js, warn = FALSE)
-  } else {
-    character(0)
-  }
-
+  # The template (inst/pkgdown/templates/in-header.html) links albers.css and
+  # albers.js on every page; extra.js only has to carry the site defaults.
   c(
-    "/* albersdown pkgdown/extra.js: site default classes + full albers.js. */",
-    defaults,
-    "/* ----------------------- full albers.js ----------------------- */",
-    full
+    "/* albersdown pkgdown/extra.js: site default family and direction. */",
+    defaults
   )
+}
+
+# Keep a path out of the package tarball (as usethis::use_build_ignore()).
+.albers_build_ignore <- function(pattern, file = ".Rbuildignore", dry_run = FALSE) {
+  lines <- if (file.exists(file)) readLines(file, warn = FALSE) else character()
+  if (pattern %in% lines) return(invisible(FALSE))
+  if (dry_run) {
+    .albers_say(sprintf("Would add %s to %s", pattern, file))
+    return(invisible(TRUE))
+  }
+  .albers_write_lines(c(lines, pattern), file)
+  .albers_say(sprintf("Added %s to %s", pattern, file), "success")
+  invisible(TRUE)
+}
+
+# The README note albersdown 2.0 wrote (it describes the vendored setup).
+.albers_readme_has_vendor_note <- function() {
+  for (f in intersect(c("README.Rmd", "README.md"), list.files("."))) {
+    lines <- readLines(f, warn = FALSE)
+    s <- which(lines == "<!-- albersdown:theme-note:start -->")[1]
+    e <- which(lines == "<!-- albersdown:theme-note:end -->")[1]
+    if (!is.na(s) && !is.na(e) && e > s && any(grepl("params$family", lines[s:e], fixed = TRUE))) return(TRUE)
+  }
+  FALSE
 }
 
 .write_pkgdown_extra <- function(
@@ -691,6 +857,11 @@ use_albersdown <- function(
       lines = .render_pkgdown_extra_js(family = family, preset = preset)
     )
   )
+
+  if (!dry_run) {
+    dir.create("pkgdown", showWarnings = FALSE)
+    .albers_build_ignore("^pkgdown$")
+  }
 
   for (target in targets) {
     exists <- file.exists(target$path)
@@ -763,38 +934,43 @@ use_albersdown <- function(
     return(list(ok = NA, min_ratio = NA_real_, failures = character(), checked = integer()))
   }
 
-  presets <- list(
-    homage = list(bg = "#f3f5f7", ink = "#17181a"),
-    study = list(bg = "#f7f9fb", ink = "#17181a"),
-    structural = list(bg = "#e6e9ed", ink = "#101214"),
-    adobe = list(bg = "#ece9e7", ink = "#1f1c19"),
-    midnight = list(bg = "#0d1117", ink = "#e8e6e1")
-  )
+  # the grounds the theme itself uses (midnight's are tinted per family)
+  preset_names <- c("homage", "interaction", "study", "structural", "adobe", "midnight")
+  ground <- function(preset_name, family = NULL) {
+    cols <- .preset_colors(preset_name, family)
+    list(bg = cols$bg, ink = cols$fg)
+  }
 
   checks <- list()
 
-  for (preset_name in names(presets)) {
-    checks[[paste0("body-light-", preset_name)]] <- .contrast_ratio(
-      presets[[preset_name]]$ink,
-      presets[[preset_name]]$bg
-    )
+  for (preset_name in setdiff(preset_names, "midnight")) {
+    g <- ground(preset_name)
+    checks[[paste0("body-light-", preset_name)]] <- .contrast_ratio(g$ink, g$bg)
   }
 
   for (family_name in names(tokens$families)) {
     fam <- tokens$families[[family_name]]
-    for (preset_name in names(presets)) {
+    g <- ground("midnight", family_name)
+    checks[[paste0("body-midnight-", family_name)]] <- .contrast_ratio(g$ink, g$bg)
+    for (preset_name in preset_names) {
+      g <- ground(preset_name, family_name)
       link_fg <- if (identical(preset_name, "midnight") && !is.null(fam$dark$accent_ink)) fam$dark$accent_ink else fam$A900
-      checks[[paste0("link-light-", family_name, "-", preset_name)]] <- .contrast_ratio(
-        link_fg,
-        presets[[preset_name]]$bg
-      )
+      checks[[paste0("link-light-", family_name, "-", preset_name)]] <- .contrast_ratio(link_fg, g$bg)
     }
     if (!is.null(fam$dark$accent_ink)) {
-      checks[[paste0("link-dark-", family_name)]] <- .contrast_ratio(fam$dark$accent_ink, "#111315")
+      # on both night grounds the theme uses (warm homage, cool interaction)
+      for (dir in c("homage", "interaction")) {
+        checks[[paste0("link-dark-", family_name, "-", dir)]] <- .contrast_ratio(
+          fam$dark$accent_ink, .preset_colors_night(dir)$bg
+        )
+      }
     }
   }
 
-  checks[["body-dark-default"]] <- .contrast_ratio("#ece8de", "#111315")
+  for (dir in c("homage", "interaction")) {
+    night <- .preset_colors_night(dir)
+    checks[[paste0("body-dark-", dir)]] <- .contrast_ratio(night$fg, night$bg)
+  }
   vals <- unlist(checks, use.names = TRUE)
   vals <- vals[!is.na(vals)]
   failing <- names(vals[vals < min_ratio])
@@ -944,7 +1120,7 @@ use_albersdown <- function(
   classes <- sprintf("'palette-%s'", family)
   if (preset != "homage") classes <- paste0(classes, sprintf(",'preset-%s'", preset))
   sprintf(
-    "<script>document.addEventListener('DOMContentLoaded',function(){document.body.classList.add(%s);});</script>",
+    "<script>(function(){document.body.classList.add(%s);})();</script>",
     classes
   )
 }

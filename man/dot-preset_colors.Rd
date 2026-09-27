@@ -4,13 +4,16 @@
 \alias{.preset_colors}
 \title{Color values for named Albers presets}
 \usage{
-.preset_colors(preset = "homage")
+.preset_colors(preset = "homage", family = NULL)
 }
 \arguments{
 \item{preset}{One of the two 2.0 directions \code{"homage"} (warm cream,
 serif body) or \code{"interaction"} (cool grey, grotesk), or a legacy
 preset (\code{"study"}, \code{"structural"}, \code{"adobe"},
 \code{"midnight"}) retained for backward compatibility.}
+
+\item{family}{Colour family name. Only midnight uses it: its grounds are
+tinted by the family (\code{NULL} or an unknown name gives red's).}
 }
 \value{
 Named list with bg, fg, surface, muted, grid, border, code_bg.
@@ -25,7 +28,8 @@ inspired by Bauhaus, Le Corbusier, and Josef Albers.
 \item{study}{Pure analytical white from \emph{Interaction of Color} plates.}
 \item{structural}{Cool concrete (b\enc{é}{e}ton brut), shadowless precision.}
 \item{adobe}{Warm architectural grey, Le Corbusier b\enc{é}{e}ton.}
-\item{midnight}{Deep indigo-black for dark-theme contexts.}
+\item{midnight}{The family's deepest tone mixed into ink, for dark-theme
+contexts.}
 }
 }
 \keyword{internal}

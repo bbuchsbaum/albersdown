@@ -1,14 +1,16 @@
 #' One-command migration to latest albersdown
 #'
-#' Convenience helper for existing packages that already use albersdown and
-#' need to replace older vignette/site wiring with the latest defaults while
-#' choosing an Albers accent family and preset.
+#' Convenience helper for existing packages that already use the vendored
+#' albersdown setup (copied `albers.css`/`albers.js` in `vignettes/`) and need
+#' to refresh it with the latest assets while choosing an Albers accent family
+#' and preset. To move to the output format instead, use
+#' `use_albersdown(path, method = "format")`.
 #'
 #' @param path Path to the package directory.  Must be supplied explicitly;
 #'   there is no default so that the function never writes to an unexpected
 #'   location.
-#' @param family one of: "red","lapis","ochre","teal","green","violet"
-#' @param preset Visual preset (default \code{"homage"}). See [albers_presets()].
+#' @param family,preset As in [use_albersdown()]: if not given, the package's
+#'   current family and direction are kept.
 #' @param dry_run if TRUE, report changes without writing files.
 #' @return \code{TRUE} invisibly.
 #' @export
@@ -21,16 +23,20 @@
 migrate_albersdown <- function(
   path,
   family = "red",
-  preset = c("homage", "study", "structural", "adobe", "midnight"),
+  preset = c("homage", "interaction", "study", "structural", "adobe", "midnight"),
   dry_run = FALSE
 ) {
-  use_albersdown(
+  args <- list(
     path = path,
-    family = family,
-    preset = preset,
     apply_to = "all",
     dry_run = dry_run,
     fallback_extra = "always",
-    force_replace = TRUE
+    force_replace = TRUE,
+    method = "vendor",
+    readme = TRUE
   )
+  # family/preset not given: use_albersdown() keeps the package's own
+  if (!missing(family)) args$family <- family
+  if (!missing(preset)) args$preset <- preset
+  do.call(use_albersdown, args)
 }

@@ -4,6 +4,10 @@ docs/
 .Rproj.user
 .DS_Store
 ..Rcheck/
+*.Rcheck/
+*.tar.gz
+.rcmdcheck_result.rds
 .omc/
 CRAN-SUBMISSION
 .albersdown.bak/
+.ruff_cache/

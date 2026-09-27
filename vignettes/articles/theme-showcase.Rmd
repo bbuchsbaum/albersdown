@@ -3,27 +3,11 @@ title: 'Theme Showcase: Directions and Families'
 name: theme-showcase
 description: The two albersdown directions and the six colour families, side by side.
 output:
-  rmarkdown::html_vignette:
+  albersdown::albers_vignette:
+    family: red
+    preset: homage
     toc: yes
     toc_depth: 2
-    css: albers.css
-    includes:
-      in_header: albers-header.html
-params:
-  family: red
-  preset: homage
-  base_size: 13
-  content_width: 80
-  style: minimal
-resource_files:
-- albers.css
-- albers.js
-- albers-header.html
-
-vignette: |
-  %\VignetteIndexEntry{Theme Showcase: Directions and Families}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, include=FALSE}
@@ -32,24 +16,6 @@ knitr::opts_chunk$set(
   out.width = "100%", fig.width = 7, fig.asp = 0.6, message = FALSE, warning = FALSE
 )
 library(ggplot2)
-if (requireNamespace("ragg", quietly = TRUE)) knitr::opts_chunk$set(dev = "ragg_png")
-if (requireNamespace("systemfonts", quietly = TRUE)) albersdown::albers_register_fonts()
-if (requireNamespace("ggplot2", quietly = TRUE) && requireNamespace("albersdown", quietly = TRUE)) {
-  ggplot2::theme_set(albersdown::theme_albers(family = params$family, preset = params$preset))
-}
-```
-
-```{r albers-classes, echo=FALSE, results='asis'}
-cat(sprintf(
-  paste0(
-    '<script>document.addEventListener("DOMContentLoaded",function(){',
-    'document.body.classList.remove("palette-red","palette-lapis","palette-ochre","palette-teal","palette-green","palette-violet","preset-homage","preset-interaction","preset-study","preset-structural","preset-adobe","preset-midnight");',
-    'document.body.classList.add("palette-%s","preset-%s");',
-    '});</script>'
-  ),
-  params$family,
-  params$preset
-))
 ```
 
 ## The albersdown system
@@ -134,6 +100,6 @@ knitr::kable(recipes, format = "html", caption = "A few coherent direction + fam
 
 ## Next step
 
-- Use `vignette("theme-lab")` to tune family, direction, style, and width interactively.
+- Use the [Theme Lab](theme-lab.html) to tune family, direction, style, and width interactively.
 - See `vignette("getting-started")` (homage) and `vignette("interaction")` (interaction)
   for full-page examples of each direction.

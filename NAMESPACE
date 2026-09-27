@@ -1,4 +1,6 @@
 export(albers_bs_theme)
+export(albers_vignette)
+export(albers_discrete)
 export(albers_palette)
 export(albers_presets)
 export(albers_register_fonts)

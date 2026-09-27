@@ -5,13 +5,15 @@
 \title{Minimal, legible plot theme inspired by Josef Albers}
 \usage{
 theme_albers(
-  family = "red",
-  preset = c("homage", "interaction", "study", "structural", "adobe", "midnight"),
+  family = getOption("albersdown.family", "red"),
+  preset = getOption("albersdown.preset", c("homage", "interaction", "study",
+    "structural", "adobe", "midnight")),
   base_size = 13,
   base_family = NULL,
   bg = NULL,
   fg = NULL,
-  grid_color = NULL
+  grid_color = NULL,
+  mode = c("light", "dark")
 )
 }
 \arguments{
@@ -28,11 +30,16 @@ accepted for backward compatibility.}
 stack; install the matching typefaces (Familjen Grotesk / Space Grotesk,
 etc.) and pass e.g. \code{base_family = "Familjen Grotesk"} for full fidelity.}
 
-\item{bg}{Override background color (default derived from preset).}
+\item{bg}{Override background color. Defaults to the preset's surface
+(the vignette sheet), so figures sit on the page rather than in a box.}
 
 \item{fg}{Override foreground/text color (default derived from preset).}
 
 \item{grid_color}{Override grid line color (default derived from preset).}
+
+\item{mode}{\code{"light"} (default) or \code{"dark"}: the direction's night
+ground and ink, matching the page's dark mode. \code{\link[=albers_vignette]{albers_vignette()}} uses it
+to render a dark twin of each plot.}
 }
 \value{
 A \code{ggplot2} theme object.

@@ -7,7 +7,7 @@
 migrate_albersdown(
   path,
   family = "red",
-  preset = c("homage", "study", "structural", "adobe", "midnight"),
+  preset = c("homage", "interaction", "study", "structural", "adobe", "midnight"),
   dry_run = FALSE
 )
 }
@@ -16,9 +16,8 @@ migrate_albersdown(
 there is no default so that the function never writes to an unexpected
 location.}
 
-\item{family}{one of: "red","lapis","ochre","teal","green","violet"}
-
-\item{preset}{Visual preset (default \code{"homage"}). See \code{\link[=albers_presets]{albers_presets()}}.}
+\item{family, preset}{As in \code{\link[=use_albersdown]{use_albersdown()}}: if not given, the package's
+current family and direction are kept.}
 
 \item{dry_run}{if TRUE, report changes without writing files.}
 }
@@ -26,9 +25,11 @@ location.}
 \code{TRUE} invisibly.
 }
 \description{
-Convenience helper for existing packages that already use albersdown and
-need to replace older vignette/site wiring with the latest defaults while
-choosing an Albers accent family and preset.
+Convenience helper for existing packages that already use the vendored
+albersdown setup (copied \code{albers.css}/\code{albers.js} in \verb{vignettes/}) and need
+to refresh it with the latest assets while choosing an Albers accent family
+and preset. To move to the output format instead, use
+\code{use_albersdown(path, method = "format")}.
 }
 \examples{
 \donttest{

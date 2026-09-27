@@ -1,12 +1,13 @@
 ^data-raw$
 ^\.github$
 ^README\.md$
-^NEWS\.md$
 ^\.DS_Store$
 ^examples$
 ^\.claude($|/)
 ^\.omc($|/)
 ^.*\.Rcheck$
+^.*\.tar\.gz$
+^\.rcmdcheck_result\.rds$
 ^_pkgdown\.yml$
 ^docs$
 ^pkgdown$
@@ -16,3 +17,7 @@
 ^tools$
 ^tests/visual-regression($|/)
 ^resdesign$
+^\.ruff_cache$
+^\.albersdown\.bak$
+^\.planning$
+^vignettes/articles$

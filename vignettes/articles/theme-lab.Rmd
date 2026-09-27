@@ -1,30 +1,15 @@
 ---
 title: 'Theme Lab: Tune Family, Preset, and Rhythm'
 name: theme-lab
-description: Interactive controls for palette family, preset, style intensity, and
-  content width.
+description: Interactive controls for palette family, direction, style intensity,
+  and reading width.
 output:
-  rmarkdown::html_vignette:
+  albersdown::albers_vignette:
+    fonts: both
+    family: red
+    preset: homage
     toc: yes
     toc_depth: 2
-    css: albers.css
-    includes:
-      in_header: albers-header.html
-params:
-  family: red
-  preset: homage
-  base_size: 13
-  content_width: 80
-  style: minimal
-resource_files:
-- albers.css
-- albers.js
-- albers-header.html
-
-vignette: |
-  %\VignetteIndexEntry{Theme Lab: Tune Family, Preset, and Rhythm}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, include=FALSE}
@@ -33,39 +18,6 @@ knitr::opts_chunk$set(
   out.width = "100%", fig.width = 7, fig.asp = 0.618, message = FALSE, warning = FALSE
 )
 library(ggplot2)
-if (requireNamespace("ragg", quietly = TRUE)) knitr::opts_chunk$set(dev = "ragg_png")
-if (requireNamespace("systemfonts", quietly = TRUE)) albersdown::albers_register_fonts()
-if (requireNamespace("ggplot2", quietly = TRUE) && requireNamespace("albersdown", quietly = TRUE)) {
-  if (requireNamespace("ggplot2", quietly = TRUE) && requireNamespace("albersdown", quietly = TRUE)) ggplot2::theme_set(albersdown::theme_albers(family = params$family, preset = params$preset))
-}
-```
-
-```{r albers-classes, echo=FALSE, results='asis'}
-cat(sprintf(
-  paste0(
-    '<script>document.addEventListener("DOMContentLoaded",function(){',
-    'document.body.classList.remove("palette-red","palette-lapis","palette-ochre","palette-teal","palette-green","palette-violet","preset-homage","preset-study","preset-structural","preset-adobe","preset-midnight");',
-    'document.body.classList.add("palette-%s","preset-%s");',
-    '});</script>'
-  ),
-  params$family,
-  params$preset
-))
-```
-
-
-
-```{r albers-style, echo=FALSE, results='asis'}
-cat(sprintf(
-  paste0(
-    '<script>document.addEventListener("DOMContentLoaded",function(){',
-    'if(!document.body.classList.contains("style-minimal") && !document.body.classList.contains("style-assertive") && "%s"!=="balanced") document.body.classList.add("style-%s");',
-    '});</script>'
-  ),
-  params$style,
-  params$style
-))
-cat(sprintf('<style>:root{--content:%sch}</style>', params$content_width))
 ```
 
 ## What Is This Page For?
@@ -117,7 +69,7 @@ That order gives the fastest path to a coherent page.
   </div>
   <div>
   <label for="albers-width">Content width (ch)</label>
-  <input id="albers-width" data-albers-control="width" type="number" min="60" max="100" value="80" />
+  <input id="albers-width" data-albers-control="width" type="number" min="56" max="100" placeholder="66" />
   </div>
   </div>
 </div>
@@ -129,7 +81,7 @@ That order gives the fastest path to a coherent page.
   <span class="albers-chip">A500</span>
   <span class="albers-chip">A300</span>
   </div>
-  <p data-albers-lab-summary>family=red | preset=homage | style=minimal | width=80ch</p>
+  <p data-albers-lab-summary>family=red | preset=homage | style=minimal | width=66ch</p>
   <div class="albers-composition albers-composition--dense" data-seed="theme-lab" data-density="8" aria-hidden="true"></div>
 </div>
 </div>
@@ -140,13 +92,16 @@ That order gives the fastest path to a coherent page.
   marker, and plot palettes (the four chips above show the active family's tones).
 - `preset` (direction): warm **homage** (cream ground, serif body, light code) vs
   cool **interaction** (grey ground, grotesk, dark code).
-- `style`: structural weight (`minimal`, `balanced`, `assertive`).
-- `content_width`: reading measure in `ch` units.
+- `style`: structural weight (`minimal` or `assertive`).
+- Content width: the reading measure in `ch` units, for this preview only. The
+  theme sets it (66ch in homage, 64ch in interaction); it is not a format
+  option.
 
 ## Can You Validate The Palette Quickly?
 
 ```{r palette-check}
-pal <- albersdown::albers_palette(params$family)
+# the format sets the albersdown.family option to the vignette's family
+pal <- albersdown::albers_palette(getOption("albersdown.family", "red"))
 stopifnot(
   identical(names(pal), c("A900", "A700", "A500", "A300")),
   all(nzchar(unname(pal)))
@@ -156,13 +111,14 @@ knitr::kable(data.frame(tone = names(pal), hex = unname(pal)), format = "html")
 
 ## Copy Into YAML
 
-```yaml
-params:
-  family: red
-  preset: homage
-  base_size: 13
-  content_width: 80
-  style: minimal
+Put the choice in the vignette's output format:
+
+```{.yaml #albers-lab-yaml}
+output:
+  albersdown::albers_vignette:
+    family: red        # red, lapis, ochre, teal, green, violet
+    preset: homage     # homage or interaction
+    style: minimal     # minimal, balanced or assertive
 ```
 
 ## Example Plot
@@ -173,6 +129,7 @@ stopifnot(length(levels(mtcars$grp)) >= 3)
 
 ggplot(mtcars, aes(wt, mpg, colour = grp)) +
   geom_point(size = 2.2) +
+  albersdown::scale_color_albers() +
   labs(
     title = "Theme Lab preview",
     subtitle = "Tune family + preset + style, then copy YAML"

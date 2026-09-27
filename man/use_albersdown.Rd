@@ -7,11 +7,13 @@
 use_albersdown(
   path,
   family = "red",
-  preset = c("homage", "study", "structural", "adobe", "midnight"),
+  preset = c("homage", "interaction", "study", "structural", "adobe", "midnight"),
   apply_to = c("all", "new"),
   dry_run = FALSE,
   fallback_extra = c("auto", "always", "never"),
-  force_replace = TRUE
+  force_replace = TRUE,
+  method = c("format", "vendor"),
+  readme = FALSE
 )
 }
 \arguments{
@@ -19,34 +21,86 @@ use_albersdown(
 there is no default so that the function never writes to an unexpected
 location.}
 
-\item{family}{one of: "red","lapis","ochre","teal","green","violet"}
+\item{family}{One of \code{"red"}, \code{"lapis"}, \code{"ochre"}, \code{"teal"}, \code{"green"},
+\code{"violet"} (case-insensitive). If not given, the family the package
+already uses is kept: from its vignettes (a \verb{family:} stated in their
+\code{albers_vignette()} entries, or albersdown 2.0's \code{params}; the most
+common if they differ), else from site defaults in \code{pkgdown/extra.js} or
+\verb{_pkgdown.yml}, else \code{"red"}. With \code{apply_to = "new"} the site defaults
+come first. A message says which was kept and where it came from.}
 
-\item{preset}{Visual preset (default \code{"homage"}). See \code{\link[=albers_presets]{albers_presets()}}.}
+\item{preset}{Direction, \code{"homage"} or \code{"interaction"} (legacy presets are
+accepted; case-insensitive). If not given, inferred like \code{family}, else
+\code{"homage"}. See \code{\link[=albers_presets]{albers_presets()}}.}
 
-\item{apply_to}{"all" to patch every \emph{.Rmd/}.qmd in vignettes/, or "new" to only add the template and assets}
+\item{apply_to}{\code{"all"} to convert the vignettes as well (every \verb{*.Rmd} in
+\verb{vignettes/}; with \code{method = "vendor"} also \verb{*.qmd}), or \code{"new"} to set up
+only \verb{_pkgdown.yml}, the site defaults and \code{DESCRIPTION} (vignette
+dependencies only if a vignette is already on the format).}
 
-\item{dry_run}{if TRUE, show changes without writing}
+\item{dry_run}{if TRUE, report the changes (including \code{.Rbuildignore} and
+\code{.gitignore} entries) without writing anything.}
 
-\item{fallback_extra}{Controls writing site-wide fallbacks into \verb{pkgdown/}:
+\item{fallback_extra}{\code{method = "vendor"} only. Controls writing site-wide
+fallbacks into \verb{pkgdown/}:
 \itemize{
 \item "auto": write \code{pkgdown/extra.css} and \code{pkgdown/extra.js} whenever
-site-wide defaults are needed, including the standard
-\code{template: { package: albersdown }} setup where pkgdown template
-assets are copied but not linked automatically.
+site-wide defaults are needed.
 \item "always": always write to \verb{pkgdown/} (useful as a safety net or for custom setups).
 \item "never": never copy site-wide fallbacks.
-}}
+}
 
-\item{force_replace}{if TRUE (default), overwrite existing albersdown assets and
-replace existing vignette CSS/header hooks so albersdown becomes the active theme.}
+With \code{method = "format"}, only the site default family is written, to
+\code{pkgdown/extra.js}, and only when it is not red/homage (or was set before).}
+
+\item{force_replace}{\code{method = "vendor"} only. If TRUE (default), overwrite
+existing albersdown assets and replace existing vignette CSS/header hooks
+so albersdown becomes the active theme.}
+
+\item{method}{\code{"format"} (default) or \code{"vendor"}; see Details.}
+
+\item{readme}{If \code{TRUE}, add a short note about the theme to \code{README.Rmd}
+(re-knit it afterwards) or, when there is none, \code{README.md} (default
+\code{FALSE}), describing the setup \code{method} makes.}
 }
 \value{
 \code{TRUE} invisibly.
 }
 \description{
-Turn-key retrofit to adopt the albersdown theme in an existing package.
-Copies local assets for CRAN-safe vignettes, ensures pkgdown template,
-optionally patches all vignettes, writes a README note, and prints a doctor report.
+Adopt the albersdown theme in an existing package.
+}
+\details{
+With \code{method = "format"} (the default) each \verb{vignettes/*.Rmd} whose first
+output format is \code{html_vignette} is switched to \code{\link[=albers_vignette]{albers_vignette()}}, and
+\verb{_pkgdown.yml} is pointed at the albersdown template (it is created, and
+added to \code{.Rbuildignore} with \verb{docs/}, if missing). \code{DESCRIPTION} gains
+\code{bbuchsbaum/albersdown} in \code{Config/Needs/website}. When at least one
+vignette is on the format, it also gains \verb{albersdown (>= <installed version>)} in \code{Suggests} (or that bound where albersdown is already in
+\code{Imports}/\code{Depends}), \code{knitr} and \code{rmarkdown}, and \code{VignetteBuilder: knitr};
+and, when the installed albersdown is a development version (not on CRAN),
+\code{Remotes: bbuchsbaum/albersdown}, so that R CMD check and CI install the
+version with \code{albers_vignette()} (\verb{R CMD check --as-cran} notes that
+field). Otherwise (no vignettes, none convertible, or \code{apply_to = "new"}
+with none already on the format) the adoption is site-only and no field that
+R CMD check reads is changed. Nothing is copied into
+\verb{vignettes/}. Edits are textual (other output formats, comments, key order
+and line endings are kept) and each changed file is backed up to
+\verb{.albersdown.bak/}, which is added to \code{.Rbuildignore} and \code{.gitignore}.
+
+A package set up by albersdown 2.0 (the vendor setup) is migrated: the
+setup-chunk lines and \code{params} (\code{family}, \code{preset}) that 2.0 added are
+removed, as are its generated \code{pkgdown/extra.css} (an \verb{@import} of the
+theme) and \code{pkgdown/extra.js}, and its README note is rewritten. The copied
+\code{albers.css}, \code{albers.js}, \code{albers-header.html} and fonts in \verb{vignettes/} are
+moved to \verb{.albersdown.bak/} once no remaining vignette uses them.
+
+Quarto vignettes, flow-style \code{output: {...}} headers and pkgdown-only
+articles in \verb{vignettes/articles/} are listed but not changed: articles take the site default family unless you
+set \code{output: albersdown::albers_vignette} in their YAML by hand.
+
+With \code{method = "vendor"} the stylesheet, script and fonts are copied into
+\verb{vignettes/} and each vignette keeps \code{rmarkdown::html_vignette} with the
+theme's css and header include (the albersdown 2.0 setup).
 }
 \examples{
 \donttest{

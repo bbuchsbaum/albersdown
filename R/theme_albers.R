@@ -9,12 +9,12 @@
 albers_palette <- function(family = c("red","lapis","ochre","teal","green","violet")) {
   family <- match.arg(family)
   switch(family,
-    red    = c(A900 = "#C22B23", A700 = "#DC3925", A500 = "#E44926", A300 = "#E35B2D"),
-    lapis  = c(A900 = "#1B2A74", A700 = "#20399C", A500 = "#2C4FCC", A300 = "#4968D6"),
-    ochre  = c(A900 = "#6F5200", A700 = "#8B6700", A500 = "#B48900", A300 = "#D7A700"),
-    teal   = c(A900 = "#0D4A4A", A700 = "#0F5E5E", A500 = "#127373", A300 = "#2F8C8C"),
-    green  = c(A900 = "#1B5E20", A700 = "#2E7D32", A500 = "#388E3C", A300 = "#66BB6A"),
-    violet = c(A900 = "#4A148C", A700 = "#6A1B9A", A500 = "#8E24AA", A300 = "#BA68C8")
+    red    = c(A900 = "#760906", A700 = "#AE1703", A500 = "#D74A21", A300 = "#F7A885"),
+    lapis  = c(A900 = "#213480", A700 = "#3154B9", A500 = "#507ADF", A300 = "#A2BEF5"),
+    ochre  = c(A900 = "#513801", A700 = "#7A5604", A500 = "#A47807", A300 = "#DEB95C"),
+    teal   = c(A900 = "#044746", A700 = "#0A6C69", A500 = "#2E918C", A300 = "#8DCCC5"),
+    green  = c(A900 = "#204727", A700 = "#386B3A", A500 = "#5E904D", A300 = "#AEC98E"),
+    violet = c(A900 = "#4E2B62", A700 = "#754590", A500 = "#956CB3", A300 = "#CAB2E1")
   )
 }
 
@@ -28,25 +28,29 @@ albers_palette <- function(family = c("red","lapis","ochre","teal","green","viol
 #'   \item{study}{Pure analytical white from \emph{Interaction of Color} plates.}
 #'   \item{structural}{Cool concrete (b\enc{é}{e}ton brut), shadowless precision.}
 #'   \item{adobe}{Warm architectural grey, Le Corbusier b\enc{é}{e}ton.}
-#'   \item{midnight}{Deep indigo-black for dark-theme contexts.}
+#'   \item{midnight}{The family's deepest tone mixed into ink, for dark-theme
+#'     contexts.}
 #' }
 #'
 #' @param preset One of the two 2.0 directions \code{"homage"} (warm cream,
 #'   serif body) or \code{"interaction"} (cool grey, grotesk), or a legacy
 #'   preset (\code{"study"}, \code{"structural"}, \code{"adobe"},
 #'   \code{"midnight"}) retained for backward compatibility.
+#' @param family Colour family name. Only midnight uses it: its grounds are
+#'   tinted by the family (\code{NULL} or an unknown name gives red's).
 #' @return Named list with bg, fg, surface, muted, grid, border, code_bg.
 #' @keywords internal
-.preset_colors <- function(preset = "homage") {
+.preset_colors <- function(preset = "homage", family = NULL) {
+  if (identical(preset, "midnight")) return(.midnight_colors(family))
   switch(preset,
     homage = list(
       bg = "#efe7d6", fg = "#1f1b16", surface = "#fbf7ee",
-      muted = "#7a7264", grid = "#e0d6c0",
+      muted = "#6b6355", grid = "#e6ddca",
       border = "#d8cbae", code_bg = "#fbf7ee"
     ),
     interaction = list(
-      bg = "#f1f2f4", fg = "#15181e", surface = "#ffffff",
-      muted = "#7b8494", grid = "#e3e6eb",
+      bg = "#eceef1", fg = "#15181e", surface = "#ffffff",
+      muted = "#5d6573", grid = "#e3e6eb",
       border = "#d6dbe3", code_bg = "#eef0f3"
     ),
     study = list(
@@ -64,11 +68,46 @@ albers_palette <- function(family = c("red","lapis","ochre","teal","green","viol
       muted = "#66615d", grid = "#d4cfcb",
       border = "#ccc7c3", code_bg = "#e3dfdc"
     ),
-    midnight = list(
-      bg = "#0d1117", fg = "#e8e6e1", surface = "#151b24",
-      muted = "#9aa2b0", grid = "#303745",
-      border = "#2c3342", code_bg = "#111722"
-    )
+    midnight = .midnight_colors(family)
+  )
+}
+
+# Midnight's grounds are the family's deepest tone mixed into ink (albers.css
+# computes them with color-mix(); these are the resolved values), so a red
+# page's plots sit on the same red-black as the page.
+.midnight_colors <- function(family = NULL) {
+  grounds <- list(
+    red    = c(bg = "#1e0d0e", surface = "#271416", border = "#40282a", code_bg = "#220c0e"),
+    lapis  = c(bg = "#0c1223", surface = "#12192d", border = "#242e4a", code_bg = "#0b1229"),
+    ochre  = c(bg = "#15120e", surface = "#1d1a16", border = "#332f2a", code_bg = "#17130e"),
+    teal   = c(bg = "#0a1418", surface = "#101c21", border = "#223339", code_bg = "#08161b"),
+    green  = c(bg = "#0d1512", surface = "#131c1b", border = "#253330", code_bg = "#0b1613"),
+    violet = c(bg = "#15101d", surface = "#1c1727", border = "#322b41", code_bg = "#170f22")
+  )
+  key <- if (is.character(family) && length(family) == 1 && family %in% names(grounds)) family else "red"
+  g <- grounds[[key]]
+  list(
+    bg = unname(g[["bg"]]), fg = "#e8e6e1", surface = unname(g[["surface"]]),
+    muted = "#b6b4ae", grid = unname(g[["border"]]),
+    border = unname(g[["border"]]), code_bg = unname(g[["code_bg"]])
+  )
+}
+
+# Night grounds, matching html[data-albers-theme="dark"] in albers.css. Homage
+# stays warm and Interaction cool; midnight is already dark.
+.preset_colors_night <- function(preset = "homage", family = NULL) {
+  if (identical(preset, "midnight")) return(.preset_colors("midnight", family))
+  if (identical(preset, "interaction")) {
+    return(list(
+      bg = "#0d0f13", fg = "#e6e8ec", surface = "#14171c",
+      muted = "#9aa3b2", grid = "#262b33",
+      border = "#292e37", code_bg = "#090b0e"
+    ))
+  }
+  list(
+    bg = "#13110e", fg = "#ece5d6", surface = "#1b1814",
+    muted = "#aaa190", grid = "#2f2a23",
+    border = "#37312a", code_bg = "#12100d"
   )
 }
 
@@ -100,9 +139,13 @@ albers_presets <- function() {
 #' @param base_family Base font family. Plots fall back to the system "sans"
 #'   stack; install the matching typefaces (Familjen Grotesk / Space Grotesk,
 #'   etc.) and pass e.g. \code{base_family = "Familjen Grotesk"} for full fidelity.
-#' @param bg Override background color (default derived from preset).
+#' @param bg Override background color. Defaults to the preset's surface
+#'   (the vignette sheet), so figures sit on the page rather than in a box.
 #' @param fg Override foreground/text color (default derived from preset).
 #' @param grid_color Override grid line color (default derived from preset).
+#' @param mode \code{"light"} (default) or \code{"dark"}: the direction's night
+#'   ground and ink, matching the page's dark mode. [albers_vignette()] uses it
+#'   to render a dark twin of each plot.
 #' @return A \code{ggplot2} theme object.
 #' @export
 #' @examples
@@ -113,84 +156,167 @@ albers_presets <- function() {
 #' }
 #' }
 theme_albers <- function(
-  family = "red",
-  preset = c("homage", "interaction", "study", "structural", "adobe", "midnight"),
+  family = getOption("albersdown.family", "red"),
+  preset = getOption("albersdown.preset", c("homage", "interaction", "study", "structural", "adobe", "midnight")),
   base_size = 13,
   base_family = NULL,
   bg = NULL,
   fg = NULL,
-  grid_color = NULL
+  grid_color = NULL,
+  mode = c("light", "dark")
 ) {
-  preset <- match.arg(preset)
+  preset <- match.arg(preset, c("homage", "interaction", "study", "structural", "adobe", "midnight"))
+  mode <- match.arg(mode)
   # When base_family is unset, use the direction's display font if it has been
   # registered via albers_register_fonts(); otherwise fall back to "sans".
   base_family <- base_family %||% .albers_direction_font(preset)
   pal <- albers_palette(family)
-  colors <- .preset_colors(preset)
+  colors <- if (identical(mode, "dark")) .preset_colors_night(preset, family) else .preset_colors(preset, family)
 
-  bg <- bg %||% colors$bg
+  bg <- bg %||% colors$surface
   fg <- fg %||% colors$fg
   grid_color <- grid_color %||% colors$grid
   muted <- colors$muted
   surface <- colors$surface
-  border <- colors$border
-  strip_alpha <- if (preset == "midnight") 0.18 else 0.11
+  strip_alpha <- if (preset == "midnight" || identical(mode, "dark")) 0.18 else 0.11
   strip_fill <- grDevices::adjustcolor(pal[["A300"]], alpha.f = strip_alpha)
-  legend_bg <- grDevices::adjustcolor(surface, alpha.f = 0.97)
 
   ggplot2::theme_minimal(base_size = base_size, base_family = base_family) +
     ggplot2::theme(
       plot.background = ggplot2::element_rect(fill = bg, colour = NA),
-      panel.background = ggplot2::element_rect(fill = surface, colour = NA),
-      panel.border = ggplot2::element_rect(fill = NA, colour = border, linewidth = 0.33),
-      panel.grid.major = ggplot2::element_line(color = grid_color, linewidth = 0.3),
+      panel.background = ggplot2::element_rect(fill = bg, colour = NA),
+      panel.border = ggplot2::element_blank(),
+      panel.grid.major = ggplot2::element_line(color = grid_color, linewidth = 0.35),
       panel.grid.minor = ggplot2::element_blank(),
-      panel.spacing = grid::unit(10, "pt"),
-      axis.line = ggplot2::element_line(color = border, linewidth = 0.24),
-      axis.ticks = ggplot2::element_line(color = border, linewidth = 0.24),
-      axis.ticks.length = grid::unit(2.5, "pt"),
+      panel.spacing = grid::unit(14, "pt"),
+      axis.line.x = ggplot2::element_line(color = fg, linewidth = 0.35),
+      axis.line.y = ggplot2::element_blank(),
+      axis.ticks = ggplot2::element_blank(),
+      axis.ticks.length = grid::unit(0, "pt"),
       plot.title = ggplot2::element_text(
-        face = "bold", color = fg,
+        face = "bold", color = fg, size = ggplot2::rel(1.15),
         lineheight = 1.04,
-        margin = ggplot2::margin(b = 6)
+        margin = ggplot2::margin(b = 4)
       ),
       plot.title.position = "plot",
       plot.subtitle = ggplot2::element_text(
         color = muted,
         lineheight = 1.2,
-        margin = ggplot2::margin(b = 10)
+        margin = ggplot2::margin(b = 12)
       ),
       plot.caption = ggplot2::element_text(
-        color = muted, hjust = 0, size = ggplot2::rel(0.9),
+        color = muted, hjust = 0, size = ggplot2::rel(0.85),
         margin = ggplot2::margin(t = 10)
       ),
       plot.caption.position = "plot",
       legend.position = "top",
-      legend.title = ggplot2::element_text(face = "bold", color = fg),
-      legend.text = ggplot2::element_text(color = muted),
-      legend.background = ggplot2::element_rect(fill = legend_bg, colour = border, linewidth = 0.3),
-      legend.box.background = ggplot2::element_rect(fill = legend_bg, colour = border, linewidth = 0.3),
-      legend.key = ggplot2::element_rect(fill = legend_bg, colour = NA),
-      legend.key.width = grid::unit(14, "pt"),
-      legend.key.height = grid::unit(8, "pt"),
-      axis.title = ggplot2::element_text(color = fg),
+      legend.justification = "left",
+      legend.title = ggplot2::element_text(color = muted, size = ggplot2::rel(0.85)),
+      legend.text = ggplot2::element_text(color = fg, size = ggplot2::rel(0.9)),
+      legend.background = ggplot2::element_blank(),
+      legend.box.background = ggplot2::element_blank(),
+      legend.key = ggplot2::element_blank(),
+      legend.key.width = grid::unit(12, "pt"),
+      legend.key.height = grid::unit(12, "pt"),
+      legend.margin = ggplot2::margin(0, 0, 4, 0),
+      axis.title = ggplot2::element_text(color = muted, size = ggplot2::rel(0.9)),
       axis.title.x = ggplot2::element_text(margin = ggplot2::margin(t = 8)),
       axis.title.y = ggplot2::element_text(margin = ggplot2::margin(r = 8)),
-      axis.text = ggplot2::element_text(color = muted),
-      strip.background = ggplot2::element_rect(fill = strip_fill, colour = border, linewidth = 0.3),
+      axis.text = ggplot2::element_text(color = muted, size = ggplot2::rel(0.9)),
+      strip.background = ggplot2::element_rect(fill = strip_fill, colour = NA),
       strip.text = ggplot2::element_text(
         face = "bold",
         color = fg,
-        margin = ggplot2::margin(4, 4, 4, 4)
+        hjust = 0,
+        margin = ggplot2::margin(4, 6, 4, 6)
       ),
-      plot.margin = ggplot2::margin(12, 12, 12, 12)
-    )
+      plot.margin = ggplot2::margin(10, 14, 10, 6)
+    ) +
+    .albers_geom_defaults(ink = fg, paper = bg, accent = pal[["A700"]])
+}
+
+# ggplot2 >= 4.0 lets a theme set geom defaults: unmapped lines, points and
+# text then use the page's ink and the family accent instead of pure black.
+.albers_geom_defaults <- function(ink, paper, accent) {
+  ns <- asNamespace("ggplot2")
+  if (!exists("element_geom", envir = ns, inherits = FALSE)) return(NULL)
+  ggplot2::theme(geom = get("element_geom", envir = ns)(ink = ink, paper = paper, accent = accent))
+}
+
+# Each family's "interaction" complement (see inst/tokens/albers-tokens.yml):
+# `comp` for fills and marks, `comp_ink` / `comp_light` for text.
+.albers_comp <- function(family) {
+  switch(family,
+    red    = c(comp = "#DE9D16", comp_ink = "#745004", comp_light = "#E5B568"),
+    lapis  = c(comp = "#E69825", comp_ink = "#7A4D04", comp_light = "#EBB16C"),
+    ochre  = c(comp = "#BA93FB", comp_ink = "#634590", comp_light = "#C8AEFA"),
+    teal   = c(comp = "#F9875E", comp_ink = "#8E3B1C", comp_light = "#FBA587"),
+    green  = c(comp = "#E28DAE", comp_ink = "#863A5B", comp_light = "#F6A0C1"),
+    violet = c(comp = "#C9A90C", comp_ink = "#695701", comp_light = "#D4BD67")
+  )
+}
+
+#' Discrete colours for a family
+#'
+#' The \code{"contrast"} set leads with the family's own tone and its
+#' interaction complement -- the two colours of the title plate (red and gold
+#' for the red family) -- then the complementary family (blue), the family at
+#' another lightness, the complementary family at another lightness, and a
+#' warm neutral. With \code{mode = "dark"} each slot keeps its hue (only its
+#' lightness changes), so a category keeps its colour when the page switches
+#' theme.
+#' Adjacent levels differ in hue, so a two-group comparison is always legible. The \code{"family"} set is the single-hue A900-A300 ramp.
+#'
+#' @param family Palette family.
+#' @param type \code{"contrast"} (default) or \code{"family"}.
+#' @param mode \code{"light"} (default) or \code{"dark"}: lighter tones that
+#'   hold up on the night ground (used for the dark twins of figures).
+#' @return Character vector of hex colours.
+#' @export
+#' @examples
+#' albers_discrete("red")
+#' albers_discrete("teal", type = "family")
+albers_discrete <- function(family = getOption("albersdown.family", "red"),
+                            type = c("contrast", "family"),
+                            mode = c("light", "dark")) {
+  type <- match.arg(type)
+  mode <- match.arg(mode)
+  pal <- albers_palette(family)
+  comp <- albers_palette(albers_complement(family))
+  # Slot k has the same hue in light and dark, so a category keeps its colour
+  # when the page switches theme: family, interaction complement, complement
+  # family, family (other lightness), complement family (other lightness),
+  # neutral.
+  if (identical(mode, "dark")) {
+    if (type == "family") return(unname(pal[c("A300", "A500", "A700", "A900")]))
+    return(unname(c(
+      pal[["A500"]], .albers_comp(family)[["comp"]], comp[["A300"]],
+      .albers_tint(pal[["A300"]], 0.45), comp[["A500"]], "#B5AD9C"
+    )))
+  }
+  if (type == "family") return(unname(pal[c("A900", "A700", "A500", "A300")]))
+  unname(c(
+    pal[["A700"]],
+    .albers_mark_contrast(.albers_comp(family)[["comp"]]),
+    comp[["A700"]],
+    pal[["A900"]],
+    comp[["A500"]],
+    "#8C8474"
+  ))
 }
 
 #' Scales that use the family's tones (discrete/continuous)
 #'
-#' @param family Palette family.
+#' Discrete scales use \code{\link{albers_discrete}()}: by default the
+#' family's tone is paired with its Albers complement and ochre so adjacent
+#' groups stay distinguishable. Use \code{type = "family"} for the single-hue
+#' ramp. Continuous scales run from a light tint to the family's A900.
+#'
+#' @param family Palette family. Defaults to the `albersdown.family` option
+#'   (set by [albers_vignette()] while a vignette renders), else `"red"`.
 #' @param discrete Whether to use a discrete palette; if FALSE, uses a gradient.
+#' @param type Discrete colour set, \code{"contrast"} (default) or
+#'   \code{"family"}; see \code{\link{albers_discrete}()}.
 #' @param ... Passed to underlying `ggplot2` scale.
 #' @return A \code{ggplot2} scale object.
 #' @export
@@ -201,18 +327,74 @@ theme_albers <- function(
 #'     color = Species)) + ggplot2::geom_point() + scale_color_albers()
 #' }
 #' }
-scale_color_albers <- function(family = "red", discrete = TRUE, ...) {
+scale_color_albers <- function(family = getOption("albersdown.family", "red"), discrete = TRUE, type = c("contrast", "family"), ...) {
+  type <- match.arg(type)
   pal <- albers_palette(family)
-  if (discrete) ggplot2::scale_color_manual(values = unname(pal[c("A900","A700","A500","A300")]), ...)
-  else ggplot2::scale_color_gradient(low = pal[["A300"]], high = pal[["A900"]], ...)
+  sc <- if (discrete) ggplot2::scale_color_manual(values = albers_discrete(family, type), ...)
+  else ggplot2::scale_color_gradient(low = .albers_tint(pal[["A300"]], 0.55), high = pal[["A900"]], ...)
+  .albers_tag_scale(sc, family, type, discrete)
 }
 
 #' @rdname scale_color_albers
 #' @export
-scale_fill_albers <- function(family = "red", discrete = TRUE, ...) {
+scale_fill_albers <- function(family = getOption("albersdown.family", "red"), discrete = TRUE, type = c("contrast", "family"), ...) {
+  type <- match.arg(type)
   pal <- albers_palette(family)
-  if (discrete) ggplot2::scale_fill_manual(values = unname(pal[c("A900","A700","A500","A300")]), ...)
-  else ggplot2::scale_fill_gradient(low = pal[["A300"]], high = pal[["A900"]], ...)
+  sc <- if (discrete) ggplot2::scale_fill_manual(values = albers_discrete(family, type), ...)
+  else ggplot2::scale_fill_gradient(low = .albers_tint(pal[["A300"]], 0.55), high = pal[["A900"]], ...)
+  .albers_tag_scale(sc, family, type, discrete)
+}
+
+# Remember how an albersdown scale was made, so the dark twin of a figure can
+# redraw it with night tones (see .albers_dark_twin()).
+.albers_tag_scale <- function(sc, family, type, discrete) {
+  tryCatch(sc$albers <- list(family = family, type = type, discrete = discrete), error = function(e) NULL)
+  sc
+}
+
+# Palette function for the night version of a tagged scale.
+.albers_night_palette <- function(tag) {
+  if (isTRUE(tag$discrete)) {
+    vals <- albers_discrete(tag$family, tag$type, mode = "dark")
+    return(function(n) vals)
+  }
+  pal <- albers_palette(tag$family)
+  ramp <- grDevices::colorRamp(c(grDevices::colorRampPalette(c(pal[["A900"]], "#1b1814"))(3)[2], pal[["A300"]]))
+  function(x) {
+    out <- rep(NA_character_, length(x))
+    ok <- !is.na(x)
+    if (any(ok)) {
+      m <- ramp(pmin(pmax(x[ok], 0), 1))
+      out[ok] <- grDevices::rgb(m[, 1], m[, 2], m[, 3], maxColorValue = 255)
+    }
+    out
+  }
+}
+
+# Darken a colour in CIELAB lightness (hue and chroma kept) until it has at
+# least `min` contrast against every light plot ground, the WCAG 1.4.11 level
+# for graphical marks.
+.albers_mark_contrast <- function(col, grounds = c("#fbf7ee", "#ffffff"), min = 3.2) {
+  lum <- function(h) {
+    v <- grDevices::col2rgb(h)[, 1] / 255
+    v <- ifelse(v <= 0.04045, v / 12.92, ((v + 0.055) / 1.055)^2.4)
+    sum(c(0.2126, 0.7152, 0.0722) * v)
+  }
+  ok <- function(h) all(vapply(grounds, function(g) {
+    l <- sort(c(lum(h), lum(g)), decreasing = TRUE)
+    (l[1] + 0.05) / (l[2] + 0.05) >= min
+  }, logical(1)))
+  lab <- grDevices::convertColor(t(grDevices::col2rgb(col) / 255), "sRGB", "Lab")
+  while (!ok(col) && lab[1, 1] > 5) {
+    lab[1, 1] <- lab[1, 1] - 1
+    rgb <- pmin(pmax(grDevices::convertColor(lab, "Lab", "sRGB"), 0), 1)
+    col <- grDevices::rgb(rgb[1, 1], rgb[1, 2], rgb[1, 3])
+  }
+  col
+}
+
+.albers_tint <- function(col, amount) {
+  grDevices::colorRampPalette(c(col, "#ffffff"))(101)[round(amount * 100) + 1]
 }
 
 #' Distinct, colorblind-friendly line palette across families

@@ -172,12 +172,13 @@ test_that("use_albersdown writes renderable html_vignette hooks for non-red fami
     "",
     "```{r setup, include=FALSE}",
     "library(ggplot2)",
+    "if (requireNamespace(\"systemfonts\", quietly = TRUE)) albersdown::albers_register_fonts()",
     "```",
     "",
     "Demo text."
   ), file.path(pkg, "vignettes", "demo.Rmd"))
 
-  use_albersdown(path = pkg, family = "teal", preset = "midnight", apply_to = "all", dry_run = FALSE)
+  use_albersdown(path = pkg, family = "teal", preset = "midnight", apply_to = "all", dry_run = FALSE, method = "vendor")
 
   migrated <- readLines(file.path(pkg, "vignettes", "demo.Rmd"), warn = FALSE)
   expect_true(any(grepl("^vignette:\\s+\\|\\s*$", migrated)))
@@ -187,8 +188,8 @@ test_that("use_albersdown writes renderable html_vignette hooks for non-red fami
   expect_true(file.exists(file.path(pkg, "pkgdown", "extra.js")))
   expect_true(any(grepl("@import url\\(\"albers\\.css\"\\);", readLines(file.path(pkg, "pkgdown", "extra.css"), warn = FALSE))))
   extra_js <- readLines(file.path(pkg, "pkgdown", "extra.js"), warn = FALSE)
-  expect_true(any(grepl("palette-teal", extra_js, fixed = TRUE)))
-  expect_true(any(grepl("preset-midnight", extra_js, fixed = TRUE)))
+  expect_true(any(grepl("family: \"teal\"", extra_js, fixed = TRUE)))
+  expect_true(any(grepl("preset: \"midnight\"", extra_js, fixed = TRUE)))
 
   old <- setwd(pkg)
   on.exit(setwd(old), add = TRUE)
@@ -200,7 +201,52 @@ test_that("use_albersdown writes renderable html_vignette hooks for non-red fami
   expect_true(any(grepl("FAMILY_CLASSES|navigator\\.clipboard|data-bs-theme", html)))
   expect_true(any(grepl("palette-teal", html)))
   expect_true(any(grepl("preset-midnight", html)))
-  expect_true(any(grepl("albers\\.css|0D4A4A|0d4a4a", html)))
+  teal_a900 <- sub("^#", "", albers_palette("teal")[["A900"]])
+  expect_true(any(grepl(paste0("albers\\.css|", teal_a900), html, ignore.case = TRUE)))
+})
+
+test_that("use_albersdown accepts interaction as a current visual direction", {
+  skip_if_not_installed("yaml")
+
+  pkg <- file.path(tempdir(), paste0("albersdown-interaction-", Sys.getpid()))
+  dir.create(pkg, recursive = TRUE, showWarnings = FALSE)
+
+  writeLines(c(
+    "Package: demo",
+    "Version: 0.0.0.9000",
+    "Title: Demo",
+    "Authors@R: person(\"Demo\", \"User\", email = \"demo@example.com\", role = c(\"aut\", \"cre\"))",
+    "Description: Demo package.",
+    "License: MIT"
+  ), file.path(pkg, "DESCRIPTION"))
+
+  writeLines("# Demo", file.path(pkg, "README.md"))
+  dir.create(file.path(pkg, "vignettes"), showWarnings = FALSE)
+  writeLines(c(
+    "---",
+    "title: \"Demo\"",
+    "output: rmarkdown::html_vignette",
+    "vignette: >",
+    "  %\\VignetteIndexEntry{Demo}",
+    "  %\\VignetteEngine{knitr::rmarkdown}",
+    "  %\\VignetteEncoding{UTF-8}",
+    "---",
+    "",
+    "```{r setup, include=FALSE}",
+    "library(ggplot2)",
+    "```",
+    "",
+    "Demo text."
+  ), file.path(pkg, "vignettes", "demo.Rmd"))
+
+  use_albersdown(path = pkg, family = "lapis", preset = "interaction", apply_to = "all", dry_run = FALSE, method = "vendor")
+
+  migrated <- readLines(file.path(pkg, "vignettes", "demo.Rmd"), warn = FALSE)
+  extra_js <- readLines(file.path(pkg, "pkgdown", "extra.js"), warn = FALSE)
+
+  expect_true(any(grepl("^\\s+preset:\\s+interaction\\s*$", migrated)))
+  expect_true(any(grepl("preset-interaction", migrated, fixed = TRUE)))
+  expect_true(any(grepl("preset: \"interaction\"", extra_js, fixed = TRUE)))
 })
 
 test_that("use_albersdown migrates legacy CRAN-shaped top-level vignette hooks", {
@@ -257,7 +303,7 @@ test_that("use_albersdown migrates legacy CRAN-shaped top-level vignette hooks",
   expect_false(before$nested_css)
   expect_false(before$nested_header)
 
-  use_albersdown(path = pkg, family = "teal", preset = "midnight", apply_to = "all", dry_run = FALSE)
+  use_albersdown(path = pkg, family = "teal", preset = "midnight", apply_to = "all", dry_run = FALSE, method = "vendor")
 
   migrated <- readLines(file.path(pkg, "vignettes", "demo.Rmd"), warn = FALSE)
   fence <- which(migrated == "---")
@@ -357,6 +403,15 @@ test_that("migrate_albersdown is idempotent for README note and class hook", {
   expect_equal(sum(grepl("^<!-- albersdown:theme-note:start -->$", readme)), 1)
   expect_equal(sum(grepl("^<!-- albersdown:theme-note:end -->$", readme)), 1)
   expect_equal(sum(grepl("^```\\{r albers-classes, echo=FALSE, results='asis'\\}\\s*$", migrated)), 1)
+  expect_false(any(grepl(
+    "^\\s*if \\(requireNamespace\\(\"systemfonts\", quietly = TRUE\\)\\) albersdown::albers_register_fonts\\(\\)\\s*$",
+    migrated
+  )))
+  expect_true(any(grepl(
+    "\"albers_register_fonts\" %in% getNamespaceExports(\"albersdown\")",
+    migrated,
+    fixed = TRUE
+  )))
 })
 
 test_that("migrate_albersdown carries family defaults into pkgdown fallback assets", {
@@ -402,6 +457,6 @@ test_that("migrate_albersdown carries family defaults into pkgdown fallback asse
   expect_equal(cfg$template$package, "albersdown")
   expect_equal(cfg$template$bootstrap, 5)
   expect_true(any(grepl("@import url\\(\"albers\\.css\"\\);", extra_css)))
-  expect_true(any(grepl("palette-ochre", extra_js, fixed = TRUE)))
-  expect_true(any(grepl("preset-homage", extra_js, fixed = TRUE)))
+  expect_true(any(grepl("family: \"ochre\"", extra_js, fixed = TRUE)))
+  expect_true(any(grepl("preset: \"homage\"", extra_js, fixed = TRUE)))
 })
