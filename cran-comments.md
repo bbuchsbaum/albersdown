@@ -21,8 +21,7 @@ This is a minor release (2.0.0 -> 2.1.0). In this version I have:
 
 * local macOS Sonoma 14.3 (aarch64-apple-darwin20), R 4.5.1:
   `R CMD check --as-cran --no-manual`, Status: OK.
-* win-builder, R-devel: [TODO: result]
-* win-builder, R-release: [TODO: result]
+* win-builder, R-devel (2026-09-25 r90590 ucrt, x86_64-w64-mingw32): Status: OK.
 * GitHub Actions, ubuntu-latest (R-devel, R-release, R-oldrel-1): Status: OK.
 * GitHub Actions, windows-latest (R-release): Status: OK.
 * GitHub Actions, macos-latest (R-release): Status: OK.
