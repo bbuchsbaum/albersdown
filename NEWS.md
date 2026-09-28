@@ -1,3 +1,11 @@
+# albersdown (development version)
+
+* Definition lists (including the pkgdown reference index) no longer let one
+  long term squeeze every description to a sliver. The term column now fits
+  its content up to 40% of the row, and long terms wrap. In 2.1.0 the column
+  grew to its widest term, so a reference entry listing many S3 methods
+  pushed descriptions down to one character per line.
+
 # albersdown 2.1.0
 
 ## A vignette format

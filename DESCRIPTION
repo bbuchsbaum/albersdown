@@ -1,7 +1,7 @@
 Package: albersdown
 Type: Package
 Title: Minimalist Theme and Vignette Kit for 'pkgdown' and R Markdown
-Version: 2.1.0
+Version: 2.1.0.9000
 Authors@R: c(person(given = "Bradley R.", family = "Buchsbaum", role = c("aut","cre"),
     email = "brad.buchsbaum@gmail.com"))
 Description: Provides a minimalist 'ggplot2' theme, colour scales, and
