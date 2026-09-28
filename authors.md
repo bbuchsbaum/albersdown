@@ -10,13 +10,13 @@ Source:
 [`DESCRIPTION`](https://github.com/bbuchsbaum/albersdown/blob/main/DESCRIPTION)
 
 Buchsbaum B (2026). *albersdown: Minimalist Theme and Vignette Kit for
-'pkgdown' and R Markdown*. R package version 2.1.0,
+'pkgdown' and R Markdown*. R package version 2.1.0.9000,
 <https://github.com/bbuchsbaum/albersdown>.
 
     @Manual{,
       title = {albersdown: Minimalist Theme and Vignette Kit for 'pkgdown' and R Markdown},
       author = {Bradley R. Buchsbaum},
       year = {2026},
-      note = {R package version 2.1.0},
+      note = {R package version 2.1.0.9000},
       url = {https://github.com/bbuchsbaum/albersdown},
     }

@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">albersdown</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -32,7 +32,11 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="2.1.0" id="albersdown-210">albersdown 2.1.0<a class="anchor" aria-label="anchor" href="#albersdown-210"></a></h2>
+<h2 class="pkg-version" data-toc-text="development version" id="albersdown-development-version">albersdown (development version)<a class="anchor" aria-label="anchor" href="#albersdown-development-version"></a></h2>
+<ul><li>Definition lists (including the pkgdown reference index) no longer let one long term squeeze every description to a sliver. The term column now fits its content up to 40% of the row, and long terms wrap. In 2.1.0 the column grew to its widest term, so a reference entry listing many S3 methods pushed descriptions down to one character per line.</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="2.1.0" id="albersdown-210">albersdown 2.1.0<a class="anchor" aria-label="anchor" href="#albersdown-210"></a></h2><p class="text-muted">CRAN release: 2026-09-27</p>
 <div class="section level3">
 <h3 id="a-vignette-format-2-1-0">A vignette format<a class="anchor" aria-label="anchor" href="#a-vignette-format-2-1-0"></a></h3>
 <ul><li>New output format <code><a href="../reference/albers_vignette.html">albersdown::albers_vignette()</a></code>: one line of YAML themes a CRAN vignette, with nothing copied into <code>vignettes/</code>. It embeds the installed stylesheet, the page script and only the chosen direction’s fonts, sets the family and direction before the page draws (no restyle on load), sets knitr defaults, and uses <code><a href="../reference/theme_albers.html">theme_albers()</a></code> for the render. Scales and themes called without a family follow the vignette’s family (<code>albersdown.family</code> option). Packages using it should declare <code>albersdown (&gt;= 2.1.0)</code>.</li>
