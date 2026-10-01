@@ -518,7 +518,7 @@
   if (identical(new, old)) return(invisible(FALSE))
   if (dry_run) {
     .albers_say(sprintf("Would set the site default to %s / %s in %s%s", family, preset, path,
-                        if (legacy) " (replacing the copy of the old albers.js that albersdown 2.0 wrote there)" else ""))
+                        if (legacy) " (replacing the old albersdown script copied there)" else ""))
     if (!.albers_build_ignored("pkgdown")) .albers_build_ignore("^pkgdown$", dry_run = TRUE)
     return(invisible(TRUE))
   }
@@ -527,28 +527,80 @@
   .albers_write_lines(new, path)
   if (!.albers_build_ignored("pkgdown")) .albers_build_ignore("^pkgdown$")
   .albers_say(sprintf("Site default: %s / %s (%s%s)", family, preset, path,
-                      if (legacy) "; replaced albersdown 2.0's copy of the old albers.js" else ""), "success")
+                      if (legacy) "; replaced the old albersdown script copied there" else ""), "success")
   invisible(TRUE)
 }
 
 .albers_legacy_extra_js <- function(lines) {
-  length(lines) > 0 && identical(trimws(lines[1]), "/* albersdown pkgdown/extra.js: site default classes + full albers.js. */")
+  if (!length(lines)) return(FALSE)
+  identical(trimws(lines[1]), "/* albersdown pkgdown/extra.js: site default classes + full albers.js. */") ||
+    .albers_is_theme_copy(lines)
+}
+
+# albersdown 1.x copied its whole stylesheet into pkgdown/extra.css and a
+# class-setting script into pkgdown/extra.js. pkgdown loads extra.css after
+# the template's albers.css, so an old copy silently overrides the current
+# theme. A file is recognised as such a copy by its fingerprint: the MD5 of
+# its text with trailing whitespace and the filled-in family/preset names
+# taken out, looked up in inst/legacy/theme-copies.txt (every stylesheet and
+# script albersdown has shipped; regenerate with tools/legacy_theme_copies.R).
+.albers_theme_fingerprint <- function(lines) {
+  # bytes, not characters: a stray latin-1 byte must not make sub() fail
+  lines <- sub("[ \t\r]+$", "", lines, useBytes = TRUE)
+  while (length(lines) && !nzchar(lines[length(lines)])) lines <- lines[-length(lines)]
+  lines <- gsub("(['\"])(palette|preset)-[a-z]+\\1", "\\1\\2-*\\1", lines, perl = TRUE, useBytes = TRUE)
+  tmp <- tempfile()
+  on.exit(unlink(tmp))
+  writeBin(charToRaw(paste0(paste(lines, collapse = "\n"), "\n")), tmp)
+  unname(tools::md5sum(tmp))
+}
+
+.albers_is_theme_copy <- function(lines) {
+  known <- system.file("legacy", "theme-copies.txt", package = "albersdown")
+  if (!nzchar(known) || !length(lines)) return(FALSE)
+  .albers_theme_fingerprint(lines) %in% readLines(known, warn = FALSE)
+}
+
+# The first line of each 1.x stylesheet: an edited copy still carries it.
+.albers_theme_copy_header <- function(lines) {
+  length(lines) > 0 &&
+    grepl("^\\s*/\\* -+ (Albersdown: (Bauhaus geometric|geometric modernist) system|Homage family: default = Homage-Red) -+ \\*/\\s*$",
+          lines[1], useBytes = TRUE)
 }
 
 # albersdown 2.0's pkgdown/extra.css was only this import, a second load of
-# the theme now that the template links it. A user's own extra.css is kept.
+# the theme now that the template links it; 1.x's was a full copy of the old
+# stylesheet, which loads after the template's and overrides it. Both are
+# removed. A user's own extra.css is kept, and so is an edited 1.x copy, with
+# a warning, since it may hold the user's rules.
 .albers_retire_extra_css <- function(dry_run = FALSE) {
   path <- file.path("pkgdown", "extra.css")
   if (!file.exists(path)) return(invisible(FALSE))
-  content <- trimws(readLines(path, warn = FALSE))
-  if (!identical(content[nzchar(content)], "@import url(\"albers.css\");")) return(invisible(FALSE))
+  lines <- readLines(path, warn = FALSE)
+  content <- gsub("^[ \t\r\n]+|[ \t\r\n]+$", "", lines, useBytes = TRUE)
+  why <- if (identical(content[nzchar(content)], "@import url(\"albers.css\");")) {
+    "albersdown 2.0's @import of albers.css; the template links the theme"
+  } else if (.albers_is_theme_copy(lines)) {
+    "a copy of the albersdown 1.x stylesheet, which overrode the current theme"
+  }
+  if (is.null(why)) {
+    if (.albers_theme_copy_header(lines)) {
+      .albers_say(sprintf(paste(
+        "%s starts as a copy of the albersdown 1.x stylesheet but has been edited, so it was kept.",
+        "pkgdown loads it after the theme, so it overrides albersdown: keep only your own rules in it."), path), "warning")
+    }
+    return(invisible(FALSE))
+  }
   if (dry_run) {
-    .albers_say(sprintf("Would remove %s (albersdown 2.0's @import of albers.css; the template links the theme)", path))
+    .albers_say(sprintf("Would remove %s (%s)", path, why))
     return(invisible(TRUE))
   }
-  .albers_backup(path)
+  if (!isTRUE(.albers_backup(path))) {
+    .albers_say(sprintf("Kept %s (%s): it could not be backed up to .albersdown.bak/", path, why), "warning")
+    return(invisible(FALSE))
+  }
   file.remove(path)
-  .albers_say(sprintf("Removed %s (albersdown 2.0's @import of albers.css; the template links the theme; backed up)", path), "success")
+  .albers_say(sprintf("Removed %s (%s; backed up)", path, why), "success")
   invisible(TRUE)
 }
 
@@ -727,8 +779,9 @@
   }
   fam <- pick("albersdownDefaults\\s*=\\s*\\{[^}]*family\\s*:\\s*['\"]([A-Za-z]+)['\"]", .albers_families)
   pre <- pick("albersdownDefaults\\s*=\\s*\\{[^}]*preset\\s*:\\s*['\"]([A-Za-z]+)['\"]", .albers_all_presets)
-  if (is.na(fam)) fam <- pick("classList\\.add\\(\"palette-([a-z]+)\"\\)", .albers_families)
-  if (is.na(pre)) pre <- pick("classList\\.add\\(\"preset-([a-z]+)\"\\)", .albers_all_presets)
+  # 1.x scripts add the classes together: classList.add("palette-teal", "preset-homage", ...)
+  if (is.na(fam)) fam <- pick("classList\\.add\\([^)]*[\"']palette-([a-z]+)[\"']", .albers_families)
+  if (is.na(pre)) pre <- pick("classList\\.add\\([^)]*[\"']preset-([a-z]+)[\"']", .albers_all_presets)
   if (is.na(fam) && is.na(pre)) NULL else list(family = fam, preset = pre)
 }
 

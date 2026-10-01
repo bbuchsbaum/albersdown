@@ -729,6 +729,9 @@ use_albersdown <- function(
 
   if (file.exists("pkgdown/extra.css")) {
     css <- readLines("pkgdown/extra.css", warn = FALSE)
+    if (.albers_is_theme_copy(css) || .albers_theme_copy_header(css)) {
+      penalize(15, "pkgdown/extra.css is a copy of the albersdown 1.x stylesheet; it loads after the theme and overrides it (use_albersdown() retires an unedited copy)")
+    }
     has_anchor <- any(grepl("\\.anchor\\s*\\{", css))
     has_hover <- any(grepl("h2:hover \\.anchor|h3:hover \\.anchor", css))
     if (has_anchor && !has_hover) {

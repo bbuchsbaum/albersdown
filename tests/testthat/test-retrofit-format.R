@@ -661,3 +661,55 @@ test_that("site and vignettes disagreeing: apply_to = 'new' keeps the site, the 
   msg <- paste(testthat::capture_messages(use_albersdown(pkg, dry_run = TRUE)), collapse = "")
   expect_match(msg, "Kept the package's family: ochre (from vignettes (a.Rmd); pkgdown/extra.js says lapis)", fixed = TRUE)
 })
+
+legacy_1x_pkg <- function(env = parent.frame()) {
+  pkg <- toy_pkg(env = env)
+  writeLines(html_vig("A"), file.path(pkg, "vignettes", "a.Rmd"))
+  dir.create(file.path(pkg, "pkgdown"))
+  file.copy(test_path("fixtures", "extra-1x.css"), file.path(pkg, "pkgdown", "extra.css"))
+  file.copy(test_path("fixtures", "extra-1x.js"), file.path(pkg, "pkgdown", "extra.js"))
+  writeLines(c("template:", "  package: albersdown"), file.path(pkg, "_pkgdown.yml"))
+  pkg
+}
+
+test_that("a theme copy's fingerprint ignores trailing space and the filled-in family", {
+  js <- readLines(test_path("fixtures", "extra-1x.js"))
+  expect_true(.albers_is_theme_copy(js))
+  expect_true(.albers_is_theme_copy(c(paste0(js, "  "), "", "")))
+  expect_true(.albers_is_theme_copy(sub("palette-teal", "palette-ochre", js, fixed = TRUE)))
+  expect_false(.albers_is_theme_copy(c(js, "console.log('mine');")))
+  expect_false(.albers_is_theme_copy(character()))
+  css <- readLines(test_path("fixtures", "extra-1x.css"))
+  expect_true(.albers_is_theme_copy(css))
+  expect_true(.albers_theme_copy_header(css))
+  expect_false(.albers_theme_copy_header("a { color: hotpink; }"))
+})
+
+test_that("albersdown 1.x's copied stylesheet and script are retired, keeping the site family", {
+  pkg <- legacy_1x_pkg()
+  msg <- paste(testthat::capture_messages(use_albersdown(pkg, apply_to = "new")), collapse = "")
+  expect_match(msg, "Removed pkgdown/extra.css (a copy of the albersdown 1.x stylesheet", fixed = TRUE)
+  expect_false(file.exists(file.path(pkg, "pkgdown", "extra.css")))
+  expect_true(file.exists(file.path(pkg, ".albersdown.bak", "extra.css")))
+  # the 1.x script set palette-teal; the defaults line keeps it and replaces the rest
+  expect_identical(readLines(file.path(pkg, "pkgdown", "extra.js")),
+                   'window.albersdownDefaults = { family: "teal", preset: "homage", style: "minimal" };')
+})
+
+test_that("an edited 1.x stylesheet copy is kept, with a warning", {
+  pkg <- legacy_1x_pkg()
+  css <- c(readLines(test_path("fixtures", "extra-1x.css")), ".mine { color: hotpink; }")
+  writeLines(css, file.path(pkg, "pkgdown", "extra.css"))
+  msg <- paste(testthat::capture_messages(use_albersdown(pkg, apply_to = "new", dry_run = TRUE)), collapse = "")
+  expect_match(msg, "starts as a copy of the albersdown 1.x stylesheet but has been edited", fixed = TRUE)
+  expect_no_match(msg, "Would remove pkgdown/extra.css", fixed = TRUE)
+  suppressMessages(use_albersdown(pkg, apply_to = "new"))
+  expect_identical(readLines(file.path(pkg, "pkgdown", "extra.css")), css)
+})
+
+test_that("a stray latin-1 byte does not stop the fingerprint", {
+  css <- c(readLines(test_path("fixtures", "extra-1x.css")), "/* caf\xe9 */")
+  Encoding(css) <- "unknown"
+  expect_false(.albers_is_theme_copy(css))
+  expect_true(.albers_theme_copy_header(css))
+})
