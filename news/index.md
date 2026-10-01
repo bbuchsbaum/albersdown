@@ -4,9 +4,26 @@
 
 - Definition lists (including the pkgdown reference index) no longer let
   one long term squeeze every description to a sliver. The term column
-  now fits its content up to 40% of the row, and long terms wrap. In
-  2.1.0 the column grew to its widest term, so a reference entry listing
-  many S3 methods pushed descriptions down to one character per line.
+  now fits its content up to 45% of the row, and long terms wrap between
+  calls; a call is split only when it is wider than the column itself.
+  In 2.1.0 the column grew to its widest term, so a reference entry
+  listing many S3 methods pushed descriptions down to one character per
+  line.
+
+- [`use_albersdown()`](https://bbuchsbaum.github.io/albersdown/reference/use_albersdown.md)
+  now retires the stylesheet and script that albersdown 1.x copied into
+  `pkgdown/extra.css` and `pkgdown/extra.js`. pkgdown loads `extra.css`
+  after the theme, so an old copy overrode 2.x on every page (uppercase
+  headings, section numbers run into the heading text). A file is
+  retired, with a backup, only when its text matches a version
+  albersdown shipped. A family or preset the old script set carries over
+  to the defaults line; otherwise the vignettes’ choice is used. An
+  edited copy is kept with a warning, and the doctor flags it.
+
+- On pkgdown sites, a plot now sits 2rem below the code that made it,
+  not 3.5rem. Bootstrap styles knitr’s `div.figure` as `inline-block`,
+  whose margins add to the code block’s instead of collapsing; the theme
+  now sets it to `block`.
 
 ## albersdown 2.1.0
 
