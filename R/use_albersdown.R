@@ -828,7 +828,7 @@ use_albersdown <- function(
     .albers_say(sprintf("Would add %s to %s", pattern, file))
     return(invisible(TRUE))
   }
-  .albers_write_lines(c(lines, pattern), file)
+  .albers_append_line(pattern, file)
   .albers_say(sprintf("Added %s to %s", pattern, file), "success")
   invisible(TRUE)
 }

@@ -52,6 +52,20 @@
   writeLines(lines, con, sep = style$eol, useBytes = TRUE)
 }
 
+# Add one line to the end of a file without rewriting what is there: an ignore
+# file may mix CRLF and LF lines, and every existing byte is kept. The new
+# line takes the ending of the line above it.
+.albers_append_line <- function(line, path) {
+  old <- if (file.exists(path)) readBin(path, "raw", file.info(path)$size) else raw()
+  lf <- which(old == as.raw(10L))
+  eol <- if (length(lf) && lf[length(lf)] > 1 && old[lf[length(lf)] - 1L] == as.raw(13L)) "\r\n" else "\n"
+  # a last line without its newline gets one first
+  if (length(old) && old[length(old)] != as.raw(10L)) old <- c(old, charToRaw(eol))
+  con <- file(path, open = "wb")
+  on.exit(close(con), add = TRUE)
+  writeBin(c(old, charToRaw(paste0(line, eol))), con)
+}
+
 # The YAML front matter delimiters, as rmarkdown finds them: an opening `---`
 # (after blank lines only) and a closing `---` or `...`, trailing blanks
 # allowed. Returns the two line numbers, or NULL.

@@ -16,6 +16,10 @@
   defaults line; otherwise the vignettes' choice is used. An
   edited copy is kept with a warning, and the doctor flags it.
 
+* `use_albersdown()` appends to `.Rbuildignore` and `.gitignore` instead of
+  rewriting them, so a file that mixes CRLF and LF line endings keeps every
+  existing byte.
+
 * On pkgdown sites, a plot now sits 2rem below the code that made it, not
   3.5rem. Bootstrap styles knitr's `div.figure` as `inline-block`, whose
   margins add to the code block's instead of collapsing; the theme now sets

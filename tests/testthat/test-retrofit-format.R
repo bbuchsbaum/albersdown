@@ -713,3 +713,20 @@ test_that("a stray latin-1 byte does not stop the fingerprint", {
   expect_false(.albers_is_theme_copy(css))
   expect_true(.albers_theme_copy_header(css))
 })
+
+test_that("an ignore entry is appended without rewriting mixed line endings", {
+  dir <- withr::local_tempdir()
+  withr::local_dir(dir)
+  raw <- charToRaw("^a$\r\n^b$\n^c$\r\n")
+  writeBin(raw, ".Rbuildignore")
+  expect_true(suppressMessages(.albers_build_ignore("^d$")))
+  expect_identical(readBin(".Rbuildignore", "raw", 100), c(raw, charToRaw("^d$\r\n")))
+  # no final newline: one is added in the last line's style
+  writeBin(charToRaw("^a$\n^b$"), ".gitignore")
+  suppressMessages(.albers_build_ignore("x/", file = ".gitignore"))
+  expect_identical(rawToChar(readBin(".gitignore", "raw", 100)), "^a$\n^b$\nx/\n")
+  # a new file, and an entry already present
+  suppressMessages(.albers_build_ignore("^e$", file = "new-ignore"))
+  expect_identical(readLines("new-ignore"), "^e$")
+  expect_false(suppressMessages(.albers_build_ignore("^e$", file = "new-ignore")))
+})
